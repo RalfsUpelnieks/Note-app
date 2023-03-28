@@ -5,7 +5,7 @@ import configData from '../config.json'
 
 
 async function loginUser(Email, Password){
-    await fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
+    return fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
@@ -17,11 +17,12 @@ async function loginUser(Email, Password){
     })
     .then(response => {
         if (response.ok) {
-            return response.text().then((response) => {
-              console.log(response)});
+          return response.json();
         } else {
-            console.error( response.text());
-            return null;
+          response.json().then(data => {
+            console.log(data);
+          });
+          return null;
         }
     })
 }
@@ -33,7 +34,7 @@ export default function Login({ setToken }) {
     const handleSubmit = async e => {
         e.preventDefault(); 
         const token = await loginUser(email, password);
-        //setToken(token);
+        setToken(token);
     }
 
   return(

@@ -60,9 +60,9 @@ namespace backend.Controllers
             {
                 var user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Email);
                 if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) {
-                    return Ok(CreateToken(user));
+                    return Ok(new {token = CreateToken(user)});
                 } else {
-                    return BadRequest("Invalid username or password");
+                    return BadRequest(new { Error = "Invalid username or password"});
                 }
             } 
             
