@@ -1,0 +1,25 @@
+.header {
+    display: flex;
+    position: fixed;
+    transition: background-color 0.2s ease-in-out, filter 0.25s ease;;
+    background-color: rgba(216, 216, 216, 0.4);
+    backdrop-filter: blur(1px); 
+    width: 100%;
+    justify-content: space-between;
+    z-index: 2;
+}
+
+.layoutRoot {
+    display: flex;
+    flex: 1 1 auto;
+    max-width: 100%;
+    padding-left: 10%;
+    padding-top: 10%;
+}
+
+.layoutContainer {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    width: 100%;
+}

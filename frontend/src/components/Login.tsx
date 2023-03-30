@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState} from 'react';
+import {Navigate } from 'react-router-dom';
 import Styles from '../stylesheets/Login.module.css'
-import PropTypes from 'prop-types'
 import configData from '../config.json'
 
 
-async function loginUser(Email, Password){
-    return fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
+async function loginUser(Email: string, Password: string){
+    await fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
@@ -17,27 +17,34 @@ async function loginUser(Email, Password){
     })
     .then(response => {
         if (response.ok) {
-          return response.json();
+          response.json().then(data => { 
+            localStorage.setItem('token', data.token);
+            window.location.reload();
+          });
         } else {
           response.json().then(data => {
             console.log(data);
           });
-          return null;
         }
     })
 }
 
-export default function Login({ setToken }) {
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+export default function Login() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errMsg, setErrMsg] = useState('');
 
-    const handleSubmit = async e => {
-        e.preventDefault(); 
-        const token = await loginUser(email, password);
-        setToken(token);
+    const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+        event.preventDefault(); 
+        await loginUser(email, password);
     }
+    
+  useEffect(() => {
+    setErrMsg('');
+  }, [email, password]);
 
   return(
+    localStorage.getItem('token') ? <Navigate to="/"/> :
     <div className={Styles.wrapper}>
       <h1>Please Log In</h1>
       <form onSubmit={handleSubmit}>
@@ -49,6 +56,7 @@ export default function Login({ setToken }) {
           <p>Password</p>
           <input type="password" onChange={e => setPassword(e.target.value)} />
         </label>
+        <p className={errMsg ? Styles.errMsg : Styles.offscreen} aria-live="assertive">{errMsg}</p>
         <div>
           <button type="submit">Submit</button>
         </div>
@@ -56,7 +64,3 @@ export default function Login({ setToken }) {
     </div>
   )
 }
-
-Login.propTypes = {
-setToken: PropTypes.func.isRequired
-};

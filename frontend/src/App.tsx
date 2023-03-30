@@ -1,29 +1,37 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
-import styles from './App.module.css'
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login';
-import useToken from './components/useToken';
+import Register from './components/Register';
+import AdminPage from './components/AdminPage';
+import Layout from './components/Layout';
+import Dashboard from './components/Dashboard';
+
 
 
 function App() {
-
-    const { token, setToken } = useToken();
-    
-    if(!token){
-        return <Login setToken={setToken} />
+    //test function
+    function isAuthorized() {
+        if (localStorage.getItem('token') !== null) {
+            return true;
+        }
+        return false;
     }
 
+    const [isAdmin, setIsAdmin] = React.useState(false);
+
     return (
-        <div className={styles.wrapper}>
-            <h1>Application</h1>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    
-                </Routes>
-            </BrowserRouter>
-        </div>
+        <Routes>
+            <Route path="/" element= {isAuthorized() ? <Navigate to={isAdmin ? '/admin' : '/dashboard'} /> :  <Navigate to="/login" />} />
+
+            <Route path="/login" element={<Login />}/>
+            <Route path="/register" element={<Register />}/>
+
+            <Route element={<Layout />}>
+                <Route path="/dashboard" element={<Dashboard />}/>
+                <Route path="/admin" element={<AdminPage/>}/>
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
     );
 };
 
