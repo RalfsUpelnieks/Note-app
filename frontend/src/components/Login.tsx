@@ -4,7 +4,7 @@ import Styles from '../stylesheets/Login.module.css'
 import configData from '../config.json'
 
 
-async function loginUser(Email: string, Password: string){
+async function loginUser(Email: string, Password: string, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
     await fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
       method: 'POST',
       mode: 'cors',
@@ -23,6 +23,7 @@ async function loginUser(Email: string, Password: string){
           });
         } else {
           response.json().then(data => {
+            setErrMsg(data.error);
             console.log(data);
           });
         }
@@ -36,7 +37,7 @@ export default function Login() {
 
     const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault(); 
-        await loginUser(email, password);
+        await loginUser(email, password, setErrMsg);
     }
     
   useEffect(() => {

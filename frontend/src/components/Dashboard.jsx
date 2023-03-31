@@ -3,7 +3,6 @@ import DataRequests from '../services/DataRequests';
 
 export default function Dashboard() {
     const [weather, setWeather] = useState([]);
-    //setWeather(DataRequests.requestFromAPI2());
 
     const [time, setTime] = useState(Date.now());
 
