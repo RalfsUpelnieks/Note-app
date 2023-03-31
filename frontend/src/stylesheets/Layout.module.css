@@ -1,20 +1,108 @@
+@import "variables.css";
+@import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
+
 .header {
     display: flex;
     position: fixed;
-    transition: background-color 0.2s ease-in-out, filter 0.25s ease;;
-    background-color: rgba(216, 216, 216, 0.4);
-    backdrop-filter: blur(1px); 
+    background-color: rgb(216, 216, 216);
     width: 100%;
     justify-content: space-between;
     z-index: 2;
+}
+
+.sideNav {
+    overflow:visible;
+    background:#212121;
+    border-right:1px solid #e5e5e5;
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    height:100%;
+    width:250px;
+    z-index:1;
+}
+
+.sideNav ul {
+    margin-top:100px;
+}
+
+.sideNav li {
+    position:relative;
+    display:block;
+    width:250px;
+}
+
+.sideNav a {
+    position:relative;
+    display:table;
+    border-collapse:collapse;
+    border-spacing:0;
+    color:#999;
+    font-family: arial;
+    font-size: 14px;
+    text-decoration:none;
+}
+
+.sideNav i {
+    position:relative;
+    display:table-cell;
+    width:60px;
+    height:36px;
+    text-align:center;
+    vertical-align:middle;
+    font-size:20px;
+}
+    
+.navText {
+    position:relative;
+    display:table-cell;
+    vertical-align:middle;
+    width:190px;
+    font-size: 1.2em;
+    font-family: var(--SideBar);
+}
+   
+a:hover,a:focus {
+    text-decoration:none;
+} 
+    
+nav ul,nav li {
+    outline:0;
+    margin:0;
+    padding:0;
+}
+
+.sideNav li:hover {
+    color:#fff;
+    background-color:#000000;
+}
+
+.notePage {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 10px;
+}
+
+.notePage span {
+    font-size: 1.1em;
+    font-family: var(--SideBar);
+}
+
+.settings {
+    position:absolute;
+    left:0;
+    bottom:0;
 }
 
 .layoutRoot {
     display: flex;
     flex: 1 1 auto;
     max-width: 100%;
-    padding-left: 10%;
-    padding-top: 10%;
+    padding-left: 260px;
+    padding-top: 5%;
 }
 
 .layoutContainer {

@@ -1,4 +1,5 @@
 import Header from './Header';
+import SideNav from './SideNav';
 import { Outlet } from 'react-router-dom';
 import style from '../stylesheets/Layout.module.css';
 
@@ -17,6 +18,7 @@ export default function Layout() {
   return (
     <div>
       <Header />
+      <SideNav />
       <div className={style.layoutRoot}>
         <div className={style.LayoutContainer}>
           <Outlet />
