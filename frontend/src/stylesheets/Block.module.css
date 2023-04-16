@@ -1,0 +1,76 @@
+@import "variables.css";
+
+.block {
+    width: calc(100% - 2rem);
+    -webkit-user-select: text;
+    user-select: text;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.block:focus,
+.isDragging,
+.blockSelected {
+  background: var(tertiary);
+  outline: 0px solid transparent;
+}
+
+.dragHandle {
+    opacity: 1;
+}
+
+.placeholder {
+  color: rgba(72, 72, 72, 0.25);
+}
+
+.draggable {
+    display: flex;
+}
+
+.draggable:hover .block {
+    background: #fafafa;
+    outline-color: var(tertiary);
+}
+.draggable:hover .dragHandle {
+    opacity: 1;
+}
+
+.dragHandle {
+    opacity: 0;
+    width: 1rem;
+    height: 1rem;
+    align-self: center;
+    padding: 0.25rem; 
+    margin: 0.25rem;
+
+}
+
+.dragHandle i {
+    display: block;
+    opacity: 0.4;
+}
+
+/* .image {
+  display: inline-block;
+  width: calc(100% - 1rem);
+  padding: 0.25rem;
+}
+
+.image i {
+    display: block;
+    max-height: 600px;
+    max-width: 100%;
+    margin: 0 auto;
+} */
+
+.blockSelected.image {
+  opacity: 0.75;
+}
+
+.fileInputLabel {
+  display: block;
+  padding: 0.5rem 0.25rem;
+  color: #888888;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+}

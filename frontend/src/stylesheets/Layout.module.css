@@ -1,5 +1,5 @@
 @import "variables.css";
-@import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
 
 .header {
     display: flex;
@@ -42,6 +42,8 @@
     font-family: arial;
     font-size: 14px;
     text-decoration:none;
+    border-style: solid;
+    border: #000000;
 }
 
 .sideNav i {
@@ -75,20 +77,58 @@ nav ul,nav li {
 
 .sideNav li:hover {
     color:#fff;
-    background-color:#000000;
+    background-color:#181818;
 }
 
 .notePage {
     height: 30px;
-    display: flex;
+    display: table !important;
     align-items: center;
     justify-content: left;
-    padding-left: 10px;
 }
 
-.notePage span {
+.notePage a {
+    display: table-cell;
+}
+
+.textLink {
+    width: 90%;
+    align-items: center;
+    justify-content: left;
+    vertical-align: middle;
+    padding-left: 1px;
     font-size: 1.1em;
     font-family: var(--SideBar);
+    vertical-align: middle;
+}
+
+.textLink span {
+    display: flex;
+    width: 200px !important;
+    
+    align-items: center;
+    vertical-align: middle;
+    padding-left: 10px;
+    font-size: 1.1em;
+    font-family: var(--SideBar);
+
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.noteIcon {
+    float: right;
+}
+
+.noteIcon i {
+    font-size: 1rem;
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.selectedNote {
+    background-color: #000000;
 }
 
 .settings {
@@ -97,17 +137,17 @@ nav ul,nav li {
     bottom:0;
 }
 
-.layoutRoot {
-    display: flex;
-    flex: 1 1 auto;
-    max-width: 100%;
-    padding-left: 260px;
-    padding-top: 5%;
+.content {
+    box-sizing: border-box;
+    width: 80%;
+    max-width: 720px;
+    padding: 10rem 0 1rem 1rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.layoutContainer {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    width: 100%;
+[contenteditable=true]:empty:before {
+    content: attr(placeholder);
+    display: block;
+    color: #aaa;
 }

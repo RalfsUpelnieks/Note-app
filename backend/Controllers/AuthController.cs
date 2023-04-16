@@ -15,21 +15,18 @@ using System.Text;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
-    {
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase {
         private readonly IConfiguration _configuration;
         private DataContext _context;
-        public AuthController(IConfiguration configuration, DataContext dataContext)
-        {
+        public AuthController(IConfiguration configuration, DataContext dataContext) {
             _configuration = configuration;
             _context = dataContext;
         }
 
         [HttpPost("register")]
-        public ActionResult<User> Register([FromBody] UserRegistration requestDto)
-        {
+        public ActionResult<User> Register([FromBody] UserRegistration requestDto) {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             if (_context.users.Any(u => u.EmailAddress == requestDto.Email)) return BadRequest("User with this email already exists");
@@ -38,10 +35,12 @@ namespace backend.Controllers
 
             if (requestDto.Password.Length < 8) return BadRequest("Password must be at least 8 characters");
 
-            var user = new User
-            {
+            var user = new User {
+                Name = requestDto.FirstName,
+                Surname = requestDto.LastName,
                 EmailAddress = requestDto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password)
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password),
+                Role = requestDto.IsAdmin ? 1 : 0
             };
 
             _context.Add(user);
@@ -51,10 +50,8 @@ namespace backend.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<User> Login([FromBody] UserLogin request)
-        {
-            if (ModelState.IsValid)
-            {
+        public ActionResult<User> Login([FromBody] UserLogin request) {
+            if (ModelState.IsValid) {
                 var user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Email);
                 if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) {
                     return Ok(new {token = CreateToken(user)});
@@ -66,8 +63,7 @@ namespace backend.Controllers
             return BadRequest(ModelState);
         }
 
-        private string CreateToken(User user)
-        {
+        private string CreateToken(User user) {
             List<Claim> claims = new List<Claim> {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.EmailAddress),
@@ -82,6 +78,5 @@ namespace backend.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
     }
 }

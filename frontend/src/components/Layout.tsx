@@ -1,29 +1,48 @@
+import { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import SideNav from './SideNav';
-import { Outlet } from 'react-router-dom';
 import style from '../stylesheets/Layout.module.css';
+import configData from '../config.json'
 
-export default function Layout() {
-  //const [Page, ChangePage] = useState(false);
+export default function Layout({pages, setPages} : any) {
+  const navigate = useNavigate()
 
-  // const handlePageChange = useCallback(
-  //   () => {
-  //     if (ChangePage) {
-  //       setOpenNav(false);
-  //     }
-  //   },
-  //   [openNav]
-  // );
+  useEffect(() => {
+    const updatePages = async () => {
+        let bearer = 'Bearer ' + localStorage.getItem('token');
+
+        await fetch('http://localhost:' + configData.APIPort + '/api/Note', {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+        }}).then(response => {
+            if (response.ok) {
+                response.json().then(data => { 
+                    console.log("Updated page data from server");
+                    setPages(data);
+                    return data;
+                });
+            } else if (response.status === 401) {
+                localStorage.removeItem('token');
+                navigate('/login');
+            }
+        })
+    };
+    updatePages();
+  }, []);
 
   return (
     <div>
       <Header />
-      <SideNav />
-      <div className={style.layoutRoot}>
-        <div className={style.LayoutContainer}>
-          <Outlet />
-        </div>
-      </div>
+      <SideNav pages={pages}/>
+      <main className={style.content}>
+        <Outlet context={[pages, setPages]} />  
+      </main>
     </div>
   );
 };

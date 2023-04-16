@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import {Navigate } from 'react-router-dom';
-import Styles from '../stylesheets/Login.module.css'
+import styles from '../stylesheets/Login.module.css'
 import configData from '../config.json'
 
 
@@ -46,22 +46,27 @@ export default function Login() {
 
   return(
     localStorage.getItem('token') ? <Navigate to="/"/> :
-    <div className={Styles.wrapper}>
-      <h1>Please Log In</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Username</p>
-          <input type="text" onChange={e => setEmail(e.target.value)} />
-        </label>
-        <label>
-          <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)} />
-        </label>
-        <p className={errMsg ? Styles.errMsg : Styles.offscreen} aria-live="assertive">{errMsg}</p>
-        <div>
-          <button type="submit">Submit</button>
+    <div> 
+      <form className={styles.form} id="submitForm" onSubmit={handleSubmit}>
+        <h1 className={styles.title}>Note App</h1>   
+        <div className={styles.formGroup}>
+          <label>Email</label>
+          <input type="text" className="form-control text-lowercase" id="username" onChange={e => setEmail(e.target.value)} required name="username"/>
+        </div>                    
+        <div className={styles.formGroup}>
+          <label className="d-flex flex-row align-items-center">Password</label>
+          <input type="password" className="form-control" onChange={e => setPassword(e.target.value)} required id="password" name="password"/>
+        </div>
+        <div className={styles.formGroup}>
+          <p className={errMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{errMsg}</p>
+        </div>
+        <div className="form-group pt-1">
+          <button className={styles.loginButton} type="submit">Log In</button>
         </div>
       </form>
-    </div>
-  )
+      {/* <p className="small-xl pt-3 text-center">
+        <span className="text-muted">Not a member?</span>
+        <a href="/signup">Sign up</a>
+      </p> */}
+    </div>)
 }
