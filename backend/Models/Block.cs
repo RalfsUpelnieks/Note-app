@@ -8,6 +8,7 @@ namespace backend.Models {
         required public string tag { get; set; }
         public string html { get; set; } = string.Empty;
         public string imageUrl { get; set; } = string.Empty;
+        required public int position { get; set; }
 
         [ForeignKey("Page")]
         required public string PageId { get; set; }

@@ -211,9 +211,6 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
     return (
       <>
         <RenameBlock 
-          key={0}
-          position={0}
-          id={0}
           html={pages[pageIndex].title}
           pageId={id}
           addBlock={addBlockHandler}

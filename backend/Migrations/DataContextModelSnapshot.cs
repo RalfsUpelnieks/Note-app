@@ -38,6 +38,9 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("position")
+                        .HasColumnType("int");
+
                     b.Property<string>("tag")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

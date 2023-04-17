@@ -11,7 +11,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230416125121_blocks")]
+    [Migration("20230417053004_blocks")]
     partial class blocks
     {
         /// <inheritdoc />
@@ -40,6 +40,9 @@ namespace backend.Migrations
                     b.Property<string>("imageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("position")
+                        .HasColumnType("int");
 
                     b.Property<string>("tag")
                         .IsRequired()

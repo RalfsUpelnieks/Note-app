@@ -128,7 +128,7 @@ nav ul,nav li {
 }
 
 .selectedNote {
-    background-color: #000000;
+    background-color: #000000 !important;
 }
 
 .settings {
