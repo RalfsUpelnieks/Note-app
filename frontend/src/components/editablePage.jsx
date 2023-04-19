@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef} from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import {Navigate, useOutletContext, useNavigate } from 'react-router-dom';
-import ContentEditable from "react-contenteditable";
 
 import EditableBlock from "./editableBlock";
 import RenameBlock from "./renameBlock";
@@ -37,12 +36,8 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
     }
     // If a block was deleted, move the caret to the end of the last block
     if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-      const lastBlockPosition = prevBlocks
-        .map((b) => b._id)
-        .indexOf(currentBlockId);
-      const lastBlock = document.querySelector(
-        `[data-position="${lastBlockPosition}"]`
-      );
+      const lastBlockPosition = prevBlocks.map((b) => b._id).indexOf(currentBlockId);
+      const lastBlock = document.querySelector(`[data-position="${lastBlockPosition}"]`);
       if (lastBlock) {
         setCaretToEnd(lastBlock);
       }
@@ -70,39 +65,6 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
     }
   }, [blocks, prevBlocks]);
 
-  useEffect(() => {
-    const updatePageOnServer = async (pages) => {
-      try {
-        const pageIndex = pages.map((p) => p.pageId).indexOf(id);
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdatePage', {
-          method: 'POST',
-          mode: 'cors',
-          cache: 'no-cache',
-          credentials: 'same-origin',
-          headers: {
-              'Authorization': bearer,
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({pageId: id, title: pages[pageIndex].title})
-        }).then(response => {
-        if (response.ok) {
-            console.log("Page updated");
-        } else if (response.status === 401) {
-            localStorage.removeItem('token');
-            console.log("Unauthorized");
-            navigate('/login');
-        }});
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    if (pages) {
-      updatePageOnServer(pages);
-    }
-  }, [pages]);
-
   if (err) {
     return (
       <div status="ERROR">
@@ -112,11 +74,35 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
     );
   }
 
-  const updateTitleHandler = (currentTitle) => {
-    const index = pages.map((p) => p.pageId).indexOf(id);
-    const updatedPages = [...pages];
-    updatedPages[index] = {...updatedPages[index], title: currentTitle.html};
-    setPages(updatedPages);
+  const updateTitleOnServer = async () => {
+    try {
+      const pageIndex = pages.map((p) => p.pageId).indexOf(id);
+      let bearer = 'Bearer ' + localStorage.getItem('token');
+
+      await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdatePage', {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+            'Authorization': bearer,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({pageId: id, title: pages[pageIndex].title})
+      }).then(response => {
+      if (response.ok) {
+          console.log("Page updated");
+          return true;
+      } else if (response.status === 401) {
+          localStorage.removeItem('token');
+          console.log("Unauthorized");
+          navigate('/login');
+      }});
+      return false;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   };
 
   const deleteImageOnServer = async (imageUrl) => {
@@ -214,13 +200,16 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
           html={pages[pageIndex].title}
           pageId={id}
           addBlock={addBlockHandler}
-          updateTitle={updateTitleHandler} />
+          updateTitle={updateTitleOnServer}
+          pages={pages}
+          setPages={setPages}/>
         <DragDropContext onDragEnd={onDragEndHandler}>
           <Droppable droppableId={id}>
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {blocks.map((block) => {
                   const position = blocks.map((b) => b._id).indexOf(block._id) + 1;
+                  console.log(position);
                   return (
                     <EditableBlock
                       key={block._id}

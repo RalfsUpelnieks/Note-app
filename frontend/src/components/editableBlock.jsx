@@ -1,5 +1,4 @@
 import React from "react";
-import ContentEditable from "react-contenteditable";
 import { Draggable } from "react-beautiful-dnd";
 
 import styles from '../stylesheets/Block.module.css'
@@ -21,38 +20,30 @@ class EditableBlock extends React.Component {
     this.closeActionMenu = this.closeActionMenu.bind(this);
     this.handleTagSelection = this.handleTagSelection.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
-    this.addPlaceholder = this.addPlaceholder.bind(this);
     this.calculateActionMenuPosition = this.calculateActionMenuPosition.bind(this);
     this.contentEditable = React.createRef();
     this.fileInput = null;
     this.state = {
       htmlBackup: null,
       html: "",
+      htmlInput: "",
       tag: "p",
       imageUrl: "",
-      placeholder: false,
-      previousKey: null,
+      placeholder: "Press '/' for commands",
       isTyping: false,
       actionMenuOpen: false,
-      actionMenuPosition: { x: null, y: null,},
+      actionMenuPosition: { x: null, y: null,}
     };
   }
 
   componentDidMount() {
-    // Add a placeholder if the first block has no sibling elements and no content
-    const hasPlaceholder = this.addPlaceholder({
-      block: this.contentEditable.current,
-      position: this.props.position,
-      content: this.props.html || this.props.imageUrl,
+    this.setState({
+      ...this.state,
+      html: this.props.html,
+      htmlInput: this.props.html,
+      tag: this.props.tag,
+      imageUrl: this.props.imageUrl,
     });
-    if (!hasPlaceholder) {
-      this.setState({
-        ...this.state,
-        html: this.props.html,
-        tag: this.props.tag,
-        imageUrl: this.props.imageUrl,
-      });
-    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -61,11 +52,10 @@ class EditableBlock extends React.Component {
     // 2. user changed the tag & no placeholder set
     // 3. user changed the image & no placeholder set
     const stoppedTyping = prevState.isTyping && !this.state.isTyping;
-    const hasNoPlaceholder = !this.state.placeholder;
     const htmlChanged = this.props.html !== this.state.html;
     const tagChanged = this.props.tag !== this.state.tag;
     const imageChanged = this.props.imageUrl !== this.state.imageUrl;
-    if (((stoppedTyping && htmlChanged) || tagChanged || imageChanged) && hasNoPlaceholder) {
+    if ((stoppedTyping && htmlChanged) || tagChanged || imageChanged) {
       console.log("updated block");
       this.props.updateBlock({
         id: this.props.id,
@@ -82,33 +72,15 @@ class EditableBlock extends React.Component {
   }
 
   handleChange(e) {
-    this.setState({ ...this.state, html: e.target.value });
+    this.setState({ ...this.state, html: e.target.textContent });
   }
 
   handleFocus() {
-    // If a placeholder is set, we remove it when the block gets focused
-    if (this.state.placeholder) {
-      this.setState({
-        ...this.state,
-        html: "",
-        placeholder: false,
-        isTyping: true,
-      });
-    } else {
-      this.setState({ ...this.state, isTyping: true });
-    }
+    this.setState({ ...this.state, isTyping: true });
   }
 
   handleBlur(e) {
-    // Show placeholder if block is still the only one and empty
-    const hasPlaceholder = this.addPlaceholder({
-      block: this.contentEditable.current,
-      position: this.props.position,
-      content: this.state.html || this.state.imageUrl,
-    });
-    if (!hasPlaceholder) {
-      this.setState({ ...this.state, isTyping: false });
-    }
+    this.setState({ ...this.state, isTyping: false });
   }
 
   handleKeyDown(e) {
@@ -116,10 +88,11 @@ class EditableBlock extends React.Component {
       // If the user starts to enter a command, we store a backup copy of
       // the html. We need this to restore a clean version of the content
       // after the content type selection was finished.
-      this.setState({ htmlBackup: this.state.html });
+      this.setState({ htmlBackup: this.state.htmlInput });
     } else if (e.key === "Backspace" && !this.state.html) {
+      e.preventDefault();
       this.props.deleteBlock({ id: this.props.id });
-    } else if (e.key === "Enter" && this.state.previousKey !== "Shift" && !this.state.actionMenuOpen) {
+    } else if (e.key === "Enter" && !window.event.shiftKey && !this.state.actionMenuOpen) {
       // If the user presses Enter, we want to add a new block
       // Only the Shift-Enter-combination should add a new paragraph,
       // i.e. Shift-Enter acts as the default enter behaviour
@@ -132,8 +105,6 @@ class EditableBlock extends React.Component {
         ref: this.contentEditable.current,
       });
     }
-    // We need the previousKey to detect a Shift-Enter-combination
-    this.setState({ previousKey: e.key });
   }
 
   // The openTagSelectorMenu function needs to be invoked on key up. Otherwise
@@ -143,14 +114,6 @@ class EditableBlock extends React.Component {
       this.openActionMenu();
     }
   }
-
-  // handleMouseUp() {
-  //   const block = this.contentEditable.current;
-  //   const { selectionStart, selectionEnd } = getSelection(block);
-  //   if (selectionStart !== selectionEnd) {
-  //     this.openActionMenu(block, "ACTION_MENU");
-  //   }
-  // }
 
   handleDragHandleClick(e) {
     const dragHandle = e.target;
@@ -241,25 +204,6 @@ class EditableBlock extends React.Component {
     }
   }
 
-  // Show a placeholder for blank pages
-  addPlaceholder({ block, position, content }) {
-    const isFirstBlockWithoutHtml = position === 1 && !content;
-    const isFirstBlockWithoutSibling = !block.parentElement.nextElementSibling;
-    if (isFirstBlockWithoutHtml && isFirstBlockWithoutSibling) {
-      this.setState({
-        ...this.state,
-        html: "Type a page title...",
-        tag: "h1",
-        imageUrl: "",
-        placeholder: true,
-        isTyping: false,
-      });
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   // If the user types the "/" command, the tag selector menu should be display above
   // If it is triggered by the action menu, it should be positioned relatively to its initiator
   calculateActionMenuPosition(parent = null) {
@@ -281,9 +225,7 @@ class EditableBlock extends React.Component {
             position={this.state.actionMenuPosition}
             closeMenu={this.closeActionMenu}
             handleSelection={this.handleTagSelection}
-            actions={{
-              deleteBlock: () => this.props.deleteBlock({ id: this.props.id }),
-            }}
+            actions={{ deleteBlock: () => this.props.deleteBlock({ id: this.props.id }) }}
           />
         )}
         <Draggable draggableId={this.props.id} index={this.props.position}>
@@ -293,25 +235,25 @@ class EditableBlock extends React.Component {
                   <i className="fa fa-bars" alt="Icon"/>
               </span>
               {this.state.tag !== "img" && (
-                <ContentEditable
-                  innerRef={this.contentEditable} 
-                  data-position={this.props.position} 
-                  data-tag={this.state.tag} 
-                  html={this.state.html} 
-                  onChange={this.handleChange} 
-                  onFocus={this.handleFocus} 
-                  onBlur={this.handleBlur} 
-                  onKeyDown={this.handleKeyDown} 
-                  onKeyUp={this.handleKeyUp} 
-                  onMouseUp={this.handleMouseUp} 
-                  tagName={this.state.tag} 
-                  className={[styles.block, this.state.isTyping || this.state.actionMenuOpen || this.state.tagSelectorMenuOpen ? styles.blockSelected : null, this.state.placeholder ? styles.placeholder : null, snapshot.isDragging ? styles.isDragging : null,].join(" ")}
-                />
+                React.createElement(this.state.tag, {
+                  ref: this.contentEditable,
+                  "data-position": this.props.position,
+                  
+                  onInput: this.handleChange,
+                  onFocus: this.handleFocus,
+                  onBlur: this.handleBlur,
+                  onKeyDown: this.handleKeyDown,
+                  onKeyUp: this.handleKeyUp,
+                  contentEditable: true,
+                  placeholder: this.state.placeholder,
+
+                  dangerouslySetInnerHTML: { __html: this.state.htmlInput },
+                  className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null, snapshot.isDragging ? styles.isDragging : null,].join(" "),
+                })
               )}
               {this.state.tag === "img" && (
                 <div
                   data-position={this.props.position}
-                  data-tag={this.state.tag}
                   ref={this.contentEditable}
                   className={[ styles.image, this.state.actionMenuOpen || this.state.tagSelectorMenuOpen ? styles.blockSelected : null,].join(" ")}>
                   <input id={`${this.props.id}_fileInput`} name={this.state.tag} type="file" onChange={this.handleImageUpload} ref={(ref) => (this.fileInput = ref)} hidden/>

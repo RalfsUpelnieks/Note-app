@@ -1,6 +1,18 @@
 @import "variables.css";
 
-.block {
+.title[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block;
+  color: #aaa;
+}
+
+.block[contenteditable=true]:focus:empty:before {
+  content: attr(placeholder);
+  display: block;
+  color: #aaa;
+}
+
+.title {
     width: calc(100% - 2rem);
     -webkit-user-select: text;
     user-select: text;
@@ -8,7 +20,16 @@
     margin-bottom: 4px;
 }
 
+.block {
+  width: calc(100% - 2rem);
+  -webkit-user-select: text;
+  user-select: text;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
 .block:focus,
+.title:focus,
 .isDragging,
 .blockSelected {
   background: var(tertiary);

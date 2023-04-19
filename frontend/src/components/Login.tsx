@@ -64,9 +64,5 @@ export default function Login() {
           <button className={styles.loginButton} type="submit">Log In</button>
         </div>
       </form>
-      {/* <p className="small-xl pt-3 text-center">
-        <span className="text-muted">Not a member?</span>
-        <a href="/signup">Sign up</a>
-      </p> */}
     </div>)
 }

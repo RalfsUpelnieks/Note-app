@@ -23,7 +23,7 @@ export default function Layout({pages, setPages} : any) {
         }}).then(response => {
             if (response.ok) {
                 response.json().then(data => { 
-                    console.log("Updated page data from server");
+                    console.log("Get page data from server");
                     setPages(data);
                     return data;
                 });

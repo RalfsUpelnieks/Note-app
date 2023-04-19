@@ -105,7 +105,7 @@ function SideNav({pages} : any, setPages: any){
                     return (
                         <li className={`${Styles.notePage} ${isSelected ? Styles.selectedNote : null}`}>
                             <a href={`/page/${Object.pageId}`} className={Styles.textLink}>
-                                <span>{Object.title || "Untitled"}</span>
+                                <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
                             </a>
                             <a href='' onClick={() => RemovePage(navigate, Object.pageId)} className={Styles.noteIcon}><i className="fa fa-trash"></i></a>
                         </li>

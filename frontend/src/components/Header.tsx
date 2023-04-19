@@ -8,7 +8,7 @@ function Header(){
     return (
         <header className={styles.header}>
             <h1>Note app</h1>
-            <button className="header__button" onClick={logOutUser}>Log out</button>
+            <button  onClick={logOutUser}>Log out</button>
         </header>
     )
 }

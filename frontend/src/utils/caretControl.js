@@ -29,6 +29,7 @@ export const getCaretCoordinates = (fromStart = true) => {
 export const getSelection = (element) => {
     let selectionStart, selectionEnd;
     const isSupported = typeof window.getSelection !== "undefined";
+    console.log(isSupported);
     if (isSupported) {
       const range = window.getSelection().getRangeAt(0);
       const preSelectionRange = range.cloneRange();

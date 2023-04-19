@@ -1,5 +1,4 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
 import { Route, Routes, Navigate, useParams } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -18,9 +17,15 @@ function isAuthorized() {
 
 function GetPage({pages}: any) {
     const params = useParams();
-    const blocks = [{ tag: "p", html: "test test test", imageUrl: "" }, { tag: "p", html: "This is text", imageUrl: "" }];
+    const blocks = [{ _id: "1", tag: "p", html: "test test test", imageUrl: "", position: 1 }, {  _id: "2", tag: "p", html: "This is text", imageUrl: "", position: 2 }];
+    // const blocks = [];
     if(pages.length === 0){
-        return <></>;
+        return (
+            <div>
+              <h3>Something went wrong!</h3>
+              <p>Have you tried to restart the app at '/' ?</p>
+            </div>
+          );
     } else {
         return <EditablePage id={params.id} fetchedBlocks={blocks} err={""} />;
     }
