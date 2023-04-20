@@ -33,7 +33,7 @@ namespace backend.Controllers {
             if (user == null) return Unauthorized();
 
             //return list of pages
-            return await _context.pages.Where(p => p.UserId == user.Id).Select(results => new PageData {pageId = results.pageId, title = results.title}).ToListAsync();
+            return await _context.pages.Where(p => p.userId == user.Id).Select(results => new PageData {pageId = results.pageId, title = results.title}).ToListAsync();
         }
 
         [HttpPost("AddPage")]
@@ -47,7 +47,7 @@ namespace backend.Controllers {
             var page = new Page {
                 pageId = data.pageId,
                 title = data.title,
-                UserId = user.Id
+                userId = user.Id
             };
             _context.pages.Add(page);
             await _context.SaveChangesAsync();
@@ -82,7 +82,7 @@ namespace backend.Controllers {
 
             Page? pages = _context.pages.FirstOrDefault(p => p.pageId == id);
             if (pages is null) return BadRequest();
-            if(pages.UserId == user.Id) {
+            if(pages.userId == user.Id) {
                 _context.pages.Remove(pages);
                 await _context.SaveChangesAsync();
             }

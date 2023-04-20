@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { matchSorter } from "match-sorter";
 
-import styles from "../stylesheets/Menu.module.css"
+import styles from "../stylesheets/actionMenu.module.css"
 
 const tags = [
     {

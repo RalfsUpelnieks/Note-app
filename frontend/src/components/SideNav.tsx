@@ -62,7 +62,7 @@ async function RemovePage(navigate: any, pageId: any){
     });
 }
 
-function SideNav({pages} : any, setPages: any){
+function SideNav({pages, setPages, isAdmin} : any){
     //const initialPages = pages || [];
     // const [pageTabs, setPages] = useState(initialPages.map((data: { page: any; }) => data.page));
     // const [pages, setPages] = useState([]);
@@ -78,47 +78,53 @@ function SideNav({pages} : any, setPages: any){
             <ul>
                 <li>
                     <a href="/">
+                        <i className='fa fa-user'></i>
+                        <span className={Styles.navText}>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/">
                         <i className='fa fa-home'></i>
                         <span className={Styles.navText}>Dashboard</span>
                     </a>
                 </li>
+                
                 <li>
                     <a href="/">
                         <i className="fa fa-calendar-o"></i>
-                        <span className={Styles.navText}>Calendar</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/">
-                       <i className="fa fa-thumb-tack"></i>
                         <span className={Styles.navText}>Events</span>
                     </a>
                 </li>
                 <li>
-                    <a onClick={handlePageSubmit}>
-                       <i className="fa fa-plus"></i>
-                        <span className={Styles.navText}>Add page</span>
+                    <a href="/">
+                        <i className="fa fa-files-o"></i>
+                        <span className={Styles.navText}>Files</span>
                     </a>
                 </li>
-                {pages.map((Object: { pageId: any; title: any; }) => {
-                    var isSelected = Object.pageId == openTab;
-                    return (
-                        <li className={`${Styles.notePage} ${isSelected ? Styles.selectedNote : null}`}>
-                            <a href={`/page/${Object.pageId}`} className={Styles.textLink}>
-                                <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
-                            </a>
-                            <a href='' onClick={() => RemovePage(navigate, Object.pageId)} className={Styles.noteIcon}><i className="fa fa-trash"></i></a>
-                        </li>
-                    );
-                })}
-            </ul>
-            <ul className={Styles.settings}>
-                <li>
-                   <a href="/">
-                        <i className="fa fa-cogs"></i>
-                        <span className={Styles.navText}>Settings</span>
-                    </a>
-                </li>  
+                <span className={Styles.pagesText}>Pages</span>
+                <div>
+                    {pages.map((Object: { pageId: any; title: any; }) => {
+                        var isSelected = Object.pageId == openTab;
+                        return (
+                            <li className={`${Styles.notePage} ${isSelected ? Styles.selectedNote : null}`}>
+                                <a href={`/page/${Object.pageId}`} className={Styles.textLink}>
+                                    <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
+                                </a>
+                                <a href='' onClick={() => RemovePage(navigate, Object.pageId)} className={Styles.noteIcon}><i className="fa fa-trash"></i></a>
+                            </li>
+                        );
+                    })}
+                    <li className={Styles.innerAddPage}>
+                        <a href="javascript:void(0)" onClick={handlePageSubmit} className={Styles.textLink}>
+                            <i className="fa fa-plus"></i>
+                            <span>Add page</span>
+                        </a>
+                    </li>
+                </div>
+                <a href="javascript:void(0)" onClick={handlePageSubmit} className={Styles.addPage}>
+                    <i className="fa fa-plus"></i>
+                    <span className={Styles.navText}>Add page</span>
+                </a>
             </ul>
         </nav>
     );

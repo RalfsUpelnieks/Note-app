@@ -7,11 +7,15 @@ namespace backend.Models {
         public string blockId { get; set; }
         required public string tag { get; set; }
         public string html { get; set; } = string.Empty;
-        public string imageUrl { get; set; } = string.Empty;
+        [MaxLength(-1)]
+        public string uniqueData { get; set; }
         required public int position { get; set; }
-
+        
         [ForeignKey("Page")]
-        required public string PageId { get; set; }
+        required public string pageId { get; set; }
         required public Page Page { get; set; }
+
+        public File file { get; set; }
+        public ICollection<Event> Event { get; set; }
     }
 }

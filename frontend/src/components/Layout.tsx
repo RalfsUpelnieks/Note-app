@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import SideNav from './SideNav';
 import style from '../stylesheets/Layout.module.css';
 import configData from '../config.json'
 
-export default function Layout({pages, setPages} : any) {
+export default function Layout({pages, setPages, isAdmin} : any) {
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function Layout({pages, setPages} : any) {
   return (
     <div>
       <Header />
-      <SideNav pages={pages}/>
+      <SideNav pages={pages} isAdmin={isAdmin}/>
       <main className={style.content}>
         <Outlet context={[pages, setPages]} />  
       </main>

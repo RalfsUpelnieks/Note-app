@@ -3,8 +3,12 @@ import {Navigate } from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css'
 import configData from '../config.json'
 
+export default function Login({setIsAdmin} : any) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errMsg, setErrMsg] = useState('');
 
-async function loginUser(Email: string, Password: string, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
+  async function loginUser(Email: string, Password: string, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
     await fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
       method: 'POST',
       mode: 'cors',
@@ -19,7 +23,8 @@ async function loginUser(Email: string, Password: string, setErrMsg: React.Dispa
         if (response.ok) {
           response.json().then(data => { 
             localStorage.setItem('token', data.token);
-            window.location.reload();
+            setIsAdmin(data.role == 1);
+            console.log(data);
           });
         } else {
           response.json().then(data => {
@@ -28,17 +33,12 @@ async function loginUser(Email: string, Password: string, setErrMsg: React.Dispa
           });
         }
     })
-}
+  }
 
-export default function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-
-    const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-        event.preventDefault(); 
-        await loginUser(email, password, setErrMsg);
-    }
+  const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault(); 
+    await loginUser(email, password, setErrMsg);
+  }
     
   useEffect(() => {
     setErrMsg('');
@@ -64,5 +64,6 @@ export default function Login() {
           <button className={styles.loginButton} type="submit">Log In</button>
         </div>
       </form>
-    </div>)
+    </div>
+    )
 }

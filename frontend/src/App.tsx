@@ -1,19 +1,13 @@
 import React from 'react';
 import { Route, Routes, Navigate, useParams } from 'react-router-dom';
 import Login from './components/Login';
-import Register from './components/Register';
 import Dashboard from './components/dashboard';
 import AdminPage from './components/AdminPage';
 import Layout from './components/Layout';
 import EditablePage from './components/editablePage';
 import configData from './config.json'
 
-function isAuthorized() {
-    if (localStorage.getItem('token') !== null) {
-        return true;
-    }
-    return false;
-}
+
 
 function GetPage({pages}: any) {
     const params = useParams();
@@ -32,23 +26,29 @@ function GetPage({pages}: any) {
 }
 
 function App() {
-
     const [isAdmin, setIsAdmin] = React.useState(false);
     const [pages, setPages] = React.useState([]);
+
+    function isAuthorized() {
+        if (localStorage.getItem('token') !== null) {
+            console.log(isAdmin);
+            return true;
+        }
+        return false;
+    }
 
     return (
         <Routes>
             <Route path="/" element= {isAuthorized() ? <Navigate to={isAdmin ? '/admin' : '/dashboard'} /> :  <Navigate to="/login" />} />
 
-            <Route path="/login" element={<Login />}/>
-            <Route path="/register" element={<Register />}/>
+            <Route path="/login" element={<Login setIsAdmin={setIsAdmin} />}/>
             
-            <Route element={<Layout pages={pages} setPages={setPages} />}>
+            <Route element={<Layout pages={pages} setPages={setPages} isAdmin={isAdmin} />}>
                 <Route path="/dashboard" element={<Dashboard />}/>
                 <Route path="/page/:id" element={<GetPage pages={pages}/>}/>
                 <Route path="/admin" element={<AdminPage/>}/>
             </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
         </Routes>
     );
 };

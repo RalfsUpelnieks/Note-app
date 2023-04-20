@@ -13,8 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace backend.Controllers
-{
+namespace backend.Controllers {
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase {
@@ -23,8 +22,24 @@ namespace backend.Controllers
         public AuthController(IConfiguration configuration, DataContext dataContext) {
             _configuration = configuration;
             _context = dataContext;
+            SeedData();
         }
 
+        private void SeedData() {
+            if (!_context.users.Any()) {
+                var user = new User {
+                    Name = "admin",
+                    Surname = "admin",
+                    EmailAddress = "admin@admin.admin",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin"),
+                    Role = 1
+                };
+
+                _context.Add(user);
+                _context.SaveChanges();
+            }
+        }
+        
         [HttpPost("register")]
         public ActionResult<User> Register([FromBody] UserRegistration requestDto) {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -54,7 +69,7 @@ namespace backend.Controllers
             if (ModelState.IsValid) {
                 var user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Email);
                 if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) {
-                    return Ok(new {token = CreateToken(user)});
+                    return Ok(new {token = CreateToken(user), role = user.Role});
                 } else {
                     return BadRequest(new { Error = "Invalid username or password"});
                 }
