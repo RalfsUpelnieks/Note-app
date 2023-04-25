@@ -20,6 +20,7 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
     const navigate = useNavigate();
     const [pages, setPages] = useOutletContext();
 
+    const [title, setTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(id)].title);
     const [blocks, setBlocks] = useState(fetchedBlocks);
     const prevBlocks = usePrevious(blocks);
     const [currentBlockId, setCurrentBlockId] = useState(null);
@@ -43,6 +44,17 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
             }
         }
     }, [blocks, prevBlocks, currentBlockId]);
+
+    
+    useEffect(() => {
+        console.log("Id changed");
+        const pageIndex = pages.map((p) => p.pageId).indexOf(id);
+        if (pageIndex === -1) {
+            return <Navigate to="/"/>;
+        }
+        setTitle(pages[pageIndex].title);
+    }, [id]);
+
 
     // Update the database whenever blocks change
     useEffect(() => {
@@ -190,15 +202,15 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
         updatedBlocks.splice(destination.index - 1, 0, removedBlocks[0]);
         setBlocks(updatedBlocks);
     };
-
-    const pageIndex = pages.map((p) => p.pageId).indexOf(id);
-    if (pageIndex === -1 || !localStorage.getItem('token')) {
-        return <Navigate to="/"/>;
-    } else {
-        return (
+    // if (pageIndex === -1 || !localStorage.getItem('token')) {
+    //     return <Navigate to="/"/>;
+    // } else {
+    
+    return (
+        !localStorage.getItem('token') ? <Navigate to="/login"/> :
         <>
             <RenameBlock 
-                html={pages[pageIndex].title}
+                html={title}
                 pageId={id}
                 addBlock={addBlockHandler}
                 updateTitle={updateTitleOnServer}
@@ -232,8 +244,7 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
                 </Droppable>
             </DragDropContext>
         </>
-        );
-    }
+    );
 };
 
 export default EditablePage;

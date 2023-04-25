@@ -2,7 +2,6 @@ import React, { useEffect, useState} from 'react';
 import { useNavigate} from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css'
 import configData from '../config.json'
-import { isatty } from 'tty';
 
 function AddUser({setTabOpen}: any) {
     const navigate = useNavigate();
@@ -75,7 +74,7 @@ function AddUser({setTabOpen}: any) {
                 </div> 
                 <div className={styles.formGroup}>
                     <label>Email</label>
-                    <input type="username" onChange={e => setEmail(e.target.value)} required name="username"/>
+                    <input type="email" onChange={e => setEmail(e.target.value)} required name="username"/>
                 </div>                    
                 <div className={styles.formGroup}>
                     <label>Password</label>

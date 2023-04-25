@@ -20,7 +20,7 @@ namespace backend.Controllers {
 
             if (userId != null) {
                 var user = _context.users.FirstOrDefault(u => u.Id.ToString() == userId);
-                if (user != null) return user;
+                if (user != null) { return user; }
             }
 
             return null;
@@ -30,7 +30,7 @@ namespace backend.Controllers {
         [Authorize]
         public async Task<ActionResult<IEnumerable<PageData>>> GetNotes() {
             User? user = GetCurrentUser();
-            if (user == null) return Unauthorized();
+            if (user == null) { return Unauthorized(); }
 
             //return list of pages
             return await _context.pages.Where(p => p.userId == user.Id).Select(results => new PageData { pageId = results.pageId, title = results.title }).ToListAsync();
@@ -39,10 +39,10 @@ namespace backend.Controllers {
         [HttpPost("AddPage")]
         [Authorize]
         public async Task<ActionResult<User>> AddPage([FromBody] PageSubmit data) {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
             User? user = GetCurrentUser();
-            if (user is null) return Unauthorized();
-            if (_context is null) return BadRequest();
+            if (user is null) { return Unauthorized(); }
+            if (_context is null) { return BadRequest(); }
 
             var page = new Page {
                 pageId = data.pageId,
@@ -58,13 +58,13 @@ namespace backend.Controllers {
         [HttpPost("UpdatePage")]
         [Authorize]
         public async Task<ActionResult<User>> UpdatePage([FromBody] PageSubmit data) {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
             User? user = GetCurrentUser();
-            if (user is null) return Unauthorized();
-            if (_context is null) return BadRequest();
+            if (user is null) { return Unauthorized(); }
+            if (_context is null) { return BadRequest(); }
 
             Page? pages = _context.pages.FirstOrDefault(p => p.pageId == data.pageId);
-            if (pages is null) return BadRequest();
+            if (pages is null) { return BadRequest(); }
 
             pages.title = data.title;
             await _context.SaveChangesAsync();
@@ -75,13 +75,13 @@ namespace backend.Controllers {
         [HttpPost("Remove/{id}")]
         [Authorize]
         public async Task<ActionResult> RemovePage(string id) {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
             User? user = GetCurrentUser();
-            if (user is null) return Unauthorized();
-            if (_context.pages is null) return BadRequest();
+            if (user is null) { return Unauthorized(); }
+            if (_context.pages is null) { return BadRequest(); }
 
             Page? pages = _context.pages.FirstOrDefault(p => p.pageId == id);
-            if (pages is null) return BadRequest();
+            if (pages is null) { return BadRequest(); }
             if(pages.userId == user.Id) {
                 _context.pages.Remove(pages);
                 await _context.SaveChangesAsync();

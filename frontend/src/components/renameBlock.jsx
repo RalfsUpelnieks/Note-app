@@ -9,44 +9,55 @@ class RenameBlock extends React.Component {
         this.handleBlur = this.handleBlur.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.contentEditable = React.createRef();
-        this.value = this.props.html;
+        this.inputValue = this.props.html;
         this.timer = null;
         this.state = {
             isTyping: false,
+            startingHtml: "",
+            databaseHtml: ""
         };
     }
 
     componentDidMount() {
         this.setState({
             ...this.state,
-            inputHtml: this.props.html,
-            htmlHistory: this.props.html
+            startingHtml: this.props.html,
+            databaseHtml: this.props.html
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
         const stoppedTyping = prevState.isTyping && !this.state.isTyping;
-        const htmlChanged = this.state.htmlHistory != this.value;
+        const htmlChanged = this.state.databaseHtml != this.inputValue;
+
+        const notTyping = !prevState.isTyping && !this.state.isTyping;
+        const propHtmlChanged = this.props.html != this.state.databaseHtml;
         if (stoppedTyping && htmlChanged) {
             clearTimeout(this.timer);
-            this.props.updateTitle({html: this.value});
-            this.setState({ ...this.state, htmlHistory: this.value}); 
+            this.props.updateTitle({html: this.inputValue});
+            this.setState({ ...this.state, databaseHtml: this.inputValue}); 
+        } else if (notTyping && propHtmlChanged) {
+            this.setState({
+                ...this.state,
+                startingHtml: this.props.html,
+                databaseHtml: this.props.html
+            });
         }
     }
 
     handleChange(e) {
-        this.value = e.target.textContent;
+        this.inputValue = e.target.textContent;
 
         const index = this.props.pages.map((p) => p.pageId).indexOf(this.props.pageId);
         const updatedPages = [...this.props.pages];
-        updatedPages[index] = {...updatedPages[index], title: this.value};
+        updatedPages[index] = {...updatedPages[index], title: this.inputValue};
         this.props.setPages(updatedPages);
 
         clearTimeout(this.timer);
         if(this.props.html != e.target.textContent) {
             this.timer = setTimeout(() => { 
                 this.props.updateTitle({html: e.target.textContent});
-                this.setState({ ...this.state, htmlHistory: this.value }); 
+                this.setState({ ...this.state, databaseHtml: this.inputValue }); 
             }, 1200);
         }
     }
@@ -64,7 +75,7 @@ class RenameBlock extends React.Component {
             e.preventDefault();
             this.props.addBlock({
                 id: this.props.id,
-                html: this.state.inputHtml,
+                html: this.state.startingHtml,
                 tag: "h1",
                 ref: this.contentEditable.current,
             });
@@ -73,13 +84,17 @@ class RenameBlock extends React.Component {
 
     render() {
         return (
-            <>
-                <div className={styles.draggable}>
-                <h1 onInput={this.handleChange} onFocus={this.handleFocus} onBlur={this.handleBlur} onKeyDown={this.handleKeyDown} placeholder="Untitled" contentEditable="true" className={styles.title}>
-                    {this.state.inputHtml}
-                </h1>
-                </div>
-            </>
+            <div className={styles.draggable}>
+                <h1 dangerouslySetInnerHTML={{__html: this.state.startingHtml}} 
+                    onInput={this.handleChange}
+                    onFocus={this.handleFocus}
+                    onBlur={this.handleBlur} 
+                    onKeyDown={this.handleKeyDown}
+                    placeholder="Untitled"
+                    contentEditable="true" 
+                    className={styles.title}
+                ></h1>
+            </div>
         );
     }
 }

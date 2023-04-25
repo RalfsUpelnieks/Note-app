@@ -1,15 +1,16 @@
 @import "variables.css";
 
 .title[contenteditable=true]:empty:before {
-  content: attr(placeholder);
-  display: block;
-  color: #aaa;
+    cursor: text;
+    content: attr(placeholder);
+    display: block;
+    color: #aaa;
 }
 
 .block[contenteditable=true]:focus:empty:before {
-  content: attr(placeholder);
-  display: block;
-  color: #aaa;
+    content: attr(placeholder);
+    display: block;
+    color: #aaa;
 }
 
 .title {
@@ -21,19 +22,19 @@
 }
 
 .block {
-  width: calc(100% - 2rem);
-  -webkit-user-select: text;
-  user-select: text;
-  margin-top: 4px;
-  margin-bottom: 4px;
+    width: calc(100% - 2rem);
+    -webkit-user-select: text;
+    user-select: text;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .block:focus,
 .title:focus,
 .isDragging,
 .blockSelected {
-  background: var(tertiary);
-  outline: 0px solid transparent;
+    background: var(tertiary);
+    outline: 0px solid transparent;
 }
 
 .dragHandle {
@@ -85,13 +86,13 @@
 } */
 
 .blockSelected.image {
-  opacity: 0.75;
+    opacity: 0.75;
 }
 
 .fileInputLabel {
-  display: block;
-  padding: 0.5rem 0.25rem;
-  color: #888888;
-  font-size: 0.875rem;
-  letter-spacing: 0.5px;
+    display: block;
+    padding: 0.5rem 0.25rem;
+    color: #888888;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
 }

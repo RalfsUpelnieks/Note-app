@@ -45,11 +45,13 @@ namespace backend.Controllers {
         public ActionResult<User> Register([FromBody] UserRegistration requestDto) {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            if (_context.users.Any(u => u.EmailAddress == requestDto.Email)) return BadRequest(new { Error = "User with this email already exists" });
+            if (!new EmailAddressAttribute().IsValid(requestDto.Email)) { return BadRequest(new { Error = "Invalid email" }); }
 
-            if (!new EmailAddressAttribute().IsValid(requestDto.Email)) return BadRequest(new { Error = "Invalid email" });
+            if (_context.users.Any(u => u.Username == requestDto.Username)) { return BadRequest(new { Error = "User with this username already exists" }); }
+            
+            if (_context.users.Any(u => u.EmailAddress == requestDto.Email)) { return BadRequest(new { Error = "User with this email already exists" }); }
 
-            if (requestDto.Password.Length < 6) return BadRequest(new { Error = "Password must be at least 6 characters" });
+            if (requestDto.Password.Length < 6) { return BadRequest(new { Error = "Password must be at least 6 characters" }); }
 
             var user = new User {
                 Name = requestDto.Name,
@@ -68,20 +70,18 @@ namespace backend.Controllers {
 
         [HttpPost("login")]
         public ActionResult<User> Login([FromBody] UserLogin request) {
-            if (ModelState.IsValid) {
-                var user = _context.users.FirstOrDefault(u => u.Username == request.Username);
-                if (user == null) {
-                    user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Username);
-                }
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
-                if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) {
-                    return Ok(new {token = CreateToken(user), role = user.Role, email = user.EmailAddress, name = user.Name, surname = user.Surname});
-                } else {
-                    return BadRequest(new { Error = "Invalid username or password"});
-                }
-            } 
-            
-            return BadRequest(ModelState);
+            var user = _context.users.FirstOrDefault(u => u.Username == request.Username);
+            if (user == null) {
+                user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Username);
+            }
+
+            if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) {
+                return Ok(new {token = CreateToken(user), role = user.Role, username = user.Username, email = user.EmailAddress, name = user.Name, surname = user.Surname});
+            } else {
+                return BadRequest(new { Error = "Invalid username or password"});
+            }
         }
 
         private string CreateToken(User user) {

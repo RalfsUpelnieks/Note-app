@@ -79,7 +79,7 @@ function App() {
             
             <Route element={<Layout pages={pages} setPages={setPages} user={user}/>}>
                 <Route path="/dashboard" element={<Dashboard/>}/>
-                <Route path="/profile" element={<Profile/>}/>
+                <Route path="/profile" element={<Profile user={user} setUser={setUser}/>}/>
                 <Route path="/users" element={<Users/>}/>
                 <Route path="/page/:id" element={<GetPage pages={pages}/>}/>
                 <Route path="/admin" element={<AdminPage/>}/>
