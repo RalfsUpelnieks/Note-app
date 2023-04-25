@@ -26,11 +26,12 @@ namespace backend.Controllers {
         }
 
         private void SeedData() {
-            if (!_context.users.Any()) {
+            if (!_context.users.Where(u => u.Role == 1).Any()) {
                 var user = new User {
                     Name = "admin",
                     Surname = "admin",
-                    EmailAddress = "admin@admin.admin",
+                    Username = "admin",
+                    EmailAddress = "example@example.com",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin"),
                     Role = 1
                 };
@@ -44,15 +45,16 @@ namespace backend.Controllers {
         public ActionResult<User> Register([FromBody] UserRegistration requestDto) {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            if (_context.users.Any(u => u.EmailAddress == requestDto.Email)) return BadRequest("User with this email already exists");
+            if (_context.users.Any(u => u.EmailAddress == requestDto.Email)) return BadRequest(new { Error = "User with this email already exists" });
 
-            if (!new EmailAddressAttribute().IsValid(requestDto.Email)) return BadRequest("Invalid email");
+            if (!new EmailAddressAttribute().IsValid(requestDto.Email)) return BadRequest(new { Error = "Invalid email" });
 
-            if (requestDto.Password.Length < 8) return BadRequest("Password must be at least 8 characters");
+            if (requestDto.Password.Length < 6) return BadRequest(new { Error = "Password must be at least 6 characters" });
 
             var user = new User {
-                Name = requestDto.FirstName,
-                Surname = requestDto.LastName,
+                Name = requestDto.Name,
+                Surname = requestDto.Surname,
+                Username = requestDto.Username,
                 EmailAddress = requestDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password),
                 Role = requestDto.IsAdmin ? 1 : 0
@@ -67,7 +69,11 @@ namespace backend.Controllers {
         [HttpPost("login")]
         public ActionResult<User> Login([FromBody] UserLogin request) {
             if (ModelState.IsValid) {
-                var user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Email);
+                var user = _context.users.FirstOrDefault(u => u.Username == request.Username);
+                if (user == null) {
+                    user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Username);
+                }
+
                 if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) {
                     return Ok(new {token = CreateToken(user), role = user.Role, email = user.EmailAddress, name = user.Name, surname = user.Surname});
                 } else {

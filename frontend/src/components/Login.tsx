@@ -9,14 +9,14 @@ function Login({setUser}: any) {
     const [password, setPassword] = useState('');
     const [errMsg, setErrMsg] = useState('');
 
-    async function loginUser(Email: string, Password: string, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
+    async function loginUser(Username: string, Password: string, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
         await fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({Email, Password})
+            body: JSON.stringify({Username, Password})
         })
         .then(response => {
             if (response.ok) {
@@ -25,6 +25,7 @@ function Login({setUser}: any) {
                 setUser({
                     role: data.role,
                     email: data.email,
+                    username: data.username,
                     name: data.name,
                     surname: data.surname,
                 });

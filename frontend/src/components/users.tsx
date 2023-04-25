@@ -26,8 +26,6 @@ function Users() {
                     response.json().then(data => { 
                         console.log("Get all users data from server");
                         setUsers(data);
-                        // return data;
-                        console.log(data);
                     });
                 } else {
                     localStorage.removeItem('token');
@@ -45,7 +43,7 @@ function Users() {
     return (
         !localStorage.getItem('token') ? <Navigate to="/"/> :<div>
             {addPanelOpen && (
-                <AddUser/>
+                <AddUser setTabOpen={setAddPanelOpen}/>
             )}
             <h2>Users</h2>
             <table className={styles.table}>
@@ -60,16 +58,16 @@ function Users() {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((Object: { name: string; surname: string; emailAddress: string; role: any }) => {
+                    {users.map((Object: { name: string; surname: string; username: string; emailAddress: string; role: any }) => {
                         // var isSelected = Object.pageId == openTab;
                         return (
                             <tr>
-                                <td>N/A</td>
+                                <td>{Object.username}</td>
                                 <td>{Object.emailAddress}</td>
                                 <td>{Object.name} {Object.surname}</td>
                                 <td>N/A</td>
                                 <td>
-                                    <input type="checkbox"/>
+                                    <input type="checkbox" checked={Object.role == "1"}/>
                                 </td>
                                 <td>
                                 <button onClick={deleteUser}>Delete Data</button>

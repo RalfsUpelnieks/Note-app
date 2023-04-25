@@ -18,19 +18,6 @@
     background: rgba(0, 0, 0, 0.7);
 }
 
-/* .popup {
-    position: fixed;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 8rem;
-    max-width: 400px;
-    padding: 1.25rem;
-
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.151);
-} */
-
 .form {
     position: relative;
     margin-left: auto;
@@ -78,18 +65,88 @@ input {
 }
 
 .loginButton {
-    background-color: #52b0e2;
+    border: 3px solid #000;
+    background-color: #000;
+    color: #fff;
+    transition: all 100ms ease-in-out;
     border-radius: 5px;
     width: 100%;
     height: 2.5rem;
-    border: none;
 
     font-family: var(--regular);
-    color: white;
     font-size: 1rem;
+    font-weight: 700;
 }
 
-button:hover {
-    background-color: #329dd5;
-    transition: all 0.2s ease;
+.loginButton:hover {
+    background-color: #2da4e4;
+    box-shadow: -1px 1px 0 0 #000;
+    transform: translate(1px, -1px);
+    cursor: pointer;
+}
+
+.header button {
+    padding: 0.4rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    grid-column-gap: 0.625rem;
+    border: 3px solid #000;
+    border-radius: 3rem;
+    background-color: #000;
+    transition: all 100ms ease-in-out;
+    font-family: 'TT Commons Pro', sans-serif;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    width: 8rem;
+    height: 2.5rem;
+}
+
+
+/* Add user */
+
+.popup {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8rem;
+    max-width: 400px;
+    padding: 0.1rem 1.25rem 1.25rem 1.25rem;
+
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.151);
+}
+
+.firstRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 0.2rem;
+}
+
+.firstRow i {
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.name {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.name div {
+    width: 48%;
+}
+
+.isAdmin {
+    display: flex;
+    align-items: center;
+}
+
+.popup input[type='checkbox'] {
+    width: 20px;
+
 }

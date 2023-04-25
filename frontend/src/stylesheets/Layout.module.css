@@ -27,16 +27,10 @@
 }
 
 .header button {
-    display: flex;
-    padding: 0.4rem 1.5rem;
-    justify-content: center;
-    align-items: center;
-    grid-column-gap: 0.625rem;
     border: 3px solid #000;
     border-radius: 3rem;
     background-color: #000;
     transition: all 100ms ease-in-out;
-    font-family: 'TT Commons Pro', sans-serif;
     color: #fff;
     font-size: 0.9rem;
     font-weight: 700;
@@ -49,7 +43,6 @@
     background-color: #e03327;
     box-shadow: -1px 1px 0 0 #000;
     transform: translate(1px, -1px);
-    outline: 0;
     cursor: pointer;
 }
 

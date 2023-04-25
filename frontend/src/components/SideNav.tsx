@@ -127,23 +127,25 @@ function SideNav({pages, setPages, isAdmin} : any){
                         </Link>
                     </li>
                     <span className={styles.pagesText}>Pages</span>
-                    {pages.map((Object: { pageId: any; title: any; }) => {
-                        var isSelected = Object.pageId == openTab;
-                        return (
-                            <li className={`${styles.notePage} ${isSelected ? styles.selectedNote : null}`}>
-                                <Link to={`/page/${Object.pageId}`} className={styles.textLink}>
-                                    <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
-                                </Link>
-                                <a href="javascript:void(0)" onClick={() => RemovePage(navigate, Object.pageId, pages, setPages, isSelected)} className={styles.noteIcon}><i className="fa fa-trash"></i></a>
-                            </li>
-                        );
-                    })}
-                    <li className={styles.innerAddPage}>
-                        <a href="javascript:void(0)" onClick={handlePageSubmit} className={styles.textLink}>
-                            <i className="fa fa-plus"></i>
-                            <span>Add page</span>
-                        </a>
-                    </li>
+                    <div>
+                        {pages.map((Object: { pageId: any; title: any; }) => {
+                            var isSelected = Object.pageId == openTab;
+                            return (
+                                <li className={`${styles.notePage} ${isSelected ? styles.selectedNote : null}`}>
+                                    <Link to={`/page/${Object.pageId}`} className={styles.textLink}>
+                                        <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
+                                    </Link>
+                                    <a href="javascript:void(0)" onClick={() => RemovePage(navigate, Object.pageId, pages, setPages, isSelected)} className={styles.noteIcon}><i className="fa fa-trash"></i></a>
+                                </li>
+                            );
+                        })}
+                        <li className={styles.innerAddPage}>
+                            <a href="javascript:void(0)" onClick={handlePageSubmit} className={styles.textLink}>
+                                <i className="fa fa-plus"></i>
+                                <span>Add page</span>
+                            </a>
+                        </li>
+                    </div>
                     <a href="javascript:void(0)" onClick={handlePageSubmit} className={styles.addPage}>
                         <i className="fa fa-plus"></i>
                         <span className={styles.navText}>Add page</span>

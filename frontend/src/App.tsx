@@ -33,6 +33,7 @@ function App() {
     const [user, setUser] = React.useState({
         role: "",
         email: "",
+        username: "",
         name: "",
         surname: "",
     });
@@ -56,6 +57,7 @@ function App() {
                         setUser({
                             role: data.role,
                             email: data.emailAddress,
+                            username: data.username,
                             name: data.name,
                             surname: data.surname,
                         });
