@@ -39,5 +39,11 @@ namespace backend.Controllers {
             });
 
         }
+
+
+        [HttpGet("GetAllUsers"), Authorize(Roles = "1")]
+        public async Task<ActionResult<IEnumerable<UserData>>> GetAllUser() {
+            return await _context.users.Select(results => new UserData { Id = results.Id, Name = results.Name, Surname = results.Surname, EmailAddress = results.EmailAddress, Role = results.Role }).ToListAsync();
+        }
     }
 }

@@ -9,6 +9,28 @@
     font-family: var(--title);
 }
 
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* .popup {
+    position: fixed;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8rem;
+    max-width: 400px;
+    padding: 1.25rem;
+
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.151);
+} */
+
 .form {
     position: relative;
     margin-left: auto;

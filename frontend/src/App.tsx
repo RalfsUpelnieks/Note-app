@@ -1,9 +1,11 @@
 import React from 'react';
-import { Route, Routes, Navigate, useParams } from 'react-router-dom';
-import Login from './components/Login';
+import { Route, Routes, Navigate, useParams, useLocation, useNavigate } from 'react-router-dom';
+import Login from './components/login';
+import Profile from './components/profile';
+import Users from './components/users';
 import Dashboard from './components/dashboard';
-import AdminPage from './components/AdminPage';
-import Layout from './components/Layout';
+import AdminPage from './components/adminPage';
+import Layout from './components/layout';
 import EditablePage from './components/editablePage';
 import configData from './config.json'
 
@@ -26,29 +28,61 @@ function GetPage({pages}: any) {
 }
 
 function App() {
-    const [isAdmin, setIsAdmin] = React.useState(false);
+    const navigate = useNavigate();
     const [pages, setPages] = React.useState([]);
+    const [user, setUser] = React.useState({
+        role: "",
+        email: "",
+        name: "",
+        surname: "",
+    });
 
-    function isAuthorized() {
-        if (localStorage.getItem('token') !== null) {
-            console.log(isAdmin);
-            return true;
-        }
-        return false;
-    }
+    React.useEffect(() => {
+        const updatePages = async () => {
+            let bearer = 'Bearer ' + localStorage.getItem('token');
+    
+            await fetch('http://localhost:' + configData.APIPort + '/api/User', {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Authorization': bearer,
+                    'Content-Type': 'application/json'
+            }}).then(response => {
+                if (response.ok) {
+                    response.json().then(data => { 
+                        console.log("Get user data from server");
+                        setUser({
+                            role: data.role,
+                            email: data.emailAddress,
+                            name: data.name,
+                            surname: data.surname,
+                        });
+                    });
+                } else {
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                }
+            })
+        };
+        updatePages();
+    }, []);
+
+
 
     return (
         <Routes>
-            <Route path="/" element= {isAuthorized() ? <Navigate to={isAdmin ? '/admin' : '/dashboard'} /> :  <Navigate to="/login" />} />
-
-            <Route path="/login" element={<Login setIsAdmin={setIsAdmin} />}/>
+            <Route path="/login" element={<Login setUser={setUser}/>}/>
             
-            <Route element={<Layout pages={pages} setPages={setPages} isAdmin={isAdmin} />}>
-                <Route path="/dashboard" element={<Dashboard />}/>
+            <Route element={<Layout pages={pages} setPages={setPages} user={user}/>}>
+                <Route path="/dashboard" element={<Dashboard/>}/>
+                <Route path="/profile" element={<Profile/>}/>
+                <Route path="/users" element={<Users/>}/>
                 <Route path="/page/:id" element={<GetPage pages={pages}/>}/>
                 <Route path="/admin" element={<AdminPage/>}/>
             </Route>
-            {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user.role == "1" ? '/admin' : '/dashboard'} /> : <Navigate to="/login" />} />
         </Routes>
     );
 };

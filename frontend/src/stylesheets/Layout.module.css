@@ -50,6 +50,7 @@
     box-shadow: -1px 1px 0 0 #000;
     transform: translate(1px, -1px);
     outline: 0;
+    cursor: pointer;
 }
 
 /* Side navigation */
@@ -109,7 +110,7 @@
 
 .sideNav i {
     display:table-cell;
-    width:60px;
+    width:50px;
     height:36px;
     text-align:center;
     vertical-align:middle;
@@ -218,7 +219,7 @@ nav ul,nav li {
 .content {
     box-sizing: border-box;
     width: 80%;
-    max-width: 720px;
+    max-width: 820px;
     padding: 10rem 0 1rem 1rem;
     margin-left: auto;
     margin-right: auto;

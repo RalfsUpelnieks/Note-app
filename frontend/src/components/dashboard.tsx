@@ -1,9 +1,12 @@
-import {Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-export default function Dashboard() {
+function Dashboard() {
     return (
-        !localStorage.getItem('token') ? <Navigate to="/"/> :<div>
+        !localStorage.getItem('token') ? <Navigate to="/login"/> :
+        <div>
             <h2>dashboard</h2>
         </div>
     );
 }
+
+export default Dashboard

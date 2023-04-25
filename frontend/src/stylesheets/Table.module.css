@@ -1,0 +1,53 @@
+@import "variables.css";
+
+.table {
+    font-family: sans-serif;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 40px 0 rgba(0,0,0,.15);
+    width: 100%;
+    box-sizing: border-box;
+    border-spacing: 0;
+}
+
+.table thead {
+    box-shadow: 0 5px 20px 0 rgba(0,0,0,.1);
+}
+
+.table th {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    text-align: left;
+    overflow: hidden !important;
+    max-height: 585px;
+}
+
+.table td {
+    padding-left: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.column1 {
+    width: 16%;
+    padding-left: 10px;
+}
+
+.column2 {
+    width: 30%;
+}
+
+.column3 {
+    width: 20%;
+}
+
+.column4 {
+    width: 14%;
+}
+
+.column5 {
+    width: 4%;
+}
+.column6 {
+    width: 16%;
+}

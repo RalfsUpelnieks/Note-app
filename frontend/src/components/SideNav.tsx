@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import Styles from '../stylesheets/Layout.module.css';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import styles from '../stylesheets/Layout.module.css';
 import configData from '../config.json'
 import objectId from "../utils/objectId";
 
@@ -24,18 +24,15 @@ async function AddPage(navigate: any, pages: any){
             console.log("Page added");
             pages.push({pageId: pageId, title: ""});
             navigate(`/page/${pageId}`);
-        } else if (response.status === 401) {
+        } else {
             localStorage.removeItem('token');
             console.log("Unauthorized");
             navigate('/login');
-        } else {
-            console.log(response);
-            console.log("Problem adding page");
         }
     });
 }
 
-async function RemovePage(navigate: any, pageId: any){
+async function RemovePage(navigate: any, pageId: any, pages : any, setPages : any, isSelected: boolean){
     let bearer = 'Bearer ' + localStorage.getItem('token');
 
     await fetch('http://localhost:' + configData.APIPort + `/api/Note/Remove/${pageId}`, {
@@ -51,80 +48,107 @@ async function RemovePage(navigate: any, pageId: any){
     .then(response => {
         if (response.ok) {
             console.log("Page removed");
-        } else if (response.status === 401) {
+            setPages(pages.filter((page: { pageId: string; }) => page.pageId !== pageId));
+            if(isSelected){
+                navigate('/dashboard');
+            }
+
+        } else {
             localStorage.removeItem('token');
             console.log("Unauthorized");
             navigate('/login');
-        } else {
-            console.log(response);
-            console.log("Problem adding page");
         }
     });
 }
 
 function SideNav({pages, setPages, isAdmin} : any){
-    //const initialPages = pages || [];
-    // const [pageTabs, setPages] = useState(initialPages.map((data: { page: any; }) => data.page));
-    // const [pages, setPages] = useState([]);
     const navigate = useNavigate()
     const openTab = useParams().id;
 
-    const handlePageSubmit = async () => {
+    async function handlePageSubmit() {
         await AddPage(navigate, pages);
     }
 
     return (
-        <nav className={Styles.sideNav}>
+        <nav className={styles.sideNav}>
             <ul>
-                <li>
-                    <a href="/">
-                        <i className='fa fa-user'></i>
-                        <span className={Styles.navText}>Profile</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/">
-                        <i className='fa fa-home'></i>
-                        <span className={Styles.navText}>Dashboard</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="/">
-                        <i className="fa fa-calendar-o"></i>
-                        <span className={Styles.navText}>Events</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/">
-                        <i className="fa fa-files-o"></i>
-                        <span className={Styles.navText}>Files</span>
-                    </a>
-                </li>
-                <span className={Styles.pagesText}>Pages</span>
-                <div>
+                {isAdmin ?
+                <>
+                    <li>
+                        <Link to="/">
+                            <i className='fa fa-home'></i>
+                            <span className={styles.navText}>Dashboard</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/profile">
+                            <i className='fa fa-user'></i>
+                            <span className={styles.navText}>Profile</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/users">
+                            <i className="fa fa-users"></i>
+                            <span className={styles.navText}>Users</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/">
+                            <i className="fa fa-database"></i>
+                            <span className={styles.navText}>Storage</span>
+                        </Link>
+                    </li>
+                </>
+                : 
+                <>
+                    <li>
+                        <Link to="/profile">
+                            <i className='fa fa-user'></i>
+                            <span className={styles.navText}>Profile</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/">
+                            <i className='fa fa-home'></i>
+                            <span className={styles.navText}>Dashboard</span>
+                        </Link>
+                    </li>
+                    
+                    <li>
+                        <Link to="/">
+                            <i className="fa fa-calendar-o"></i>
+                            <span className={styles.navText}>Events</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/">
+                            <i className="fa fa-files-o"></i>
+                            <span className={styles.navText}>Files</span>
+                        </Link>
+                    </li>
+                    <span className={styles.pagesText}>Pages</span>
                     {pages.map((Object: { pageId: any; title: any; }) => {
                         var isSelected = Object.pageId == openTab;
                         return (
-                            <li className={`${Styles.notePage} ${isSelected ? Styles.selectedNote : null}`}>
-                                <a href={`/page/${Object.pageId}`} className={Styles.textLink}>
+                            <li className={`${styles.notePage} ${isSelected ? styles.selectedNote : null}`}>
+                                <Link to={`/page/${Object.pageId}`} className={styles.textLink}>
                                     <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
-                                </a>
-                                <a href='' onClick={() => RemovePage(navigate, Object.pageId)} className={Styles.noteIcon}><i className="fa fa-trash"></i></a>
+                                </Link>
+                                <a href="javascript:void(0)" onClick={() => RemovePage(navigate, Object.pageId, pages, setPages, isSelected)} className={styles.noteIcon}><i className="fa fa-trash"></i></a>
                             </li>
                         );
                     })}
-                    <li className={Styles.innerAddPage}>
-                        <a href="javascript:void(0)" onClick={handlePageSubmit} className={Styles.textLink}>
+                    <li className={styles.innerAddPage}>
+                        <a href="javascript:void(0)" onClick={handlePageSubmit} className={styles.textLink}>
                             <i className="fa fa-plus"></i>
                             <span>Add page</span>
                         </a>
                     </li>
-                </div>
-                <a href="javascript:void(0)" onClick={handlePageSubmit} className={Styles.addPage}>
-                    <i className="fa fa-plus"></i>
-                    <span className={Styles.navText}>Add page</span>
-                </a>
+                    <a href="javascript:void(0)" onClick={handlePageSubmit} className={styles.addPage}>
+                        <i className="fa fa-plus"></i>
+                        <span className={styles.navText}>Add page</span>
+                    </a>
+                </>}
             </ul>
         </nav>
     );

@@ -28,12 +28,12 @@ namespace backend.Controllers {
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<PageData>>> GetUser() {
+        public async Task<ActionResult<IEnumerable<PageData>>> GetNotes() {
             User? user = GetCurrentUser();
             if (user == null) return Unauthorized();
 
             //return list of pages
-            return await _context.pages.Where(p => p.userId == user.Id).Select(results => new PageData {pageId = results.pageId, title = results.title}).ToListAsync();
+            return await _context.pages.Where(p => p.userId == user.Id).Select(results => new PageData { pageId = results.pageId, title = results.title }).ToListAsync();
         }
 
         [HttpPost("AddPage")]
