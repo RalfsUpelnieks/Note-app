@@ -145,6 +145,25 @@ function Profile({user, setUser}: any) {
         })
     }
 
+    async function DeleteUser(){
+        let bearer = 'Bearer ' + localStorage.getItem('token');
+    
+        await fetch('http://localhost:' + configData.APIPort + '/api/User/DeleteUser', {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            localStorage.removeItem('token');
+            navigate('/login');
+        });
+    }
+
     async function SaveName (event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
         if(name != user.name || surname != user.surname){
@@ -218,7 +237,7 @@ function Profile({user, setUser}: any) {
                         <label>Surname</label>
                         <input type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
                     </div>
-                    <button type="submit">Save</button>
+                    <button className={styles.button} type="submit">Save</button>
                 </div>
                 <p className={nameMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{nameMsg}</p>
             </form>
@@ -229,7 +248,7 @@ function Profile({user, setUser}: any) {
                         <label>Username</label>
                         <input type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
                     </div>
-                    <button type="submit">Save</button>
+                    <button className={styles.button} type="submit">Save</button>
                 </div>
                 <p className={usernameMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{usernameMsg}</p>
             </form> 
@@ -239,7 +258,7 @@ function Profile({user, setUser}: any) {
                         <label>Email</label>
                         <input type="email" value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
                     </div>
-                    <button type="submit">Save</button>
+                    <button className={styles.button} type="submit">Save</button>
                 </div>
                 <p className={emailMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{emailMsg}</p>
             </form>                    
@@ -253,10 +272,11 @@ function Profile({user, setUser}: any) {
                         <label>New password</label>
                         <input type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
                     </div>
-                    <button  type="submit">Change</button>
+                    <button className={styles.button} type="submit">Change</button>
                 </div>
                 <p className={passwordMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{passwordMsg}</p>
             </form>
+            <button className={[styles.button, styles.deleteButton].join(" ")} onClick={DeleteUser}>Delete Profile</button>
         </div>
     )
 }

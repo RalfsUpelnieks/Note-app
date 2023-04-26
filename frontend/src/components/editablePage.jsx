@@ -6,93 +6,47 @@ import EditableBlock from "./editableBlock";
 import RenameBlock from "./renameBlock";
 import objectId from "../utils/objectId";
 import { setCaretToEnd } from "../utils/caretControl";
+import styles from "../stylesheets/Block.module.css";
 import configData from '../config.json';
 
-const usePrevious = (value) => {
-    const ref = useRef();
-    useEffect(() => {
-        ref.current = value;
-    });
-    return ref.current;
-};
-
-const EditablePage = ({ id, fetchedBlocks, err }) => {
+const EditablePage = ({ pageId, fetchedBlocks, err }) => {
     const navigate = useNavigate();
     const [pages, setPages] = useOutletContext();
 
-    const [title, setTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(id)].title);
+    const [title, setTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(pageId)].title);
     const [blocks, setBlocks] = useState(fetchedBlocks);
-    const prevBlocks = usePrevious(blocks);
-    const [currentBlockId, setCurrentBlockId] = useState(null);
 
-    // Handling the cursor and focus on adding and deleting blocks
-    useEffect(() => {
-        // If a new block was added, move the caret to it
-        if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-            const nextBlockPosition = blocks.map((b) => b._id).indexOf(currentBlockId) + 1 + 1;
-            const nextBlock = document.querySelector(`[data-position="${nextBlockPosition}"]`);
-        if (nextBlock) {
-            nextBlock.focus();
-        }
-        }
-        // If a block was deleted, move the caret to the end of the last block
-        if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-            const lastBlockPosition = prevBlocks.map((b) => b._id).indexOf(currentBlockId);
-            const lastBlock = document.querySelector(`[data-position="${lastBlockPosition}"]`);
-            if (lastBlock) {
-                setCaretToEnd(lastBlock);
-            }
-        }
-    }, [blocks, prevBlocks, currentBlockId]);
+    const [selectIndex, setSelectedIndex] = useState(-1);
 
-    
+    // Handling the cursor and focus
     useEffect(() => {
-        console.log("Id changed");
-        const pageIndex = pages.map((p) => p.pageId).indexOf(id);
+        const block = document.querySelector(`[data-position="${selectIndex}"]`);
+        if (block) {
+            setCaretToEnd(block);
+        }
+    }, [blocks.length]);
+
+    // Handling title updates
+    useEffect(() => {
+        const pageIndex = pages.map((p) => p.pageId).indexOf(pageId);
         if (pageIndex === -1) {
             return <Navigate to="/"/>;
         }
         setTitle(pages[pageIndex].title);
-    }, [id]);
+    }, [pageId]);
 
-
-    // Update the database whenever blocks change
+    // Handling block updates
     useEffect(() => {
-        const updatePageOnServer = async (blocks) => {
-            try {
-                await fetch(`${process.env.NEXT_PUBLIC_API}/pages/${id}`, {
-                    method: "PUT",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        blocks: blocks,
-                    }),
-                });
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        if (prevBlocks && prevBlocks !== blocks) {
-            updatePageOnServer(blocks);
-        }
-    }, [blocks, prevBlocks]);
-
-    if (err) {
-        return (
-            <div status="ERROR">
-                <h3>Something went wrong!</h3>
-                <p>Have you tried to restart the app at '/' ?</p>
-            </div>
-        );
-    }
+        setBlocks(fetchedBlocks);
+    }, [fetchedBlocks]);
 
     const updateTitleOnServer = async () => {
         try {
-            const pageIndex = pages.map((p) => p.pageId).indexOf(id);
+            const pageIndex = pages.map((p) => p.pageId).indexOf(pageId);
             let bearer = 'Bearer ' + localStorage.getItem('token');
 
-            await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdatePage', {
-                method: 'POST',
+            await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdateTitle', {
+                method: 'PUT',
                 mode: 'cors',
                 cache: 'no-cache',
                 credentials: 'same-origin',
@@ -100,7 +54,7 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({pageId: id, title: pages[pageIndex].title})
+                body: JSON.stringify({pageId: pageId, title: pages[pageIndex].title})
             }).then(response => {
                 if (response.ok) {
                     console.log("Page updated");
@@ -118,74 +72,158 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
         }
     };
 
-    const deleteImageOnServer = async (imageUrl) => {
-        // The imageUrl contains images/name.jpg, hence we do not need
-        // to explicitly add the /images endpoint in the API url
+    const addBlockOnServer = async (block, position) => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API}/pages/${imageUrl}`,
-                {
-                method: "DELETE",
+            let bearer = 'Bearer ' + localStorage.getItem('token');
+
+            await fetch('http://localhost:' + configData.APIPort + '/api/Note/AddBlock', {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
                 headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
+                    'Authorization': bearer,
+                    'Content-Type': 'application/json'
                 },
+                body: JSON.stringify({blockId: block.blockId, tag: block.tag, html: block.html, uniqueData: block.uniqueData, position: position, pageId: pageId })
+            }).then(response => {
+                if (response.ok) {
+                    console.log("New block added to server");
+                    return true;
+                } else if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    console.log("Unauthorized");
+                    navigate('/login');
                 }
-            );
-            await response.json();
+            });
+            return false;
         } catch (err) {
             console.log(err);
+            return false;
         }
     };
 
+    const updateBlockOnServer = async (block, position) => {
+        try {
+            let bearer = 'Bearer ' + localStorage.getItem('token');
+
+            await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdateBlock', {
+                method: 'PUT',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Authorization': bearer,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({blockId: block.blockId, tag: block.tag, html: block.html, uniqueData: block.uniqueData, position: position, pageId: pageId })
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Block updated");
+                    return true;
+                } else if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    console.log("Unauthorized");
+                    navigate('/login');
+                }
+            });
+            return false;
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    };
+
+    const deleteBlockServer = async (blockId) => {
+        try {
+            const pageIndex = pages.map((p) => p.pageId).indexOf(pageId);
+            let bearer = 'Bearer ' + localStorage.getItem('token');
+
+            await fetch('http://localhost:' + configData.APIPort + `/api/Note/RemoveBlock/${blockId}`, {
+                method: 'DELETE',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Authorization': bearer,
+                    'Content-Type': 'application/json'
+                },
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Block removed from server");
+                    return true;
+                } else if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    console.log("Unauthorized");
+                    navigate('/login');
+                }
+            });
+            return false;
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    };
+
+    if (err) {
+        return (
+            <div status="ERROR">
+                <h3>Something went wrong!</h3>
+                <p>Have you tried to restart the app at '/' ?</p>
+            </div>
+        );
+    }
+
     const updateBlockHandler = (currentBlock) => {
-        const index = blocks.map((b) => b._id).indexOf(currentBlock.id);
-        const oldBlock = blocks[index];
+        const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
         const updatedBlocks = [...blocks];
         updatedBlocks[index] = {
             ...updatedBlocks[index],
             tag: currentBlock.tag,
             html: currentBlock.html,
-            imageUrl: currentBlock.imageUrl,
+            uniqueData: currentBlock.uniqueData,
         };
+        updateBlockOnServer(updatedBlocks[index], index + 1);
         setBlocks(updatedBlocks);
-        // If the image has been changed, we have to delete the
-        // old image file on the server
-        if (oldBlock.imageUrl && oldBlock.imageUrl !== currentBlock.imageUrl) {
-            deleteImageOnServer(oldBlock.imageUrl);
-        }
     };
 
     const addBlockHandler = (currentBlock) => {
-        setCurrentBlockId(currentBlock.id);
-        const index = blocks.map((b) => b._id).indexOf(currentBlock.id);
+        const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
         const updatedBlocks = [...blocks];
-        const newBlock = { _id: objectId(), tag: "p", html: "", imageUrl: "" };
+        const newBlock = { blockId: objectId(), tag: "p", html: "", uniqueData: "" };
+        addBlockOnServer(newBlock, index + 1);
         updatedBlocks.splice(index + 1, 0, newBlock);
         updatedBlocks[index] = {
             ...updatedBlocks[index],
             tag: currentBlock.tag,
             html: currentBlock.html,
-            imageUrl: currentBlock.imageUrl,
+            uniqueData: currentBlock.uniqueData,
         };
         setBlocks(updatedBlocks);
-        console.log(blocks);
+        setSelectedIndex(index + 2);
+    };
+
+    const addBlockToStartHandler = () => {
+        const newBlock = { blockId: objectId(), tag: "p", html: "", uniqueData: "" };
+        setBlocks([newBlock, ...blocks]);
+        addBlockOnServer(newBlock, 1);
+        setSelectedIndex(1)
+    };
+
+    const addBlockToEndHandler = () => {
+        const newBlock = { blockId: objectId(), tag: "p", html: "", uniqueData: "" };
+        addBlockOnServer(newBlock, blocks.length + 1);
+        setBlocks([...blocks, newBlock]);
+        setSelectedIndex(blocks.length + 1);
     };
 
     const deleteBlockHandler = (currentBlock) => {
-        if (blocks.length > 1) {
-            setCurrentBlockId(currentBlock.id);
-            const index = blocks.map((b) => b._id).indexOf(currentBlock.id);
-            const deletedBlock = blocks[index];
-            const updatedBlocks = [...blocks];
-            updatedBlocks.splice(index, 1);
-            setBlocks(updatedBlocks);
-            // If the deleted block was an image block, we have to delete
-            // the image file on the server
-            if (deletedBlock.tag === "img" && deletedBlock.imageUrl) {
-                deleteImageOnServer(deletedBlock.imageUrl);
-            }
-        }
+        const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
+        const updatedBlocks = [...blocks];
+        updatedBlocks.splice(index, 1);
+        deleteBlockServer(currentBlock.id);
+        setBlocks(updatedBlocks);
+        setSelectedIndex(index);
     };
 
     const onDragEndHandler = (result) => {
@@ -197,42 +235,40 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
             return;
         }
 
+        updateBlockOnServer(blocks[source.index - 1], destination.index);
+
         const updatedBlocks = [...blocks];
         const removedBlocks = updatedBlocks.splice(source.index - 1, 1);
         updatedBlocks.splice(destination.index - 1, 0, removedBlocks[0]);
         setBlocks(updatedBlocks);
     };
-    // if (pageIndex === -1 || !localStorage.getItem('token')) {
-    //     return <Navigate to="/"/>;
-    // } else {
     
     return (
         !localStorage.getItem('token') ? <Navigate to="/login"/> :
         <>
             <RenameBlock 
                 html={title}
-                pageId={id}
-                addBlock={addBlockHandler}
+                pageId={pageId}
+                addBlock={addBlockToStartHandler}
                 updateTitle={updateTitleOnServer}
                 pages={pages}
                 setPages={setPages}
             />
             <DragDropContext onDragEnd={onDragEndHandler}>
-                <Droppable droppableId={id}>
+                <Droppable droppableId={pageId}>
                     {(provided) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}>
                         {blocks.map((block) => {
-                        const position = blocks.map((b) => b._id).indexOf(block._id) + 1;
-                        console.log(position);
+                        const position = blocks.map((b) => b.blockId).indexOf(block.blockId) + 1;
                         return (
                             <EditableBlock
-                            key={block._id}
+                            key={block.blockId}
                             position={position}
-                            id={block._id}
+                            id={block.blockId}
                             tag={block.tag}
                             html={block.html}
-                            imageUrl={block.imageUrl}
-                            pageId={id}
+                            uniqueData={block.uniqueData}
+                            pageId={pageId}
                             addBlock={addBlockHandler}
                             deleteBlock={deleteBlockHandler}
                             updateBlock={updateBlockHandler}/>
@@ -243,6 +279,7 @@ const EditablePage = ({ id, fetchedBlocks, err }) => {
                     )}
                 </Droppable>
             </DragDropContext>
+            <button className={styles.addButton} onClick={addBlockToEndHandler}><i className="fa fa-plus"></i></button>
         </>
     );
 };

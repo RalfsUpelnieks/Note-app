@@ -102,5 +102,38 @@ namespace backend.Controllers {
         public async Task<ActionResult<IEnumerable<UserData>>> GetAllUser() {
             return await _context.users.Select(results => new UserData { Id = results.Id, Name = results.Name, Surname = results.Surname, Username = results.Username, EmailAddress = results.EmailAddress, Role = results.Role }).ToListAsync();
         }
+
+        [HttpDelete("DeleteUser"), Authorize]
+        public async Task<ActionResult> DeleteUser() {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+
+            _context.users.Remove(user);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("DeleteUser/{id}"), Authorize]
+        public async Task<ActionResult> DeleteUser(int id) {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+
+            if (user.Role == 1) {
+                User? deleteUser = _context.users.FirstOrDefault(p => p.Id == id);
+                if (deleteUser is null) { return BadRequest(); }
+                _context.users.Remove(deleteUser);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else {
+                return BadRequest();
+            }
+        }
     }
 }

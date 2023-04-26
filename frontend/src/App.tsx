@@ -1,5 +1,5 @@
-import React from 'react';
-import { Route, Routes, Navigate, useParams, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState}  from 'react';
+import { Route, Routes, Navigate, useParams, useNavigate } from 'react-router-dom';
 import Login from './components/login';
 import Profile from './components/profile';
 import Users from './components/users';
@@ -11,19 +11,44 @@ import configData from './config.json'
 
 
 
-function GetPage({pages}: any) {
+function GetPage({pages, navigate}: any) {
     const params = useParams();
-    const blocks = [{ _id: "1", tag: "p", html: "test test test", imageUrl: "", position: 1 }, {  _id: "2", tag: "p", html: "This is text", imageUrl: "", position: 2 }];
-    // const blocks = [];
+    const [blocks, setBlocks] = useState([]);
+
+    React.useEffect(() => {
+        async function updateBlocks() {
+            let bearer = 'Bearer ' + localStorage.getItem('token');
+    
+            await fetch('http://localhost:' + configData.APIPort + `/api/Note/GetBlockData/${params.id}`, {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Authorization': bearer,
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    response.json().then(data => { 
+                        console.log("Get block data from server");
+                        setBlocks(data);
+                    });
+                } else if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                }
+            })
+        };
+        updateBlocks();
+    }, [params.id]);
+
     if(pages.length === 0){
         return (
-            <div>
-              <h3>Something went wrong!</h3>
-              <p>Have you tried to restart the app at '/' ?</p>
-            </div>
-          );
+            <div></div>
+        );
     } else {
-        return <EditablePage id={params.id} fetchedBlocks={blocks} err={""} />;
+        return <EditablePage pageId={params.id} fetchedBlocks={blocks} err={""} />;
     }
 }
 
@@ -39,7 +64,7 @@ function App() {
     });
 
     React.useEffect(() => {
-        const updatePages = async () => {
+        async function updateUserData() {
             let bearer = 'Bearer ' + localStorage.getItem('token');
     
             await fetch('http://localhost:' + configData.APIPort + '/api/User', {
@@ -68,10 +93,8 @@ function App() {
                 }
             })
         };
-        updatePages();
+        updateUserData();
     }, []);
-
-
 
     return (
         <Routes>
@@ -80,8 +103,8 @@ function App() {
             <Route element={<Layout pages={pages} setPages={setPages} user={user}/>}>
                 <Route path="/dashboard" element={<Dashboard/>}/>
                 <Route path="/profile" element={<Profile user={user} setUser={setUser}/>}/>
-                <Route path="/users" element={<Users/>}/>
-                <Route path="/page/:id" element={<GetPage pages={pages}/>}/>
+                <Route path="/users" element={<Users />}/>
+                <Route path="/page/:id" element={<GetPage pages={pages} navigate={navigate}/>}/>
                 <Route path="/admin" element={<AdminPage/>}/>
             </Route>
             <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user.role == "1" ? '/admin' : '/dashboard'} /> : <Navigate to="/login" />} />

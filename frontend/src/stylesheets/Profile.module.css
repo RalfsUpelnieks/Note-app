@@ -23,7 +23,7 @@
     margin-right: 10px;
 }
 
-.formGroup button {
+.button {
     padding: 0 1rem;
     height: 2.3rem;
     align-self: end;
@@ -39,11 +39,15 @@
     font-weight: 700;
 }
 
-.formGroup button:hover {
+.button:hover {
     background-color: #06b815;
     box-shadow: -1px 1px 0 0 #000;
     transform: translate(1px, -1px);
     cursor: pointer;
+}
+
+.deleteButton:hover {
+    background-color: #ff0000;
 }
 
 .errMessage {

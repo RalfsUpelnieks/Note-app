@@ -13,7 +13,7 @@ namespace backend.Models {
         
         [ForeignKey("Page")]
         required public string pageId { get; set; }
-        required public Page Page { get; set; }
+        public Page Page { get; set; }
 
         public File file { get; set; }
         public ICollection<Event> Event { get; set; }

@@ -3,6 +3,11 @@ using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Components.Forms;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Runtime.CompilerServices;
 
 namespace backend.Controllers {
     [ApiController]
@@ -26,24 +31,47 @@ namespace backend.Controllers {
             return null;
         }
 
-        [HttpGet]
-        [Authorize]
+        [HttpGet("GetTitles"), Authorize]
         public async Task<ActionResult<IEnumerable<PageData>>> GetNotes() {
-            User? user = GetCurrentUser();
-            if (user == null) { return Unauthorized(); }
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
 
-            //return list of pages
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+
             return await _context.pages.Where(p => p.userId == user.Id).Select(results => new PageData { pageId = results.pageId, title = results.title }).ToListAsync();
         }
 
-        [HttpPost("AddPage")]
-        [Authorize]
-        public async Task<ActionResult<User>> AddPage([FromBody] PageSubmit data) {
+        [HttpGet("GetBlockData/{id}"), Authorize]
+        public async Task<ActionResult<IEnumerable<BlockGetData>>> GetPageData(string id) {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
-            User? user = GetCurrentUser();
-            if (user is null) { return Unauthorized(); }
             if (_context is null) { return BadRequest(); }
 
+            User? user = GetCurrentUser();
+            if (user == null) { return Unauthorized(); }
+
+            Page? page = _context.pages.FirstOrDefault(p => p.pageId == id);
+            if (page is null) { return BadRequest(); }
+
+            if (page.userId == user.Id) {
+                return await _context.blocks
+                    .Where(p => p.pageId == id)
+                    .OrderBy(p => p.position)
+                    .Select(results => new BlockGetData { blockId = results.blockId, tag = results.tag, html = results.html, uniqueData = results.uniqueData })
+                    .ToListAsync();
+            } else {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("AddPage"), Authorize]
+        public async Task<ActionResult<Page>> AddPage([FromBody] PageData data) {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+            
             var page = new Page {
                 pageId = data.pageId,
                 title = data.title,
@@ -55,14 +83,50 @@ namespace backend.Controllers {
             return Ok();
         }
 
-        [HttpPost("UpdatePage")]
-        [Authorize]
-        public async Task<ActionResult<User>> UpdatePage([FromBody] PageSubmit data) {
+        [HttpPost("AddBlock"), Authorize]
+        public async Task<ActionResult> AddBlock([FromBody] BlockData data) {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
-            User? user = GetCurrentUser();
-            if (user is null) { return Unauthorized(); }
             if (_context is null) { return BadRequest(); }
 
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+
+            Page? page = _context.pages.FirstOrDefault(p => p.pageId == data.pageId);
+            if (page is null) { return BadRequest(); }
+
+            if (page.userId == user.Id) {
+                var blocksToUpdate = _context.blocks.Where(c => c.pageId == data.pageId).Where(c => c.position >= data.position).ToList();
+                blocksToUpdate.ForEach(a => a.position += 1);
+
+                var block = new Block
+                {
+                    blockId = data.blockId,
+                    tag = data.tag,
+                    html = data.html,
+                    uniqueData = data.uniqueData,
+                    position = data.position,
+                    pageId = data.pageId
+                };
+                _context.blocks.Add(block);
+
+
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("UpdateTitle"), Authorize]
+        public async Task<ActionResult<User>> UpdatePage([FromBody] PageData data) {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+            
             Page? pages = _context.pages.FirstOrDefault(p => p.pageId == data.pageId);
             if (pages is null) { return BadRequest(); }
 
@@ -72,21 +136,92 @@ namespace backend.Controllers {
             return Ok();
         }
 
-        [HttpPost("Remove/{id}")]
-        [Authorize]
-        public async Task<ActionResult> RemovePage(string id) {
+        [HttpPut("UpdateBlock"), Authorize]
+        public async Task<ActionResult> UpdatePage([FromBody] BlockData data) {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
             User? user = GetCurrentUser();
             if (user is null) { return Unauthorized(); }
-            if (_context.pages is null) { return BadRequest(); }
+
+            Page? page = _context.pages.FirstOrDefault(p => p.pageId == data.pageId);
+            if (page is null) { return BadRequest(); }
+
+            if (page.userId == user.Id) {
+                Block? block = _context.blocks.FirstOrDefault(b => b.blockId == data.blockId);
+                if (block is null) { return BadRequest(); }
+
+                if (block.position > data.position)  {
+                    _context.blocks.Where(c => c.pageId == data.pageId && c.position >= data.position && c.position < block.position)
+                        .ToList()
+                        .ForEach(a => a.position += 1);
+
+                    block.position = data.position;
+                } else if (block.position < data.position) {
+                    _context.blocks.Where(c => c.pageId == data.pageId && c.position > block.position && c.position <= data.position)
+                        .ToList()
+                        .ForEach(a => a.position -= 1);
+
+                    block.position = data.position;
+                }
+                block.tag = data.tag;
+                block.html = data.html;
+                block.uniqueData = data.uniqueData;
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete("RemovePage/{id}"), Authorize]
+        public async Task<ActionResult> RemovePage(string id) {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+            
 
             Page? pages = _context.pages.FirstOrDefault(p => p.pageId == id);
+
             if (pages is null) { return BadRequest(); }
             if(pages.userId == user.Id) {
                 _context.pages.Remove(pages);
                 await _context.SaveChangesAsync();
+                return Ok();
+            } else {
+                return BadRequest();
             }
-            return Ok();
+        }
+
+        [HttpDelete("RemoveBlock/{id}"), Authorize]
+        public async Task<ActionResult> RemoveBlock(string id)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+
+            Block? blocksToRemove = _context.blocks.FirstOrDefault(c => c.blockId == id);
+            if (blocksToRemove is null) { return BadRequest(); }
+
+            Page? page = _context.pages.FirstOrDefault(p => p.pageId == blocksToRemove.pageId);
+            if (page is null) { return BadRequest(); }
+
+            if (page.userId == user.Id)
+            {
+                _context.blocks.Remove(blocksToRemove);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

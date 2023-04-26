@@ -35,8 +35,8 @@ async function AddPage(navigate: any, pages: any){
 async function RemovePage(navigate: any, pageId: any, pages : any, setPages : any, isSelected: boolean){
     let bearer = 'Bearer ' + localStorage.getItem('token');
 
-    await fetch('http://localhost:' + configData.APIPort + `/api/Note/Remove/${pageId}`, {
-        method: 'POST',
+    await fetch('http://localhost:' + configData.APIPort + `/api/Note/RemovePage/${pageId}`, {
+        method: 'DELETE',
         mode: 'cors',
         cache: 'no-cache',
         credentials: 'same-origin',

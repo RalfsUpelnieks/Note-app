@@ -19,7 +19,6 @@ class EditableBlock extends React.Component {
         this.openActionMenu = this.openActionMenu.bind(this);
         this.closeActionMenu = this.closeActionMenu.bind(this);
         this.handleTagSelection = this.handleTagSelection.bind(this);
-        this.handleImageUpload = this.handleImageUpload.bind(this);
         this.calculateActionMenuPosition = this.calculateActionMenuPosition.bind(this);
         this.contentEditable = React.createRef();
         this.fileInput = null;
@@ -28,7 +27,7 @@ class EditableBlock extends React.Component {
             html: "",
             htmlInput: "",
             tag: "p",
-            imageUrl: "",
+            uniqueData: "",
             placeholder: "Press '/' for commands",
             isTyping: false,
             actionMenuOpen: false,
@@ -42,26 +41,26 @@ class EditableBlock extends React.Component {
             html: this.props.html,
             htmlInput: this.props.html,
             tag: this.props.tag,
-            imageUrl: this.props.imageUrl,
+            uniqueData: this.props.uniqueData,
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
         // update the page on the server if one of the following is true
-        // 1. user stopped typing and the html content has changed & no placeholder set
-        // 2. user changed the tag & no placeholder set
-        // 3. user changed the image & no placeholder set
+        // 1. user stopped typing and the html content has changed
+        // 2. user changed the tag
+        // 3. user changed the unique data changed
         const stoppedTyping = prevState.isTyping && !this.state.isTyping;
         const htmlChanged = this.props.html !== this.state.html;
         const tagChanged = this.props.tag !== this.state.tag;
-        const imageChanged = this.props.imageUrl !== this.state.imageUrl;
-        if ((stoppedTyping && htmlChanged) || tagChanged || imageChanged) {
-            console.log("updated block");
+        const uniqueDataChanged = this.props.uniqueData !== this.state.uniqueData;
+        if ((stoppedTyping && htmlChanged) || tagChanged || uniqueDataChanged) {
+            clearTimeout(this.timer);
             this.props.updateBlock({
                 id: this.props.id,
                 html: this.state.html,
                 tag: this.state.tag,
-                imageUrl: this.state.imageUrl,
+                uniqueData: this.state.uniqueData,
             });
         }
     }
@@ -73,6 +72,18 @@ class EditableBlock extends React.Component {
 
     handleChange(e) {
         this.setState({ ...this.state, html: e.target.textContent });
+
+        clearTimeout(this.timer);
+        if(this.props.html != e.target.textContent && this.state.html.charAt(this.state.html.length - 1) !== "/") {
+            this.timer = setTimeout(() => { 
+                this.props.updateBlock({
+                    id: this.props.id,
+                    html: this.state.html,
+                    tag: this.state.tag,
+                    uniqueData: this.state.uniqueData,
+                });
+            }, 1200);
+        }
     }
 
     handleFocus() {
@@ -101,7 +112,7 @@ class EditableBlock extends React.Component {
                 id: this.props.id,
                 html: this.state.html,
                 tag: this.state.tag,
-                imageUrl: this.state.imageUrl,
+                uniqueData: this.state.uniqueData,
                 ref: this.contentEditable.current,
             });
         }
@@ -161,7 +172,7 @@ class EditableBlock extends React.Component {
                 id: this.props.id,
                 html: "",
                 tag: "p",
-                imageUrl: "",
+                uniqueData: "",
                 ref: this.contentEditable.current,
             });
         });
@@ -176,30 +187,6 @@ class EditableBlock extends React.Component {
                 this.setState({ ...this.state, tag: tag }, () => {
                     this.closeActionMenu();
                 });
-            }
-        }
-    }
-
-    async handleImageUpload() {
-        if (this.fileInput && this.fileInput.files[0]) {
-            const pageId = this.props.pageId;
-            const imageFile = this.fileInput.files[0];
-            const formData = new FormData();
-            formData.append("image", imageFile);
-            try {
-                const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API}/pages/images?pageId=${pageId}`,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    body: formData,
-                }
-                );
-                const data = await response.json();
-                const imageUrl = data.imageUrl;
-                this.setState({ ...this.state, imageUrl: imageUrl });
-            } catch (err) {
-                console.log(err);
             }
         }
     }
@@ -236,39 +223,20 @@ class EditableBlock extends React.Component {
                     </span>
                     {this.state.tag !== "img" && (
                         React.createElement(this.state.tag, {
-                        ref: this.contentEditable,
-                        "data-position": this.props.position,
-                        
-                        onInput: this.handleChange,
-                        onFocus: this.handleFocus,
-                        onBlur: this.handleBlur,
-                        onKeyDown: this.handleKeyDown,
-                        onKeyUp: this.handleKeyUp,
-                        contentEditable: true,
-                        placeholder: this.state.placeholder,
+                            ref: this.contentEditable,
+                            "data-position": this.props.position,
+                            
+                            onInput: this.handleChange,
+                            onFocus: this.handleFocus,
+                            onBlur: this.handleBlur,
+                            onKeyDown: this.handleKeyDown,
+                            onKeyUp: this.handleKeyUp,
+                            contentEditable: true,
+                            placeholder: this.state.placeholder,
 
-                        dangerouslySetInnerHTML: { __html: this.state.htmlInput },
-                        className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null, snapshot.isDragging ? styles.isDragging : null,].join(" "),
+                            dangerouslySetInnerHTML: { __html: this.state.htmlInput },
+                            className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null, snapshot.isDragging ? styles.isDragging : null,].join(" "),
                         })
-                    )}
-                    {this.state.tag === "img" && (
-                        <div
-                        data-position={this.props.position}
-                        ref={this.contentEditable}
-                        className={[ styles.image, this.state.actionMenuOpen || this.state.tagSelectorMenuOpen ? styles.blockSelected : null,].join(" ")}>
-                        <input id={`${this.props.id}_fileInput`} name={this.state.tag} type="file" onChange={this.handleImageUpload} ref={(ref) => (this.fileInput = ref)} hidden/>
-                        {!this.state.imageUrl && (
-                            <label htmlFor={`${this.props.id}_fileInput`} className={styles.fileInputLabel}>
-                            No Image Selected. Click To Select.
-                            </label>
-                        )}
-                        {this.state.imageUrl && (
-                            <img
-                            src={process.env.NEXT_PUBLIC_API + "/" + this.state.imageUrl}
-                            alt={/[^\/]+(?=\.[^\/.]*$)/.exec(this.state.imageUrl)[0]}
-                            />
-                        )}
-                        </div>
                     )}
                     </div>
                 )}

@@ -73,19 +73,15 @@ class RenameBlock extends React.Component {
     handleKeyDown(e) {
         if (e.key === "Enter" && !window.event.shiftKey) {
             e.preventDefault();
-            this.props.addBlock({
-                id: this.props.id,
-                html: this.state.startingHtml,
-                tag: "h1",
-                ref: this.contentEditable.current,
-            });
+            this.props.addBlock();
         }
     }
 
     render() {
         return (
             <div className={styles.draggable}>
-                <h1 dangerouslySetInnerHTML={{__html: this.state.startingHtml}} 
+                <h1 dangerouslySetInnerHTML={{__html: this.state.startingHtml}}
+                    data-position={0}
                     onInput={this.handleChange}
                     onFocus={this.handleFocus}
                     onBlur={this.handleBlur} 
