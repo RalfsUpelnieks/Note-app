@@ -3,7 +3,7 @@ import { useNavigate} from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css'
 import configData from '../config.json'
 
-function AddUser({setTabOpen}: any) {
+function AddUser({setTabOpen, users}: any) {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
@@ -26,7 +26,7 @@ function AddUser({setTabOpen}: any) {
             if (response.ok) {
                 response.json().then(data => { 
                     console.log("User added");
-                    console.log(data);
+                    users.push(data);
                     setTabOpen(false);
                 });
             } else if (response.status == 401) {

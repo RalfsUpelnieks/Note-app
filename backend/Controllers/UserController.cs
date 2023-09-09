@@ -43,6 +43,21 @@ namespace backend.Controllers {
 
         }
 
+        [HttpGet("GetAllUsers"), Authorize(Roles = "1")]
+        public async Task<ActionResult<IEnumerable<UserData>>> GetAllUser()
+        {
+            return await _context.users.Select(results => new UserData
+            {
+                Id = results.Id,
+                Name = results.Name,
+                Surname = results.Surname,
+                Username = results.Username,
+                EmailAddress = results.EmailAddress,
+                Role = results.Role
+            })
+                                       .ToListAsync();
+        }
+
         [HttpPost("ChangeName"), Authorize]
         public ActionResult<User> ChangeName([FromBody] UserNameChange requestDto) {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
@@ -100,17 +115,27 @@ namespace backend.Controllers {
             return Ok("Changes saved");
         }
 
-        [HttpGet("GetAllUsers"), Authorize(Roles = "1")]
-        public async Task<ActionResult<IEnumerable<UserData>>> GetAllUser() {
-            return await _context.users.Select(results => new UserData {
-                                           Id = results.Id,
-                                           Name = results.Name,
-                                           Surname = results.Surname,
-                                           Username = results.Username,
-                                           EmailAddress = results.EmailAddress,
-                                           Role = results.Role 
-                                       })
-                                       .ToListAsync();
+        [HttpPost("ChangeRole/{id}"), Authorize(Roles = "1")]
+        public async Task<ActionResult> ChangeRole(int id, [FromBody] int role)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (_context is null) { return BadRequest(); }
+
+            User? user = GetCurrentUser();
+            if (user is null) { return Unauthorized(); }
+
+            if (user.Role == 1)
+            {
+                User? changeUser = _context.users.FirstOrDefault(p => p.Id == id);
+                if (changeUser is null) { return BadRequest(); }
+                changeUser.Role = role;
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("DeleteUser"), Authorize]

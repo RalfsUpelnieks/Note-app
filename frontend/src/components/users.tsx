@@ -6,7 +6,17 @@ import AddUser from './addUser';
 
 function Users() {
     const navigate = useNavigate()
-    const [users, setUsers] = useState([]);
+
+    interface User {
+        id: string;
+        name: string;
+        surname: string;
+        username: string;
+        emailAddress: string;
+        role: string;
+    }
+
+    const [users, setUsers] = useState<User[]>([]);
     const [addPanelOpen, setAddPanelOpen] = useState(false);
 
     useEffect(() => {
@@ -36,14 +46,71 @@ function Users() {
         updatePages();
     }, []);
 
-    function deleteUser(){
-        console.log("Delete user");
+    function DeleteUserData(){
+        console.log("Data deleted");
+    }
+
+    async function DeleteUser(id: string){
+        let bearer = 'Bearer ' + localStorage.getItem('token');
+    
+        await fetch('http://localhost:' + configData.APIPort + '/api/User/DeleteUser/' + id, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("User deleted");
+                setUsers((users) => users.filter(element => element.id !== id));
+            } else if (response.status == 401) {
+                localStorage.removeItem('token');
+                navigate('/login');
+            }
+        });
+    }
+
+    async function ChangeRole(id: string, role: string){
+        let bearer = 'Bearer ' + localStorage.getItem('token');
+        if(role || role == "1"){
+            var newRole = "0";
+        } else {
+            var newRole = "1";
+        }
+
+        await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeRole/' + id, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newRole)
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Role changed");
+                const index = users.map((u) => u.id).indexOf(id);
+                const updatedUsers = [...users];
+                updatedUsers[index] = {...updatedUsers[index], role: newRole};
+                setUsers(updatedUsers);
+            } else if (response.status == 401) {
+                localStorage.removeItem('token');
+                navigate('/login');
+            }
+        });
     }
 
     return (
         !localStorage.getItem('token') ? <Navigate to="/"/> :<div>
             {addPanelOpen && (
-                <AddUser setTabOpen={setAddPanelOpen}/>
+                <AddUser setTabOpen={setAddPanelOpen} users={users}/>
             )}
             <h2>Users</h2>
             <table className={styles.table}>
@@ -58,8 +125,7 @@ function Users() {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((Object: { name: string; surname: string; username: string; emailAddress: string; role: any }) => {
-                        // var isSelected = Object.pageId == openTab;
+                    {users.map((Object: { id: string; name: string; surname: string; username: string; emailAddress: string; role: any }) => {
                         return (
                             <tr>
                                 <td>{Object.username}</td>
@@ -67,11 +133,11 @@ function Users() {
                                 <td>{Object.name} {Object.surname}</td>
                                 <td>N/A</td>
                                 <td>
-                                    <input type="checkbox" checked={Object.role == "1"}/>
+                                    <input type="checkbox" onChange={() => ChangeRole(Object.id, Object.role)} checked={Object.role == "1"}/>
                                 </td>
                                 <td>
-                                <button onClick={deleteUser}>Delete Data</button>
-                                <button onClick={deleteUser}>Delete User</button>
+                                <button onClick={DeleteUserData}>Delete Data</button>
+                                <button onClick={() => DeleteUser(Object.id)}>Delete User</button>
                                 </td>
                             </tr>
                         );
