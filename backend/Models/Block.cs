@@ -20,9 +20,5 @@ namespace backend.Models {
         public string pageId { get; set; } = null!;
 
         public Page Page { get; set; } = null!;
-
-        public File file { get; set; } = null!;
-
-        public ICollection<Event> Event { get; set; } = null!;
     }
 }

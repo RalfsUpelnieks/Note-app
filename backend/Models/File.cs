@@ -9,6 +9,6 @@ namespace backend.Models {
         public string url { get; set; } = null!;
         public int size { get; set; }
 
-        public Block block { get; set; } = null!;
+        public Block Block { get; set; } = null!;
     }
 }

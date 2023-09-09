@@ -1,14 +1,8 @@
 ﻿using backend.Data;
 using backend.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -77,10 +71,20 @@ namespace backend.Controllers {
                 user = _context.users.FirstOrDefault(u => u.EmailAddress == request.Username);
             }
 
-            if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) {
-                return Ok(new {token = CreateToken(user), role = user.Role, username = user.Username, email = user.EmailAddress, name = user.Name, surname = user.Surname});
-            } else {
-                return BadRequest(new { Error = "Invalid username or password"});
+            if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return Ok(new {
+                    token = CreateToken(user),
+                    role = user.Role,
+                    username = user.Username,
+                    email = user.EmailAddress,
+                    name = user.Name,
+                    surname = user.Surname
+                });
+            }
+            else
+            {
+                return BadRequest(new { Error = "Invalid username or password" });
             }
         }
 

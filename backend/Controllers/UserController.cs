@@ -29,7 +29,9 @@ namespace backend.Controllers {
         [HttpGet, Authorize]
         public ActionResult<UserData> GetUser() {
             User? user = GetCurrentUser();
-            if (user == null) { return Unauthorized();}
+
+            if (user == null) { return Unauthorized(); }
+
             return Ok(new UserData() {
                 Id = user.Id,
                 Name = user.Name,
@@ -100,7 +102,15 @@ namespace backend.Controllers {
 
         [HttpGet("GetAllUsers"), Authorize(Roles = "1")]
         public async Task<ActionResult<IEnumerable<UserData>>> GetAllUser() {
-            return await _context.users.Select(results => new UserData { Id = results.Id, Name = results.Name, Surname = results.Surname, Username = results.Username, EmailAddress = results.EmailAddress, Role = results.Role }).ToListAsync();
+            return await _context.users.Select(results => new UserData {
+                                           Id = results.Id,
+                                           Name = results.Name,
+                                           Surname = results.Surname,
+                                           Username = results.Username,
+                                           EmailAddress = results.EmailAddress,
+                                           Role = results.Role 
+                                       })
+                                       .ToListAsync();
         }
 
         [HttpDelete("DeleteUser"), Authorize]
