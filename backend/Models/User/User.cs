@@ -6,12 +6,22 @@ namespace backend.Models {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Surname { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string EmailAddress { get; set; } = string.Empty;
-        public string PasswordHash { get; set; } = string.Empty;
+
+        [StringLength(30)]
+        public string Name { get; set; } = null!;
+
+        [StringLength(30)]
+        public string Surname { get; set; } = null!;
+
+        [Required, StringLength(255)]
+        public string Username { get; set; } = null!;
+
+        [Required, StringLength(320)]
+        public string EmailAddress { get; set; } = null!;
+
+        [Required, StringLength(500)]
+        public string PasswordHash { get; set; } = null!;
         public int Role { get; set; } = 0;
-        public ICollection<Page> Pages { get; set; }
+        public ICollection<Page> Pages { get; set; } = null!;
     }
 }

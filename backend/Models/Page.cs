@@ -3,11 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models {
     public class Page {
-        [Key]
-        public string pageId { get; set; }
-        public string title { get; set; } = string.Empty;
+        [Key, StringLength(24)]
+        public string pageId { get; set; } = null!;
+
+        public string title { get; set; } = null!;
+
         public int userId { get; set; }
-        public User User { get; set; }
-        public ICollection<Block> Blocks { get; set; }
+
+        [Required, StringLength(24)]
+        public User User { get; set; } = null!;
+
+        public ICollection<Block> Blocks { get; set; } = null!;
     }
 }

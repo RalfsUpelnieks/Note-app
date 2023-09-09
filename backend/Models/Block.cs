@@ -3,17 +3,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models {
     public class Block {
-        [Key]
-        public string blockId { get; set; }
-        required public string tag { get; set; }
-        public string html { get; set; } = string.Empty;
-        [MaxLength(-1)]
-        public string uniqueData { get; set; }
-        required public int position { get; set; }
+        [Key, StringLength(24)]
+        public string blockId { get; set; } = null!;
 
-        required public string pageId { get; set; }
-        public Page Page { get; set; }
-        public File file { get; set; }
-        public ICollection<Event> Event { get; set; }
+        [Required, StringLength(20)]
+        public string tag { get; set; } = null!;
+
+        public string html { get; set; } = null!;
+
+        public string uniqueData { get; set; } = null!;
+
+        [Required]
+        public int position { get; set; }
+
+        [Required, StringLength(24)]
+        public string pageId { get; set; } = null!;
+
+        public Page Page { get; set; } = null!;
+
+        public File file { get; set; } = null!;
+
+        public ICollection<Event> Event { get; set; } = null!;
     }
 }
