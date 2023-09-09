@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class users : Migration
+    public partial class initMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,14 +35,14 @@ namespace backend.Migrations
                 {
                     pageId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    userId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_pages", x => x.pageId);
                     table.ForeignKey(
-                        name: "FK_pages_users_userId",
-                        column: x => x.userId,
+                        name: "FK_pages_users_UserId",
+                        column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -57,7 +57,7 @@ namespace backend.Migrations
                     html = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     uniqueData = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     position = table.Column<int>(type: "int", nullable: false),
-                    pageId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    pageId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -66,8 +66,7 @@ namespace backend.Migrations
                         name: "FK_blocks_pages_pageId",
                         column: x => x.pageId,
                         principalTable: "pages",
-                        principalColumn: "pageId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "pageId");
                 });
 
             migrationBuilder.CreateTable(
@@ -121,9 +120,9 @@ namespace backend.Migrations
                 column: "blockId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_pages_userId",
+                name: "IX_pages_UserId",
                 table: "pages",
-                column: "userId");
+                column: "UserId");
         }
 
         /// <inheritdoc />

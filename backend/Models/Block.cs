@@ -11,10 +11,7 @@ namespace backend.Models {
         public string uniqueData { get; set; }
         required public int position { get; set; }
         
-        [ForeignKey("Page")]
-        required public string pageId { get; set; }
         public Page Page { get; set; }
-
         public File file { get; set; }
         public ICollection<Event> Event { get; set; }
     }
