@@ -10,9 +10,6 @@ async function AddPage(navigate: any, pages: any){
 
     await fetch('http://localhost:' + configData.APIPort + '/api/Note/AddPage', {
         method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
         headers: {
             'Authorization': bearer,
             'Content-Type': 'application/json'
@@ -37,9 +34,6 @@ async function RemovePage(navigate: any, pageId: any, pages : any, setPages : an
 
     await fetch('http://localhost:' + configData.APIPort + `/api/Note/RemovePage/${pageId}`, {
         method: 'DELETE',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
         headers: {
             'Authorization': bearer,
             'Content-Type': 'application/json'

@@ -16,9 +16,6 @@ function AddUser({setTabOpen, users}: any) {
     async function registerUser(Name: string, Surname: string, Username: string, Email: string, Password: string, IsAdmin: boolean, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
         await fetch('http://localhost:' + configData.APIPort + '/api/Auth/register', {
             method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({Name, Surname, Username, Email, Password, IsAdmin})
         })

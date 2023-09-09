@@ -14,9 +14,6 @@ function Layout({pages, setPages, user} : any) {
 
             await fetch('http://localhost:' + configData.APIPort + '/api/Note/GetTitles', {
                 method: 'GET',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
                 headers: {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'

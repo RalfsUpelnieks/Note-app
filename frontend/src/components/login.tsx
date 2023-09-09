@@ -12,29 +12,25 @@ function Login({setUser}: any) {
     async function loginUser(Username: string, Password: string, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
         await fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
             method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({Username, Password})
         })
         .then(response => {
             if (response.ok) {
                 response.json().then(data => { 
-                localStorage.setItem('token', data.token);
-                setUser({
-                    role: data.role,
-                    email: data.email,
-                    username: data.username,
-                    name: data.name,
-                    surname: data.surname,
-                });
-                if(data.role == "1"){
-                    navigate("/admin");
-                } else {
-                    navigate("/dashboard");
-                }
-                    console.log(data);
+                    localStorage.setItem('token', data.token);
+                    setUser({
+                        role: data.role,
+                        email: data.email,
+                        username: data.username,
+                        name: data.name,
+                        surname: data.surname,
+                    });
+                    if(data.role == "1"){
+                        navigate("/admin");
+                    } else {
+                        navigate("/dashboard");
+                    }
                 });
             } else {
                 response.json().then(data => {

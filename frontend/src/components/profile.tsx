@@ -23,9 +23,6 @@ function Profile({user, setUser}: any) {
 
         await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeName', {
             method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: {
                 'Authorization': bearer,
                 'Content-Type': 'application/json'
@@ -55,9 +52,6 @@ function Profile({user, setUser}: any) {
 
         await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeUsername', {
             method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: {
                 'Authorization': bearer,
                 'Content-Type': 'application/json'
@@ -87,9 +81,6 @@ function Profile({user, setUser}: any) {
 
         await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeEmail', {
             method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: {
                 'Authorization': bearer,
                 'Content-Type': 'application/json'
@@ -119,9 +110,6 @@ function Profile({user, setUser}: any) {
 
         await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangePassword', {
             method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: {
                 'Authorization': bearer,
                 'Content-Type': 'application/json'
@@ -150,9 +138,6 @@ function Profile({user, setUser}: any) {
     
         await fetch('http://localhost:' + configData.APIPort + '/api/User/DeleteUser', {
             method: 'DELETE',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: {
                 'Authorization': bearer,
                 'Content-Type': 'application/json'

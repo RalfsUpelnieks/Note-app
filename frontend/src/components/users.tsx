@@ -25,9 +25,6 @@ function Users() {
 
             await fetch('http://localhost:' + configData.APIPort + '/api/User/GetAllUsers', {
                 method: 'GET',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
                 headers: {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
@@ -55,9 +52,6 @@ function Users() {
     
         await fetch('http://localhost:' + configData.APIPort + '/api/User/DeleteUser/' + id, {
             method: 'DELETE',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: {
                 'Authorization': bearer,
                 'Content-Type': 'application/json'
@@ -125,7 +119,7 @@ function Users() {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((Object: { id: string; name: string; surname: string; username: string; emailAddress: string; role: any }) => {
+                    {users.map((Object: { id: string; name: string; surname: string; username: string; emailAddress: string; role: string }) => {
                         return (
                             <tr>
                                 <td>{Object.username}</td>
