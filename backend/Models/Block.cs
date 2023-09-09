@@ -10,7 +10,8 @@ namespace backend.Models {
         [MaxLength(-1)]
         public string uniqueData { get; set; }
         required public int position { get; set; }
-        
+
+        required public string pageId { get; set; }
         public Page Page { get; set; }
         public File file { get; set; }
         public ICollection<Event> Event { get; set; }

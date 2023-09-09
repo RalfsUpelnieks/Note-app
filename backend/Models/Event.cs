@@ -8,6 +8,7 @@ namespace backend.Models {
         public string title { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        required public string blockId { get; set; }
         required public Block Block { get; set; }
     }
 }

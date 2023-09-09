@@ -39,7 +39,7 @@ namespace backend.Controllers {
             User? user = GetCurrentUser();
             if (user is null) { return Unauthorized(); }
 
-            return await _context.pages.Where(p => p.User == user).Select(results => new PageData { pageId = results.pageId, title = results.title }).ToListAsync();
+            return await _context.pages.Where(p => p.userId == user.Id).Select(results => new PageData { pageId = results.pageId, title = results.title }).ToListAsync();
         }
 
         [HttpGet("GetBlockData/{id}"), Authorize]
@@ -53,9 +53,9 @@ namespace backend.Controllers {
             Page? page = _context.pages.FirstOrDefault(p => p.pageId == id);
             if (page is null) { return BadRequest(); }
 
-            if (page.User == user) {
+            if (page.userId == user.Id) {
                 return await _context.blocks
-                    .Where(p => p.Page.pageId == id)
+                    .Where(p => p.pageId == id)
                     .OrderBy(p => p.position)
                     .Select(results => new BlockGetData { blockId = results.blockId, tag = results.tag, html = results.html, uniqueData = results.uniqueData })
                     .ToListAsync();
@@ -75,7 +75,7 @@ namespace backend.Controllers {
             var page = new Page {
                 pageId = data.pageId,
                 title = data.title,
-                User = user
+                userId = user.Id
             };
             _context.pages.Add(page);
             await _context.SaveChangesAsync();
@@ -94,8 +94,8 @@ namespace backend.Controllers {
             Page? page = _context.pages.FirstOrDefault(p => p.pageId == data.pageId);
             if (page is null) { return BadRequest(); }
 
-            if (page.User == user) {
-                var blocksToUpdate = _context.blocks.Where(c => c.Page.pageId == data.pageId).Where(c => c.position >= data.position).ToList();
+            if (page.userId == user.Id) {
+                var blocksToUpdate = _context.blocks.Where(c => c.pageId == data.pageId).Where(c => c.position >= data.position).ToList();
                 blocksToUpdate.ForEach(a => a.position += 1);
 
                 var block = new Block
@@ -105,7 +105,7 @@ namespace backend.Controllers {
                     html = data.html,
                     uniqueData = data.uniqueData,
                     position = data.position,
-                    Page = page
+                    pageId = data.pageId
                 };
                 _context.blocks.Add(block);
 
@@ -147,18 +147,18 @@ namespace backend.Controllers {
             Page? page = _context.pages.FirstOrDefault(p => p.pageId == data.pageId);
             if (page is null) { return BadRequest(); }
 
-            if (page.User == user) {
+            if (page.userId == user.Id) {
                 Block? block = _context.blocks.FirstOrDefault(b => b.blockId == data.blockId);
                 if (block is null) { return BadRequest(); }
 
                 if (block.position > data.position)  {
-                    _context.blocks.Where(c => c.Page.pageId == data.pageId && c.position >= data.position && c.position < block.position)
+                    _context.blocks.Where(c => c.pageId == data.pageId && c.position >= data.position && c.position < block.position)
                         .ToList()
                         .ForEach(a => a.position += 1);
 
                     block.position = data.position;
                 } else if (block.position < data.position) {
-                    _context.blocks.Where(c => c.Page.pageId == data.pageId && c.position > block.position && c.position <= data.position)
+                    _context.blocks.Where(c => c.pageId == data.pageId && c.position > block.position && c.position <= data.position)
                         .ToList()
                         .ForEach(a => a.position -= 1);
 
@@ -182,13 +182,13 @@ namespace backend.Controllers {
             if (_context is null) { return BadRequest(); }
 
             User? user = GetCurrentUser();
-            if (user is null) { return Unauthorized(); }
+            if (user is null) { await Console.Out.WriteLineAsync("No user"); return Unauthorized(); }
             
 
             Page? pages = _context.pages.FirstOrDefault(p => p.pageId == id);
 
             if (pages is null) { return BadRequest(); }
-            if(pages.User == user) {
+            if(pages.userId == user.Id) {
                 _context.pages.Remove(pages);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -209,10 +209,10 @@ namespace backend.Controllers {
             Block? blocksToRemove = _context.blocks.FirstOrDefault(c => c.blockId == id);
             if (blocksToRemove is null) { return BadRequest(); }
 
-            Page? page = _context.pages.FirstOrDefault(p => p.pageId == blocksToRemove.Page.pageId);
+            Page? page = _context.pages.FirstOrDefault(p => p.pageId == blocksToRemove.pageId);
             if (page is null) { return BadRequest(); }
 
-            if (page.User == user)
+            if (page.userId == user.Id)
             {
                 _context.blocks.Remove(blocksToRemove);
                 await _context.SaveChangesAsync();
