@@ -8,6 +8,7 @@ import AdminPage from './components/adminPage';
 import Layout from './components/layout';
 import EditablePage from './components/editablePage';
 import configData from './config.json'
+import User from './interfaces/userInterface'
 
 
 
@@ -55,13 +56,7 @@ function GetPage({pages, navigate}: any) {
 function App() {
     const navigate = useNavigate();
     const [pages, setPages] = React.useState([]);
-    const [user, setUser] = React.useState({
-        role: "",
-        email: "",
-        username: "",
-        name: "",
-        surname: "",
-    });
+    const [user, setUser] = React.useState<User>();
 
     React.useEffect(() => {
         async function updateUserData() {
@@ -79,13 +74,7 @@ function App() {
                 if (response.ok) {
                     response.json().then(data => { 
                         console.log("Get user data from server");
-                        setUser({
-                            role: data.role,
-                            email: data.emailAddress,
-                            username: data.username,
-                            name: data.name,
-                            surname: data.surname,
-                        });
+                        setUser(data);
                     });
                 } else {
                     localStorage.removeItem('token');
@@ -107,7 +96,7 @@ function App() {
                 <Route path="/page/:id" element={<GetPage pages={pages} navigate={navigate}/>}/>
                 <Route path="/admin" element={<AdminPage/>}/>
             </Route>
-            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user.role == "1" ? '/admin' : '/dashboard'} /> : <Navigate to="/login" />} />
+            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user?.role === "1" ? '/admin' : '/dashboard'} /> : <Navigate to="/login" />} />
         </Routes>
     );
 };

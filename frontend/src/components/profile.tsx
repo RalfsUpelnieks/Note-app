@@ -2,13 +2,19 @@ import React, { useEffect, useState} from 'react';
 import {Navigate, useNavigate} from 'react-router-dom';
 import styles from '../stylesheets/Profile.module.css'
 import configData from '../config.json'
+import User from '../interfaces/userInterface'
 
-function Profile({user, setUser}: any) {
+interface ProfileProps {
+    user?: User
+    setUser: React.Dispatch<React.SetStateAction<User | undefined>>
+}
+
+function Profile({user, setUser}: ProfileProps) {
     const navigate = useNavigate();
-    const [name, setName] = useState(user.name);
-    const [surname, setSurname] = useState(user.surname);
-    const [username, setUsername] = useState(user.username);
-    const [email, setEmail] = useState(user.email);
+    const [name, setName] = useState(user?.name);
+    const [surname, setSurname] = useState(user?.surname);
+    const [username, setUsername] = useState(user?.username);
+    const [email, setEmail] = useState(user?.emailAddress);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
 
@@ -33,7 +39,7 @@ function Profile({user, setUser}: any) {
             if (response.ok) {
                 response.text().then(data => { 
                     console.log("Name Changed");
-                    setUser({ ...user, name: Name, surname: Surname })
+                    setUser({ ...user!, name: Name, surname: Surname })
                     setNameMsg(data);
                 });
             } else if (response.status == 401) {
@@ -62,7 +68,7 @@ function Profile({user, setUser}: any) {
             if (response.ok) {
                 response.text().then(data => { 
                     console.log("Username Changed");
-                    setUser({ ...user, username: Username })
+                    setUser({ ...user!, username: Username })
                     setUsernameMsg(data);
                 });
             } else if (response.status == 401) {
@@ -91,7 +97,7 @@ function Profile({user, setUser}: any) {
             if (response.ok) {
                 response.text().then(data => { 
                     console.log("Username Changed");
-                    setUser({ ...user, email: Email })
+                    setUser({ ...user!, emailAddress: Email })
                     setEmailMsg(data);
                 });
             } else if (response.status == 401) {
@@ -151,8 +157,8 @@ function Profile({user, setUser}: any) {
 
     async function SaveName (event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        if(name != user.name || surname != user.surname){
-            await ChangeName(name, surname, setNameMsg);
+        if(name != user?.name || surname != user?.surname){
+            await ChangeName(name!, surname!, setNameMsg);
         } else {
             setNameMsg("No changes made");
         }
@@ -160,8 +166,8 @@ function Profile({user, setUser}: any) {
 
     async function SaveUsername (event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        if (username != user.username){
-            await ChangeUsername(username, setUsernameMsg);
+        if (username != user?.username){
+            await ChangeUsername(username!, setUsernameMsg);
         } else {
             setUsernameMsg("No changes made");
         }
@@ -169,8 +175,8 @@ function Profile({user, setUser}: any) {
 
     async function SaveEmail (event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        if (email != user.email){
-            await ChangeEmail(email, setEmailMsg);
+        if (email != user?.emailAddress){
+            await ChangeEmail(email!, setEmailMsg);
         } else {
             setEmailMsg("No changes made");
         }
@@ -186,10 +192,10 @@ function Profile({user, setUser}: any) {
     }
 
     useEffect(() => {
-        setName(user.name);
-        setSurname(user.surname);
-        setUsername(user.username);
-        setEmail(user.email);
+        setName(user?.name);
+        setSurname(user?.surname);
+        setUsername(user?.username);
+        setEmail(user?.emailAddress);
     }, [user]);
     
     useEffect(() => {

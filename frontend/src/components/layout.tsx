@@ -4,8 +4,15 @@ import Header from './header';
 import SideNav from './sideNav';
 import styles from '../stylesheets/Layout.module.css';
 import configData from '../config.json'
+import User from '../interfaces/userInterface'
 
-function Layout({pages, setPages, user} : any) {
+interface LayoutProps {
+    pages: never[]
+    setPages: React.Dispatch<React.SetStateAction<never[]>>
+    user?: User
+}
+
+function Layout({pages, setPages, user} : LayoutProps) {
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -36,7 +43,7 @@ function Layout({pages, setPages, user} : any) {
     return (
         <div>
             <Header />
-            <SideNav pages={pages} setPages={setPages} isAdmin={user.role == "1"}/>
+            <SideNav pages={pages} setPages={setPages} isAdmin={user?.role == "1"}/>
             <main className={styles.content}>
                 <Outlet context={[pages, setPages]} />  
             </main>

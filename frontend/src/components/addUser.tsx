@@ -2,8 +2,14 @@ import React, { useEffect, useState} from 'react';
 import { useNavigate} from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css'
 import configData from '../config.json'
+import User from '../interfaces/userInterface'
 
-function AddUser({setTabOpen, users}: any) {
+interface AddUserProps {
+    setTabOpen: React.Dispatch<React.SetStateAction<boolean>>
+    users: User[]
+}
+
+function AddUser({setTabOpen, users}: AddUserProps) {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');

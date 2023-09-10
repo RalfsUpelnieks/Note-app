@@ -2,8 +2,13 @@ import React, { useEffect, useState} from 'react';
 import {Navigate, useNavigate} from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css'
 import configData from '../config.json'
+import User from '../interfaces/userInterface'
 
-function Login({setUser}: any) {
+interface LoginProps {
+    setUser: React.Dispatch<React.SetStateAction<User | undefined>>
+}
+
+function Login({setUser}: LoginProps) {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,13 +24,7 @@ function Login({setUser}: any) {
             if (response.ok) {
                 response.json().then(data => { 
                     localStorage.setItem('token', data.token);
-                    setUser({
-                        role: data.role,
-                        email: data.email,
-                        username: data.username,
-                        name: data.name,
-                        surname: data.surname,
-                    });
+                    setUser(data);
                     if(data.role == "1"){
                         navigate("/admin");
                     } else {

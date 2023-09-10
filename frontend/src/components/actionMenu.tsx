@@ -3,6 +3,20 @@ import { matchSorter } from "match-sorter";
 
 import styles from "../stylesheets/actionMenu.module.css"
 
+interface DeleteAction {
+    deleteBlock: () => void;
+}
+
+interface ActionProps {
+    position: {
+        x?: number;
+        y?: number;
+    }
+    closeMenu(): void
+    handleSelection(tag: string): void
+    actions: DeleteAction
+}
+
 const tags = [
     {
         id: "page-title",
@@ -27,7 +41,7 @@ const tags = [
     },
 ];
 
-const ActionMenu = ({ position, closeMenu, handleSelection, actions }) => {
+function ActionMenu({ position, closeMenu, handleSelection, actions }: ActionProps) {
     const [tagList, setTagList] = useState(tags);
     const [selectedTag, setSelectedTag] = useState(0);
     const [command, setCommand] = useState("");
@@ -43,7 +57,7 @@ const ActionMenu = ({ position, closeMenu, handleSelection, actions }) => {
 
     // Attach listener to allow tag selection via keyboard
     useEffect(() => {
-        const handleKeyDown = (e) => {
+        const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 handleSelection(tagList[selectedTag].tag);
@@ -83,16 +97,16 @@ const ActionMenu = ({ position, closeMenu, handleSelection, actions }) => {
                             data-tag={tag.tag}
                             className={tagList.indexOf(tag) === selectedTag ? [styles.item, styles.selectedTag].join(" ") : styles.item}
                             role="button"
-                            tabIndex="0"
+                            tabIndex={0}
                             onClick={() => handleSelection(tag.tag)}
                         >
                             {tag.label}
                         </div>
                     );
                 })}
-                <span id="delete" className={styles.item} role="button" tabIndex="0" onClick={() => actions.deleteBlock()}>
-                    <i alt="Trash Icon" /> delete
-                </span>
+                <div className={[styles.item, styles.selectedTag].join(" ")} style={ Object.assign({color: "red"}, {paddingLeft: "6px"})} role="button" tabIndex={0} onClick={() => actions.deleteBlock()}>
+                    <i className="fa fa-trash " /><span style={{marginLeft: "6px"}}>delete</span>
+                </div>
             </div>
         </div>
     );

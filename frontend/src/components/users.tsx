@@ -3,18 +3,10 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import styles from '../stylesheets/Table.module.css';
 import configData from '../config.json'
 import AddUser from './addUser';
+import User from '../interfaces/userInterface'
 
 function Users() {
     const navigate = useNavigate()
-
-    interface User {
-        id: string;
-        name: string;
-        surname: string;
-        username: string;
-        emailAddress: string;
-        role: string;
-    }
 
     const [users, setUsers] = useState<User[]>([]);
     const [addPanelOpen, setAddPanelOpen] = useState(false);
@@ -61,7 +53,7 @@ function Users() {
             if (response.ok) {
                 console.log("User deleted");
                 setUsers((users) => users.filter(element => element.id !== id));
-            } else if (response.status == 401) {
+            } else if (response.status === 401) {
                 localStorage.removeItem('token');
                 navigate('/login');
             }
@@ -70,10 +62,11 @@ function Users() {
 
     async function ChangeRole(id: string, role: string){
         let bearer = 'Bearer ' + localStorage.getItem('token');
-        if(role || role == "1"){
-            var newRole = "0";
+        var newRole: string;
+        if(role || role === "1"){
+            newRole = "0";
         } else {
-            var newRole = "1";
+            newRole = "1";
         }
 
         await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeRole/' + id, {
@@ -94,7 +87,7 @@ function Users() {
                 const updatedUsers = [...users];
                 updatedUsers[index] = {...updatedUsers[index], role: newRole};
                 setUsers(updatedUsers);
-            } else if (response.status == 401) {
+            } else if (response.status === 401) {
                 localStorage.removeItem('token');
                 navigate('/login');
             }
@@ -127,7 +120,7 @@ function Users() {
                                 <td>{Object.name} {Object.surname}</td>
                                 <td>N/A</td>
                                 <td>
-                                    <input type="checkbox" onChange={() => ChangeRole(Object.id, Object.role)} checked={Object.role == "1"}/>
+                                    <input type="checkbox" onChange={() => ChangeRole(Object.id, Object.role)} checked={Object.role === "1"}/>
                                 </td>
                                 <td>
                                 <button onClick={DeleteUserData}>Delete Data</button>
