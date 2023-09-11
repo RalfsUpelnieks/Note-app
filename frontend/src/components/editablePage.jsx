@@ -33,6 +33,7 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
             return <Navigate to="/"/>;
         }
         setTitle(pages[pageIndex].title);
+        setSelectedIndex(-1);
     }, [pageId]);
 
     // Handling block updates
@@ -89,6 +90,8 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
             }).then(response => {
                 if (response.ok) {
                     console.log("New block added to server");
+                    console.log(block)
+                    console.log(position)
                     return true;
                 } else if (response.status === 401) {
                     localStorage.removeItem('token');
@@ -120,6 +123,8 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
             }).then(response => {
                 if (response.ok) {
                     console.log("Block updated");
+                    console.log(block)
+                    console.log(position)
                     return true;
                 } else if (response.status === 401) {
                     localStorage.removeItem('token');
