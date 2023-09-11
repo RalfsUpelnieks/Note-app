@@ -26,6 +26,13 @@
     margin-bottom: 1rem;
 }
 
+.header h4{
+    align-self: flex-end;
+    margin-left: 10px;
+    margin-right: auto;
+    margin-bottom: 1.2rem;
+}
+
 .header button {
     border: 3px solid #000;
     border-radius: 3rem;

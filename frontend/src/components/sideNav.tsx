@@ -74,26 +74,26 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
             <ul>
                 {isAdmin ?
                 <>
-                    <li>
-                        <Link to="/">
+                    <li className={window.location.pathname == "/admin" ? styles.selectedNote : ""}>
+                        <Link to="/admin">
                             <i className='fa fa-home'></i>
                             <span className={styles.navText}>Dashboard</span>
                         </Link>
                     </li>
-                    <li>
+                    <li className={window.location.pathname == "/profile" ? styles.selectedNote : ""}>
                         <Link to="/profile">
                             <i className='fa fa-user'></i>
                             <span className={styles.navText}>Profile</span>
                         </Link>
                     </li>
-                    <li>
+                    <li className={window.location.pathname == "/users" ? styles.selectedNote : ""}>
                         <Link to="/users">
                             <i className="fa fa-users"></i>
                             <span className={styles.navText}>Users</span>
                         </Link>
                     </li>
-                    <li>
-                        <Link to="/">
+                    <li className={window.location.pathname == "/storage" ? styles.selectedNote : ""}>
+                        <Link to="/storage">
                             <i className="fa fa-database"></i>
                             <span className={styles.navText}>Storage</span>
                         </Link>
@@ -101,20 +101,20 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
                 </>
                 : 
                 <>
-                    <li>
-                        <Link to="/">
+                    <li className={window.location.pathname == "/search" ? styles.selectedNote : ""}>
+                        <Link to="/search">
                             <i className='fa fa-search'></i>
                             <span className={styles.navText}>Search</span>
                         </Link>
                     </li>
                     
-                    <li>
-                        <Link to="/">
+                    {/* <li>
+                        <Link to="/events">
                             <i className="fa fa-calendar-o"></i>
                             <span className={styles.navText}>Events</span>
                         </Link>
-                    </li>
-                    <li>
+                    </li> */}
+                    <li className={window.location.pathname == "/profile" ? styles.selectedNote : ""}>
                         <Link to="/profile">
                             <i className='fa fa-user'></i>
                             <span className={styles.navText}>Profile</span>

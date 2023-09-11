@@ -63,7 +63,7 @@ function Users() {
     async function ChangeRole(id: string, role: string){
         let bearer = 'Bearer ' + localStorage.getItem('token');
         var newRole: string;
-        if(role || role === "1"){
+        if(role || role == "1"){
             newRole = "0";
         } else {
             newRole = "1";
@@ -120,7 +120,7 @@ function Users() {
                                 <td>{Object.name} {Object.surname}</td>
                                 <td>N/A</td>
                                 <td>
-                                    <input type="checkbox" onChange={() => ChangeRole(Object.id, Object.role)} checked={Object.role === "1"}/>
+                                    <input type="checkbox" onChange={() => ChangeRole(Object.id, Object.role)} checked={Object.role == "1"}/>
                                 </td>
                                 <td>
                                 <button onClick={DeleteUserData}>Delete Data</button>

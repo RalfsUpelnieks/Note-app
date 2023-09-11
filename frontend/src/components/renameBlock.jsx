@@ -8,12 +8,10 @@ class RenameBlock extends React.Component {
         this.handleFocus = this.handleFocus.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
-        this.contentEditable = React.createRef();
         this.inputValue = this.props.html;
         this.timer = null;
         this.state = {
             isTyping: false,
-            startingHtml: "",
             databaseHtml: ""
         };
     }
@@ -21,7 +19,6 @@ class RenameBlock extends React.Component {
     componentDidMount() {
         this.setState({
             ...this.state,
-            startingHtml: this.props.html,
             databaseHtml: this.props.html
         });
     }
@@ -39,7 +36,6 @@ class RenameBlock extends React.Component {
         } else if (notTyping && propHtmlChanged) {
             this.setState({
                 ...this.state,
-                startingHtml: this.props.html,
                 databaseHtml: this.props.html
             });
         }
@@ -67,7 +63,7 @@ class RenameBlock extends React.Component {
     }
 
     handleBlur() {
-        this.setState({ ...this.state, isTyping: false });
+        this.setState({ ...this.state, isTyping: false});
     }
 
     handleKeyDown(e) {
@@ -80,8 +76,8 @@ class RenameBlock extends React.Component {
     render() {
         return (
             <div className={styles.draggable}>
-                <h1 dangerouslySetInnerHTML={{__html: this.state.startingHtml}}
-                    data-position={0}
+                <h1 dangerouslySetInnerHTML={{__html: this.props.html}}
+                    key={this.props.pageId}
                     onInput={this.handleChange}
                     onFocus={this.handleFocus}
                     onBlur={this.handleBlur} 
