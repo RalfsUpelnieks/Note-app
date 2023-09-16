@@ -19,6 +19,7 @@
     user-select: text;
     margin-top: 4px;
     margin-bottom: 4px;
+    overflow-wrap: break-word;
 }
 
 .block {
@@ -27,6 +28,7 @@
     user-select: text;
     margin-top: 4px;
     margin-bottom: 4px;
+    overflow-wrap: break-word;
 }
 
 .block:focus,
