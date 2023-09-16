@@ -1,59 +1,16 @@
 import React, { useState}  from 'react';
+import configData from './config.json'
 import { Route, Routes, Navigate, useParams, useNavigate } from 'react-router-dom';
 import Login from './components/login';
 import Profile from './components/profile';
 import Users from './components/users';
 import AdminPage from './components/adminPage';
 import Layout from './components/layout';
-import EditablePage from './components/editablePage';
-import configData from './config.json'
 import User from './interfaces/userInterface'
 import Search from './components/search';
 import Events from './components/events';
 import StoragePage from './components/storage';
-
-
-
-function GetPage({pages, navigate}: any) {
-    const params = useParams();
-    const [blocks, setBlocks] = useState([]);
-
-    React.useEffect(() => {
-        async function updateBlocks() {
-            let bearer = 'Bearer ' + localStorage.getItem('token');
-    
-            await fetch('http://localhost:' + configData.APIPort + `/api/Note/GetBlockData/${params.id}`, {
-                method: 'GET',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                headers: {
-                    'Authorization': bearer,
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    response.json().then(data => { 
-                        console.log("Get block data from server");
-                        setBlocks(data);
-                    });
-                } else if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    navigate('/login');
-                }
-            })
-        };
-        updateBlocks();
-    }, [params.id]);
-
-    if(pages.length === 0){
-        return (
-            <div></div>
-        );
-    } else {
-        return <EditablePage pageId={params.id} fetchedBlocks={blocks} err={""} />;
-    }
-}
+import NotePage from './components/NotePage'
 
 function App() {
     const navigate = useNavigate();
@@ -66,9 +23,6 @@ function App() {
     
             await fetch('http://localhost:' + configData.APIPort + '/api/User', {
                 method: 'GET',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
                 headers: {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
@@ -102,7 +56,7 @@ function App() {
                 <Route path="/search" element={<Search/>}/>
                 <Route path="/events" element={<Events />}/>
                 <Route path="/profile" element={<Profile user={user} setUser={setUser}/>}/>
-                <Route path="/page/:id" element={<GetPage pages={pages} navigate={navigate}/>}/>
+                <Route path="/page/:id" element={<NotePage pages={pages} navigate={navigate}/>}/>
                 <Route path="/admin" element={<AdminPage/>}/>
                 <Route path="/users" element={<Users />}/>
                 <Route path="/storage" element={<StoragePage />}/>
