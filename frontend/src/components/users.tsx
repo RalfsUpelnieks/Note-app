@@ -71,9 +71,6 @@ function Users() {
 
         await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeRole/' + id, {
             method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
             headers: {
                 'Authorization': bearer,
                 'Content-Type': 'application/json'

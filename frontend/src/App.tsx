@@ -1,6 +1,6 @@
 import React, { useState}  from 'react';
 import configData from './config.json'
-import { Route, Routes, Navigate, useParams, useNavigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Login from './components/login';
 import Profile from './components/profile';
 import Users from './components/users';
@@ -14,8 +14,8 @@ import NotePage from './components/NotePage'
 
 function App() {
     const navigate = useNavigate();
-    const [pages, setPages] = React.useState([]);
-    const [user, setUser] = React.useState<User>();
+    const [pages, setPages] = useState([]);
+    const [user, setUser] = useState<User>();
 
     React.useEffect(() => {
         async function updateUserData() {
@@ -41,13 +41,6 @@ function App() {
         updateUserData();
     }, []);
 
-    function GetLink() : string {
-        if(pages.length != 0){
-            return `/page/${pages[0]['pageId']}`;
-        }
-        return "/search"
-    }
-
     return (
         <Routes>
             <Route path="/login" element={<Login setUser={setUser}/>}/>
@@ -61,7 +54,7 @@ function App() {
                 <Route path="/users" element={<Users />}/>
                 <Route path="/storage" element={<StoragePage />}/>
             </Route>
-            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user?.role == "1" ? '/admin' : GetLink()} /> : <Navigate to="/login" />} />
+            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user?.role == "1" ? '/admin' : '/search'} /> : <Navigate to="/login" />} />
         </Routes>
     );
 };

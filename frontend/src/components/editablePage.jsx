@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect} from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import {Navigate, useOutletContext, useNavigate } from 'react-router-dom';
 
@@ -9,12 +9,10 @@ import { setCaretToEnd } from "../utils/caretControl";
 import styles from "../stylesheets/Block.module.css";
 import configData from '../config.json';
 
-const EditablePage = ({ pageId, fetchedBlocks, err }) => {
+const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
     const navigate = useNavigate();
     const [pages, setPages] = useOutletContext();
-
     const [title, setTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(pageId)].title);
-    const [blocks, setBlocks] = useState(fetchedBlocks);
 
     const [selectIndex, setSelectedIndex] = useState(-1);
 
@@ -36,11 +34,6 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
         setSelectedIndex(-1);
     }, [pageId]);
 
-    // Handling block updates
-    useEffect(() => {
-        setBlocks(fetchedBlocks);
-    }, [fetchedBlocks]);
-
     const updateTitleOnServer = async () => {
         try {
             const pageIndex = pages.map((p) => p.pageId).indexOf(pageId);
@@ -48,9 +41,6 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
 
             await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdateTitle', {
                 method: 'PUT',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
                 headers: {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
@@ -79,9 +69,6 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
 
             await fetch('http://localhost:' + configData.APIPort + '/api/Note/AddBlock', {
                 method: 'POST',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
                 headers: {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
@@ -112,9 +99,6 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
 
             await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdateBlock', {
                 method: 'PUT',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
                 headers: {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
@@ -141,14 +125,10 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
 
     const deleteBlockServer = async (blockId) => {
         try {
-            const pageIndex = pages.map((p) => p.pageId).indexOf(pageId);
             let bearer = 'Bearer ' + localStorage.getItem('token');
 
             await fetch('http://localhost:' + configData.APIPort + `/api/Note/RemoveBlock/${blockId}`, {
                 method: 'DELETE',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
                 headers: {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
@@ -247,7 +227,7 @@ const EditablePage = ({ pageId, fetchedBlocks, err }) => {
         updatedBlocks.splice(destination.index - 1, 0, removedBlocks[0]);
         setBlocks(updatedBlocks);
     };
-    
+
     return (
         !localStorage.getItem('token') ? <Navigate to="/login"/> :
         <>

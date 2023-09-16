@@ -215,13 +215,13 @@ class EditableBlock extends React.Component {
                     actions={{ deleteBlock: () => this.props.deleteBlock({ id: this.props.id }) }}
                 />
             )}
-            <Draggable draggableId={this.props.id} index={this.props.position}>
+            <Draggable key={this.props.id} draggableId={this.props.id} index={this.props.position}>
                 {(provided, snapshot) => (
-                    <div ref={provided.innerRef} className={styles.draggable} {...provided.draggableProps}> 
+                    <div ref={provided.innerRef} className={styles.draggable} {...provided.draggableProps} style={!snapshot.isDropAnimating ? provided.draggableProps.style : { ...provided.draggableProps.style, transitionDuration: '0.01s' }}> 
                     <span role="button" tabIndex="0" className={styles.dragHandle} onClick={this.handleDragHandleClick} {...provided.dragHandleProps}>
                         <i className="fa fa-bars" alt="Icon"/>
                     </span>
-                    {this.state.tag !== "img" && (
+                    {
                         React.createElement(this.state.tag, {
                             ref: this.contentEditable,
                             "data-position": this.props.position,
@@ -237,7 +237,7 @@ class EditableBlock extends React.Component {
                             dangerouslySetInnerHTML: { __html: this.state.htmlInput },
                             className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null, snapshot.isDragging ? styles.isDragging : null,].join(" "),
                         })
-                    )}
+                    }
                     </div>
                 )}
             </Draggable>
