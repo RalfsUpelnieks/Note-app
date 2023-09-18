@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { matchSorter } from "match-sorter";
+import menuList from "../utils/MenuList"
 
 import styles from "../stylesheets/actionMenu.module.css"
 
@@ -13,36 +14,12 @@ interface ActionProps {
         y?: number;
     }
     closeMenu(): void
-    handleSelection(tag: string): void
+    handleSelection(id: string): void
     actions: DeleteAction
 }
 
-const tags = [
-    {
-        id: "page-title",
-        tag: "h1",
-        label: "Page Title",
-    },{
-        id: "heading",
-        tag: "h2",
-        label: "Heading",
-    },{
-        id: "subheading",
-        tag: "h3",
-        label: "Subheading",
-    },{
-        id: "paragraph",
-        tag: "p",
-        label: "Paragraph",
-    },{
-        id: "image",
-        tag: "img",
-        label: "Image",
-    },
-];
-
 function ActionMenu({ position, closeMenu, handleSelection, actions }: ActionProps) {
-    const [tagList, setTagList] = useState(tags);
+    const [tagList, setTagList] = useState(menuList);
     const [selectedTag, setSelectedTag] = useState(0);
     const [command, setCommand] = useState("");
 
@@ -52,7 +29,7 @@ function ActionMenu({ position, closeMenu, handleSelection, actions }: ActionPro
 
     // Filter tagList based on given command
     useEffect(() => {
-        setTagList(matchSorter(tags, command, { keys: ["tag"] }));
+        setTagList(matchSorter(menuList, command, { keys: ["tag"] }));
     }, [command]);
 
     // Attach listener to allow tag selection via keyboard
@@ -60,7 +37,7 @@ function ActionMenu({ position, closeMenu, handleSelection, actions }: ActionPro
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                handleSelection(tagList[selectedTag].tag);
+                handleSelection(tagList[selectedTag].id);
             } else if (e.key === "Tab" || e.key === "ArrowDown") {
                 e.preventDefault();
                 const newSelectedTag =
@@ -94,11 +71,10 @@ function ActionMenu({ position, closeMenu, handleSelection, actions }: ActionPro
                     return (
                         <div 
                             key={key}
-                            data-tag={tag.tag}
                             className={tagList.indexOf(tag) === selectedTag ? [styles.item, styles.selectedTag].join(" ") : styles.item}
                             role="button"
                             tabIndex={0}
-                            onClick={() => handleSelection(tag.tag)}
+                            onClick={() => handleSelection(tag.id)}
                         >
                             {tag.label}
                         </div>

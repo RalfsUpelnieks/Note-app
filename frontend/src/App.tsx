@@ -1,4 +1,4 @@
-import React, { useState}  from 'react';
+import React, { useState }  from 'react';
 import configData from './config.json'
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Login from './components/login';

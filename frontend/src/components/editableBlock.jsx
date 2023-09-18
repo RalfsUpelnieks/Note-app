@@ -4,6 +4,7 @@ import { Draggable } from "react-beautiful-dnd";
 import styles from '../stylesheets/Block.module.css'
 import ActionMenu from "./actionMenu";
 import { setCaretToEnd, getCaretCoordinates, getSelection } from "../utils/caretControl";
+import menuList from "../utils/MenuList"
 
 const CMD_KEY = "/";
 
@@ -20,14 +21,11 @@ class EditableBlock extends React.Component {
         this.closeActionMenu = this.closeActionMenu.bind(this);
         this.handleTagSelection = this.handleTagSelection.bind(this);
         this.calculateActionMenuPosition = this.calculateActionMenuPosition.bind(this);
-        this.contentEditable = React.createRef();
         this.fileInput = null;
         this.state = {
             htmlBackup: null,
-            html: "",
-            htmlInput: "",
-            tag: "p",
-            uniqueData: "",
+            properties: {"text": ""},
+            type: "p",
             placeholder: "Press '/' for commands",
             isTyping: false,
             actionMenuOpen: false,
@@ -38,10 +36,8 @@ class EditableBlock extends React.Component {
     componentDidMount() {
         this.setState({
             ...this.state,
-            html: this.props.html,
-            htmlInput: this.props.html,
-            tag: this.props.tag,
-            uniqueData: this.props.uniqueData,
+            properties: this.props.properties,
+            type: this.props.type,
         });
     }
 
@@ -51,16 +47,14 @@ class EditableBlock extends React.Component {
         // 2. user changed the tag
         // 3. user changed the unique data changed
         const stoppedTyping = prevState.isTyping && !this.state.isTyping;
-        const htmlChanged = this.props.html !== this.state.html;
-        const tagChanged = this.props.tag !== this.state.tag;
-        const uniqueDataChanged = this.props.uniqueData !== this.state.uniqueData;
-        if ((stoppedTyping && htmlChanged) || tagChanged || uniqueDataChanged) {
+        const propertiesChanged = this.props.properties !== this.state.properties;
+        const tagChanged = this.props.type !== this.state.type;
+        if ((stoppedTyping && propertiesChanged) || tagChanged) {
             clearTimeout(this.timer);
             this.props.updateBlock({
                 id: this.props.id,
-                html: this.state.html,
-                tag: this.state.tag,
-                uniqueData: this.state.uniqueData,
+                properties: this.state.properties,
+                type: this.state.type
             });
         }
     }
@@ -71,16 +65,15 @@ class EditableBlock extends React.Component {
     }
 
     handleChange(e) {
-        this.setState({ ...this.state, html: e.target.textContent });
+        this.setState({ ...this.state, properties: {text: e.target.textContent} });
 
         clearTimeout(this.timer);
-        if(this.props.html != e.target.textContent && this.state.html.charAt(this.state.html.length - 1) !== "/") {
+        if(this.props.properties != e.target.textContent && this.state.properties.text.charAt(this.state.properties.text.length - 1) !== "/") {
             this.timer = setTimeout(() => { 
                 this.props.updateBlock({
                     id: this.props.id,
-                    html: this.state.html,
-                    tag: this.state.tag,
-                    uniqueData: this.state.uniqueData,
+                    properties: this.state.properties,
+                    type: this.state.type
                 });
             }, 1200);
         }
@@ -99,8 +92,8 @@ class EditableBlock extends React.Component {
             // If the user starts to enter a command, we store a backup copy of
             // the html. We need this to restore a clean version of the content
             // after the content type selection was finished.
-            this.setState({ htmlBackup: this.state.htmlInput });
-        } else if (e.key === "Backspace" && !this.state.html) {
+            this.setState({ htmlBackup: e.target.textContent });
+        } else if (e.key === "Backspace" && !this.state.properties.text) {
             e.preventDefault();
             this.props.deleteBlock({ id: this.props.id });
         } else if (e.key === "Enter" && !window.event.shiftKey && !this.state.actionMenuOpen) {
@@ -110,10 +103,8 @@ class EditableBlock extends React.Component {
             e.preventDefault();
             this.props.addBlock({
                 id: this.props.id,
-                html: this.state.html,
-                tag: this.state.tag,
-                uniqueData: this.state.uniqueData,
-                ref: this.contentEditable.current,
+                properties: this.state.properties,
+                type: this.state.type
             });
         }
     }
@@ -156,11 +147,9 @@ class EditableBlock extends React.Component {
     }
 
     // Convert editableBlock shape based on the chosen tag
-    // i.e. img = display <div><input /><img /></div> (input picker is hidden)
-    // i.e. every other tag = <ContentEditable /> with its tag and html content
     handleTagSelection(tag) {
         if (tag === "img") {
-        this.setState({ ...this.state, tag: tag }, () => {
+        this.setState({ ...this.state, type: tag }, () => {
             this.closeActionMenu();
             if (this.fileInput) {
                 // Open the native file picker
@@ -170,21 +159,18 @@ class EditableBlock extends React.Component {
             // after adding an image
             this.props.addBlock({
                 id: this.props.id,
-                html: "",
-                tag: "p",
-                uniqueData: "",
-                ref: this.contentEditable.current,
+                properties: "",
+                type: "p"
             });
         });
         } else {
-            if (this.state.isTyping) {
+            if (this.state.htmlBackup !== null) {
                 // Update the tag and restore the html backup without the command
-                this.setState({ tag: tag, html: this.state.htmlBackup }, () => {
-                    setCaretToEnd(this.contentEditable.current);
+                    this.setState({ type: tag, properties: {text: this.state.htmlBackup} }, () => {
                     this.closeActionMenu();
                 });
             } else {
-                this.setState({ ...this.state, tag: tag }, () => {
+                this.setState({ ...this.state, type: tag }, () => {
                     this.closeActionMenu();
                 });
             }
@@ -222,20 +208,16 @@ class EditableBlock extends React.Component {
                         <i className="fa fa-bars" alt="Icon"/>
                     </span>
                     {
-                        React.createElement(this.state.tag, {
-                            ref: this.contentEditable,
-                            "data-position": this.props.position,
-                            
+                        React.createElement(menuList.find((element) => element.id == this.state.type).tag, {
+                            properties: this.props.properties,
+                            position: this.props.position,
                             onInput: this.handleChange,
                             onFocus: this.handleFocus,
                             onBlur: this.handleBlur,
                             onKeyDown: this.handleKeyDown,
                             onKeyUp: this.handleKeyUp,
-                            contentEditable: true,
-                            placeholder: this.state.placeholder,
-
-                            dangerouslySetInnerHTML: { __html: this.state.htmlInput },
-                            className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null, snapshot.isDragging ? styles.isDragging : null,].join(" "),
+                            saveProperties: this.saveProperties,
+                            className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null].join(" "),
                         })
                     }
                     </div>

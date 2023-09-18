@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import EditablePage from './editablePage';
 import configData from '../config.json'
 
-
 function NotePage({pages, navigate}: any) {
     const params = useParams();
     const [blocks, setBlocks] = useState([]);
@@ -22,6 +21,7 @@ function NotePage({pages, navigate}: any) {
                 if (response.ok) {
                     response.json().then(data => { 
                         console.log("Get block data from server");
+                        data.forEach(element => element.properties = JSON.parse(element.properties));
                         setBlocks(data);
                     });
                 } else if (response.status === 401) {

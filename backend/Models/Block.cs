@@ -6,12 +6,10 @@ namespace backend.Models {
         [Key, StringLength(24)]
         public string blockId { get; set; } = null!;
 
-        [Required, StringLength(20)]
-        public string tag { get; set; } = null!;
+        [Required, StringLength(30)]
+        public string type { get; set; } = null!;
 
-        public string html { get; set; } = null!;
-
-        public string uniqueData { get; set; } = null!;
+        public string properties { get; set; } = null!;
 
         [Required]
         public int position { get; set; }

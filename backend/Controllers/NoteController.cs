@@ -60,9 +60,8 @@ namespace backend.Controllers {
                     .OrderBy(p => p.position)
                     .Select(results => new BlockGetData {
                         blockId = results.blockId,
-                        tag = results.tag,
-                        html = results.html,
-                        uniqueData = results.uniqueData
+                        type = results.type,
+                        properties = results.properties
                     })
                     .ToListAsync();
             } else {
@@ -107,9 +106,8 @@ namespace backend.Controllers {
 
                 var block = new Block {
                     blockId = data.blockId,
-                    tag = data.tag,
-                    html = data.html,
-                    uniqueData = data.uniqueData,
+                    type = data.type,
+                    properties = data.properties,
                     position = data.position,
                     pageId = data.pageId
                 };
@@ -171,9 +169,8 @@ namespace backend.Controllers {
 
                     block.position = data.position;
                 }
-                block.tag = data.tag;
-                block.html = data.html;
-                block.uniqueData = data.uniqueData;
+                block.type = data.type;
+                block.properties = data.properties;
 
                 await _context.SaveChangesAsync();
                 return Ok();

@@ -73,12 +73,10 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({blockId: block.blockId, tag: block.tag, html: block.html, uniqueData: block.uniqueData, position: position, pageId: pageId })
+                body: JSON.stringify({blockId: block.blockId, type: block.type, properties: JSON.stringify(block.properties), position: position, pageId: pageId })
             }).then(response => {
                 if (response.ok) {
                     console.log("New block added to server");
-                    console.log(block)
-                    console.log(position)
                     return true;
                 } else if (response.status === 401) {
                     localStorage.removeItem('token');
@@ -103,12 +101,10 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({blockId: block.blockId, tag: block.tag, html: block.html, uniqueData: block.uniqueData, position: position, pageId: pageId })
+                body: JSON.stringify({blockId: block.blockId, type: block.type, properties: JSON.stringify(block.properties), position: position, pageId: pageId })
             }).then(response => {
                 if (response.ok) {
                     console.log("Block updated");
-                    console.log(block)
-                    console.log(position)
                     return true;
                 } else if (response.status === 401) {
                     localStorage.removeItem('token');
@@ -164,9 +160,8 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         const updatedBlocks = [...blocks];
         updatedBlocks[index] = {
             ...updatedBlocks[index],
-            tag: currentBlock.tag,
-            html: currentBlock.html,
-            uniqueData: currentBlock.uniqueData,
+            type: currentBlock.type,
+            properties: currentBlock.properties
         };
         updateBlockOnServer(updatedBlocks[index], index + 1);
         setBlocks(updatedBlocks);
@@ -175,28 +170,27 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
     const addBlockHandler = (currentBlock) => {
         const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
         const updatedBlocks = [...blocks];
-        const newBlock = { blockId: objectId(), tag: "p", html: "", uniqueData: "" };
+        const newBlock = { blockId: objectId(), type: "p", properties: {"text": ""}};
         addBlockOnServer(newBlock, index + 1);
         updatedBlocks.splice(index + 1, 0, newBlock);
         updatedBlocks[index] = {
             ...updatedBlocks[index],
-            tag: currentBlock.tag,
-            html: currentBlock.html,
-            uniqueData: currentBlock.uniqueData,
+            type: currentBlock.type,
+            properties: currentBlock.properties
         };
         setBlocks(updatedBlocks);
         setSelectedIndex(index + 2);
     };
 
     const addBlockToStartHandler = () => {
-        const newBlock = { blockId: objectId(), tag: "p", html: "", uniqueData: "" };
+        const newBlock = { blockId: objectId(), type: "p", properties: {"text": ""} };
         setBlocks([newBlock, ...blocks]);
         addBlockOnServer(newBlock, 1);
         setSelectedIndex(1)
     };
 
     const addBlockToEndHandler = () => {
-        const newBlock = { blockId: objectId(), tag: "p", html: "", uniqueData: "" };
+        const newBlock = { blockId: objectId(), type: "p", properties: {"text": ""} };
         addBlockOnServer(newBlock, blocks.length + 1);
         setBlocks([...blocks, newBlock]);
         setSelectedIndex(blocks.length + 1);
@@ -250,9 +244,8 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
                             key={block.blockId}
                             position={position}
                             id={block.blockId}
-                            tag={block.tag}
-                            html={block.html}
-                            uniqueData={block.uniqueData}
+                            type={block.type}
+                            properties={block.properties}
                             pageId={pageId}
                             addBlock={addBlockHandler}
                             deleteBlock={deleteBlockHandler}
