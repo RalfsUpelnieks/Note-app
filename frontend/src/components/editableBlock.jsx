@@ -211,12 +211,12 @@ class EditableBlock extends React.Component {
                         React.createElement(menuList.find((element) => element.id == this.state.type).tag, {
                             properties: this.props.properties,
                             position: this.props.position,
+                            placeholder: this.state.placeholder,
                             onInput: this.handleChange,
                             onFocus: this.handleFocus,
                             onBlur: this.handleBlur,
                             onKeyDown: this.handleKeyDown,
                             onKeyUp: this.handleKeyUp,
-                            saveProperties: this.saveProperties,
                             className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null].join(" "),
                         })
                     }
