@@ -74,12 +74,12 @@ namespace backend.Controllers {
             if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
                 return Ok(new {
-                    token = CreateToken(user),
-                    role = user.Role,
-                    username = user.Username,
-                    email = user.EmailAddress,
-                    name = user.Name,
-                    surname = user.Surname
+                    Token = CreateToken(user),
+                    Role = user.Role,
+                    Username = user.Username,
+                    EmailAddress = user.EmailAddress,
+                    Name = user.Name,
+                    Surname = user.Surname
                 });
             }
             else
