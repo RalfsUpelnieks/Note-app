@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 
 import styles from '../stylesheets/Block.module.css'
@@ -7,6 +7,7 @@ import { getCaretCoordinates } from "../utils/caretControl";
 import menuList from "../utils/MenuList"
 
 const CMD_KEY = "/";
+const PLACEHOLDER = `Press '${CMD_KEY}' for commands`;
 
 class EditableBlock extends React.Component {
     constructor(props) {
@@ -24,10 +25,9 @@ class EditableBlock extends React.Component {
         this.calculateActionMenuPosition = this.calculateActionMenuPosition.bind(this);
         this.fileInput = null;
         this.state = {
-            properties: {"text": ""},
-            startingProperties: {"text": ""},
-            type: "p",
-            placeholder: "Press '/' for commands",
+            properties: this.props.properties,
+            startingProperties: this.props.properties,
+            type: this.props.type,
             isTyping: false,
             actionMenuOpen: false,
             actionMenuPosition: { x: null, y: null,},
@@ -208,7 +208,7 @@ class EditableBlock extends React.Component {
                             startingProperties: this.state.startingProperties,
                             properties: this.state.properties,
                             position: this.props.position,
-                            placeholder: this.state.placeholder,
+                            placeholder: PLACEHOLDER,
                             onInput: this.handleChange,
                             onPropertyChange: this.handlePropertyChange,
                             onFocus: this.handleFocus,
