@@ -11,33 +11,17 @@ class RenameBlock extends React.Component {
         this.inputValue = this.props.html;
         this.timer = null;
         this.state = {
-            isTyping: false,
-            databaseHtml: ""
+            isTyping: false
         };
-    }
-
-    componentDidMount() {
-        this.setState({
-            ...this.state,
-            databaseHtml: this.props.html
-        });
     }
 
     componentDidUpdate(prevProps, prevState) {
         const stoppedTyping = prevState.isTyping && !this.state.isTyping;
-        const htmlChanged = this.state.databaseHtml != this.inputValue;
+        const htmlChanged = this.props.html != this.inputValue;
 
-        const notTyping = !prevState.isTyping && !this.state.isTyping;
-        const propHtmlChanged = this.props.html != this.state.databaseHtml;
         if (stoppedTyping && htmlChanged) {
             clearTimeout(this.timer);
             this.props.updateTitle({html: this.inputValue});
-            this.setState({ ...this.state, databaseHtml: this.inputValue}); 
-        } else if (notTyping && propHtmlChanged) {
-            this.setState({
-                ...this.state,
-                databaseHtml: this.props.html
-            });
         }
     }
 
@@ -50,10 +34,9 @@ class RenameBlock extends React.Component {
         this.props.setPages(updatedPages);
 
         clearTimeout(this.timer);
-        if(this.props.html != e.target.textContent) {
+        if(this.props.html != this.inputValue) {
             this.timer = setTimeout(() => { 
-                this.props.updateTitle({html: e.target.textContent});
-                this.setState({ ...this.state, databaseHtml: this.inputValue }); 
+                this.props.updateTitle({html: this.inputValue});
             }, 1200);
         }
     }
