@@ -160,7 +160,7 @@ class EditableBlock extends React.Component {
     // Convert editableBlock shape based on the chosen tag
     handleTagSelection(tag) {
         // Assigning default element properties
-        var newProperties = menuList.find((element) => element.id == tag).properties;
+        var newProperties = { ...menuList.find((element) => element.id == tag).properties };
 
         for(let p in newProperties){
             if(this.state.properties[p]){
