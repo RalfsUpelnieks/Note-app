@@ -46,6 +46,6 @@
 }
   
 .selectedTag {
-    background: var(tertiary);
+    background: rgb(224, 224, 224);
     border-radius: .5rem;
 }

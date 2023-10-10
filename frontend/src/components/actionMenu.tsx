@@ -80,7 +80,7 @@ function ActionMenu({ position, closeMenu, handleSelection, actions }: ActionPro
                         </div>
                     );
                 })}
-                <div className={[styles.item, styles.selectedTag].join(" ")} style={ Object.assign({color: "red"}, {paddingLeft: "6px"})} role="button" tabIndex={0} onClick={() => actions.deleteBlock()}>
+                <div className={styles.item} style={ Object.assign({color: "red"}, {paddingLeft: "6px"})} role="button" tabIndex={0} onClick={() => actions.deleteBlock()}>
                     <i className="fa fa-trash " /><span style={{marginLeft: "6px"}}>delete</span>
                 </div>
             </div>

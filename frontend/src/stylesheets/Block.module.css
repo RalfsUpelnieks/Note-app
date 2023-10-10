@@ -65,26 +65,12 @@
     align-self: center;
     padding: 0.25rem; 
     margin: 0.25rem;
-
 }
 
 .dragHandle i {
     display: block;
     opacity: 0.4;
 }
-
-/* .image {
-  display: inline-block;
-  width: calc(100% - 1rem);
-  padding: 0.25rem;
-}
-
-.image i {
-    display: block;
-    max-height: 600px;
-    max-width: 100%;
-    margin: 0 auto;
-} */
 
 .blockSelected.image {
     opacity: 0.75;

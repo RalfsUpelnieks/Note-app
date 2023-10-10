@@ -125,20 +125,22 @@ class EditableBlock extends React.Component {
     // the calculation of the caret coordinates does not work properly.
     handleKeyUp(e) {
         if (e.key === CMD_KEY) {
-            this.openActionMenu();
+            const coordinates = this.calculateActionMenuPosition();
+            this.openActionMenu(coordinates);
         }
     }
 
     handleDragHandleClick(e) {
-        const dragHandle = e.target;
-        this.openActionMenu(dragHandle, "Drag_Handle");
+        window.getSelection().removeAllRanges();
+
+        const coordinates = this.calculateActionMenuPosition(e.target);
+        this.openActionMenu(coordinates);
     }
 
-    openActionMenu() {
-        const { x, y } = this.calculateActionMenuPosition();
+    openActionMenu(cord) {
         this.setState({
             ...this.state,
-            actionMenuPosition: { x: x, y: y },
+            actionMenuPosition: { x: cord.x, y: cord.y },
             actionMenuOpen: true,
         });
         // Add listener asynchronously to avoid conflicts with
