@@ -61,6 +61,7 @@ class RenameBlock extends React.Component {
             <div className={styles.draggable}>
                 <h1 dangerouslySetInnerHTML={{__html: this.props.html}}
                     key={this.props.pageId}
+                    data-position={0}
                     onInput={this.handleChange}
                     onFocus={this.handleFocus}
                     onBlur={this.handleBlur} 
