@@ -4,19 +4,19 @@ import Subheading from "../components/editableComp/subheading";
 import Paragraph from "../components/editableComp/paragraph";
 import checklist from "../components/editableComp/checklist"
 
-const menuList = [
+const blockList = [
     {
-        id: "page-title",
+        id: "h1",
         tag: PageTitle,
         properties: {"text": ""},
         label: "Page Title",
     },{
-        id: "heading",
+        id: "h2",
         tag: Heading,
         properties: {"text": ""},
         label: "Heading",
     },{
-        id: "subheading",
+        id: "h3",
         tag: Subheading,
         properties: {"text": ""},
         label: "Subheading",
@@ -33,4 +33,4 @@ const menuList = [
     },
 ];
 
-export default menuList;
+export default blockList;

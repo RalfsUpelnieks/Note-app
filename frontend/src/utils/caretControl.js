@@ -40,4 +40,3 @@ export const getSelection = (element) => {
     }
     return { selectionStart, selectionEnd };
 };
-

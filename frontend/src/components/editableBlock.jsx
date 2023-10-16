@@ -4,7 +4,7 @@ import { Draggable } from "react-beautiful-dnd";
 import styles from '../stylesheets/Block.module.css'
 import ActionMenu from "./actionMenu";
 import { getCaretCoordinates } from "../utils/caretControl";
-import menuList from "../utils/MenuList"
+import menuList from "../utils/BlockList"
 
 const CMD_KEY = "/";
 const PLACEHOLDER = `Press '${CMD_KEY}' for commands`;
@@ -23,15 +23,13 @@ class EditableBlock extends React.Component {
         this.closeActionMenu = this.closeActionMenu.bind(this);
         this.handleTagSelection = this.handleTagSelection.bind(this);
         this.calculateActionMenuPosition = this.calculateActionMenuPosition.bind(this);
-        this.fileInput = null;
         this.state = {
             properties: this.props.properties,
             startingProperties: this.props.properties,
             type: this.props.type,
             isTyping: false,
             actionMenuOpen: false,
-            actionMenuPosition: { x: null, y: null,},
-            actionMenuCommand: ""
+            actionMenuPosition: { x: null, y: null,}
         };
     }
 
@@ -82,16 +80,18 @@ class EditableBlock extends React.Component {
     }
 
     handlePropertyChange(property, value){
-        const updatedProperties = {...this.state.properties, [property]: value}
+        if(this.state.properties[property] !== undefined ){
+            const updatedProperties = {...this.state.properties, [property]: value}
 
-        this.setState({ ...this.state, properties: updatedProperties });
-
-        if(this.props.properties.property != updatedProperties){
-            this.props.updateBlock({
-                id: this.props.id,
-                properties: updatedProperties,
-                type: this.state.type
-            });
+            this.setState({ ...this.state, properties: updatedProperties });
+    
+            if(this.props.properties.property != updatedProperties){
+                this.props.updateBlock({
+                    id: this.props.id,
+                    properties: updatedProperties,
+                    type: this.state.type
+                });
+            }
         }
     }
 
@@ -104,7 +104,7 @@ class EditableBlock extends React.Component {
     }
 
     handleKeyDown(e) {
-        if (e.key === "Backspace" && !this.state.properties.text) {
+        if (e.key === "Backspace" && !this.state.properties.text){
             e.preventDefault();
             clearTimeout(this.timer);
             this.props.deleteBlock({ id: this.props.id });
@@ -118,7 +118,8 @@ class EditableBlock extends React.Component {
                 properties: this.state.properties,
                 type: this.state.type
             });
-        }
+        
+        } 
     }
 
     // The openTagSelectorMenu function needs to be invoked on key up. Otherwise
@@ -196,6 +197,7 @@ class EditableBlock extends React.Component {
                     position={this.state.actionMenuPosition}
                     closeMenu={this.closeActionMenu}
                     handleSelection={this.handleTagSelection}
+                    handlePropertyChange={this.handlePropertyChange}
                     actions={{ deleteBlock: () => this.props.deleteBlock({ id: this.props.id }) }}
                 />
             )}
