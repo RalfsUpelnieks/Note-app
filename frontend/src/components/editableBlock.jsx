@@ -125,7 +125,6 @@ class EditableBlock extends React.Component {
         } else if (this.keysPressed["Control"] && e.key == " ") {
             e.preventDefault();
             const coordinates = this.calculateActionMenuPosition();
-            console.log(coordinates)
             this.openActionMenu(coordinates);
             
             delete this.keysPressed["Control"];

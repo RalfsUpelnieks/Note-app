@@ -5,6 +5,7 @@ export const setCaretToEnd = (element) => {
     range.collapse(false);
     selection.removeAllRanges();
     selection.addRange(range);
+    element.focus();
 };
 
 export const getCaretCoordinates = (fromStart = true) => {
