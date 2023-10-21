@@ -5,7 +5,6 @@ export const setCaretToEnd = (element) => {
     range.collapse(false);
     selection.removeAllRanges();
     selection.addRange(range);
-    element.focus();
 };
 
 export const getCaretCoordinates = (fromStart = true) => {
@@ -14,9 +13,16 @@ export const getCaretCoordinates = (fromStart = true) => {
     if (isSupported) {
       const selection = window.getSelection();
       if (selection.rangeCount !== 0) {
-        const range = selection.getRangeAt(0).cloneRange();
-        range.collapse(fromStart ? true : false);
-        const rect = range.getClientRects()[0];
+        const range = selection.getRangeAt(0);
+        let rect = range.getBoundingClientRect();
+        // For some reason if you set the caret using addRange() by calling the setCaretToEnd method
+        // the range.getBoundingClientRect returns 0, adding temp zero width space fixes the problem
+        if (rect.top===0 && rect.left===0) {
+          let tmpNode = document.createTextNode('\ufeff');
+          range.insertNode(tmpNode);
+          rect = range.getBoundingClientRect();
+          tmpNode.remove();
+        }
         if (rect) {
           x = rect.left;
           y = rect.top;
@@ -29,7 +35,6 @@ export const getCaretCoordinates = (fromStart = true) => {
 export const getSelection = (element) => {
     let selectionStart, selectionEnd;
     const isSupported = typeof window.getSelection !== "undefined";
-    console.log(isSupported);
     if (isSupported) {
       const range = window.getSelection().getRangeAt(0);
       const preSelectionRange = range.cloneRange();

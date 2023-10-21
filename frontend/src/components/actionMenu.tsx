@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import blockList from "../utils/BlockList"
 import styles from "../stylesheets/actionMenu.module.css"
+import { setCaretToEnd } from "../utils/caretControl";
 
 interface DeleteAction {
     deleteBlock: () => void;
@@ -11,13 +12,14 @@ interface ActionProps {
         x?: number;
         y?: number;
     }
+    blockPosition: number
     closeMenu(): void
     handleSelection(id: string): void
     handlePropertyChange(property: string, value: string): void
     actions: DeleteAction
 }
 
-function ActionMenu({ position, closeMenu, handleSelection, handlePropertyChange, actions }: ActionProps) {
+function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handlePropertyChange, actions }: ActionProps) {
     const actionMenu = [
         {
             id: "delete",
@@ -32,7 +34,6 @@ function ActionMenu({ position, closeMenu, handleSelection, handlePropertyChange
     var menuItemList = menuList.flatMap((obj : any) => obj.menuItems);
 
     const [selectedTag, setSelectedTag] = useState(0);
-    const [commandPosition, setCommandPosition] = useState(0);
     const [command, setCommand] = useState("");
 
     // Filter tagList based on given command
@@ -43,20 +44,20 @@ function ActionMenu({ position, closeMenu, handleSelection, handlePropertyChange
             var list : any = [];
             const search = command.toLowerCase();
 
-            for (const category in menu){
-                if(menu[category].title.toLowerCase().includes(search)){
-                    list.push(menu[category]);
+            for (const category of menu){
+                if(category.title.toLowerCase().includes(search)){
+                    list.push(category);
                 } else {
                     var items : any = [];
                     
-                    for (const itemInCategory in menu[category].menuItems){
-                        if(menu[category].menuItems[itemInCategory].id.toLowerCase().includes(search) || menu[category].menuItems[itemInCategory].label.toLowerCase().includes(search)){
-                            items.push(menu[category].menuItems[itemInCategory]);
+                    for (const itemInCategory of category.menuItems){
+                        if(itemInCategory.id.toLowerCase().includes(search) || itemInCategory.label.toLowerCase().includes(search)){
+                            items.push(itemInCategory);
                         }
                     }
 
                     if(items.length !== 0){
-                        list.push({title: menu[category].title, menuItems: items})
+                        list.push({title: category.title, menuItems: items})
                     }
                 }
             }
@@ -70,10 +71,7 @@ function ActionMenu({ position, closeMenu, handleSelection, handlePropertyChange
     // Attach listener to allow tag selection via keyboard
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "/") {
-                setCommand("");
-                setCommandPosition(0);
-            } else if (e.key === "Enter") {
+            if (e.key === "Enter") {
                 e.preventDefault();
                 const menutime = (menuItemList[selectedTag] as any);
                 if(menutime.action){
@@ -82,12 +80,21 @@ function ActionMenu({ position, closeMenu, handleSelection, handlePropertyChange
                     handleSelection(menutime.id);
                 }
             } else if (e.key === "Backspace") {
-                if (command) {
-                    setCommand(command.slice(0, -1));
-                    setCommandPosition(commandPosition - 1);
-                } else {
+                if (!command) {
+                    const block = document.querySelector(`[data-position="${blockPosition}"]`);
+                    if (block) {
+                        setCaretToEnd(block);
+                    }
+                    
                     closeMenu();
                 }
+            } else if (e.key === "Escape") {
+                const block = document.querySelector(`[data-position="${blockPosition}"]`);
+                if (block) {
+                    setCaretToEnd(block);
+                }
+
+                closeMenu();
             } else if (e.key === "Tab" || e.key === "ArrowDown") {
                 e.preventDefault();
                 const newSelectedTag = selectedTag === menuItemList.length - 1 ? 0 : selectedTag + 1;
@@ -96,45 +103,22 @@ function ActionMenu({ position, closeMenu, handleSelection, handlePropertyChange
                 e.preventDefault();
                 const newSelectedTag = selectedTag === 0 ? menuItemList.length - 1 : selectedTag - 1;
                 setSelectedTag(newSelectedTag);
-            } else if (e.key === "ArrowLeft") {
-                setCommandPosition(commandPosition - 1);
-                if(commandPosition === 0){
-                    closeMenu();
-                } else {
-                    setCommandPosition(commandPosition - 1);
-                }
-            } else if (e.key === "ArrowRight") {
-                var sel = document.getSelection();
-
-                if(sel){
-                    var range = sel.getRangeAt(0);
-                    var textLength = range.commonAncestorContainer.textContent?.length;
-
-                    //if caret is not at the end
-                    if(textLength !== range.endOffset) {
-                        // if caret is going pass the command close the menu
-                        if (commandPosition >= command.length){
-                            closeMenu();
-                        }
-
-                        setCommandPosition(commandPosition + 1);
-                    }
-                }
-            } else if(e.key.length == 1) {
-                setCommand(command + e.key);
-                setCommandPosition(commandPosition + 1);
             }
-            console.log(commandPosition)
         };
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [menuList, selectedTag, commandPosition]);
+    }, [menuList, selectedTag]);
+
+    function handleChange(e) {
+        setCommand(e.target.value);
+    };
 
     return (
         <div className={styles.menuWrapper} style={{ top: position.y, left: position.x}}>
             <div className={styles.menu}>
+                <input className="w-[7.5rem] h-8 mx-auto mt-1 center" data-position="Search" placeholder="Search..." onChange={handleChange}></input>
                 {menuList.length !== 0 ? (
                     menuList.map((object) => {
                         return (

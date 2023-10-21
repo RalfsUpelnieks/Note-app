@@ -99,7 +99,7 @@ namespace backend.Controllers {
 
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.Now.AddMinutes(15), signingCredentials: cred);
+            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.Now.AddMinutes(60), signingCredentials: cred);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

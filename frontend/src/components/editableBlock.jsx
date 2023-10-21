@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
 import styles from '../stylesheets/Block.module.css'
 import ActionMenu from "./actionMenu";
-import { getCaretCoordinates } from "../utils/caretControl";
+import { getCaretCoordinates, setCaretToEnd } from "../utils/caretControl";
 import menuList from "../utils/BlockList"
 
-const CMD_KEY = "/";
-const PLACEHOLDER = `Press '${CMD_KEY}' for commands`;
+const PLACEHOLDER = `Press 'Control' + 'Space bar' for commands`;
 
 class EditableBlock extends React.Component {
     constructor(props) {
@@ -23,6 +22,8 @@ class EditableBlock extends React.Component {
         this.closeActionMenu = this.closeActionMenu.bind(this);
         this.handleTagSelection = this.handleTagSelection.bind(this);
         this.calculateActionMenuPosition = this.calculateActionMenuPosition.bind(this);
+        this.ActionMenuhandler = this.ActionMenuhandler.bind(this);
+        this.keysPressed = {};
         this.state = {
             properties: this.props.properties,
             startingProperties: this.props.properties,
@@ -61,7 +62,7 @@ class EditableBlock extends React.Component {
 
     componentWillUnmount() {
         // In case, the user deleted the block, we need to cleanup all listeners
-        document.removeEventListener("click", this.closeActionMenu, false);
+        document.removeEventListener("click", this.ActionMenuhandler, false);
     }
 
     handleChange(e) {
@@ -103,8 +104,9 @@ class EditableBlock extends React.Component {
         this.setState({ ...this.state, isTyping: false });
     }
 
+    
     handleKeyDown(e) {
-        if (e.key === "Backspace" && !this.state.properties.text){
+        if (e.key === "Backspace" && !this.state.properties.text) {
             e.preventDefault();
             clearTimeout(this.timer);
             this.props.deleteBlock({ id: this.props.id });
@@ -118,24 +120,31 @@ class EditableBlock extends React.Component {
                 properties: this.state.properties,
                 type: this.state.type
             });
-        
-        } 
+        } else if (e.key === "Control") {
+            this.keysPressed[e.key] = true;
+        } else if (this.keysPressed["Control"] && e.key == " ") {
+            e.preventDefault();
+            const coordinates = this.calculateActionMenuPosition();
+            console.log(coordinates)
+            this.openActionMenu(coordinates);
+            
+            delete this.keysPressed["Control"];
+        }
     }
 
-    // The openTagSelectorMenu function needs to be invoked on key up. Otherwise
-    // the calculation of the caret coordinates does not work properly.
     handleKeyUp(e) {
-        if (e.key === CMD_KEY) {
-            const coordinates = this.calculateActionMenuPosition();
-            this.openActionMenu(coordinates);
+        if (e.key === "Control") {
+            delete this.keysPressed[e.key];
         }
     }
 
     handleDragHandleClick(e) {
-        window.getSelection().removeAllRanges();
-
-        const coordinates = this.calculateActionMenuPosition(e.target);
-        this.openActionMenu(coordinates);
+        if(this.state.actionMenuOpen){
+            this.closeActionMenu()
+        } else {
+            const coordinates = this.calculateActionMenuPosition(e.target);
+            this.openActionMenu(coordinates);
+        }
     }
 
     openActionMenu(cord) {
@@ -144,10 +153,16 @@ class EditableBlock extends React.Component {
             actionMenuPosition: { x: cord.x, y: cord.y },
             actionMenuOpen: true,
         });
+
         // Add listener asynchronously to avoid conflicts with
         // the double click of the text selection
         setTimeout(() => {
-            document.addEventListener("click", this.closeActionMenu, false);
+            document.addEventListener("click", this.ActionMenuhandler, false);
+
+            const block = document.querySelector(`[data-position="Search"]`);
+            if (block) {
+                setCaretToEnd(block);
+            }
         }, 100);
     }
 
@@ -157,8 +172,15 @@ class EditableBlock extends React.Component {
             actionMenuPosition: { x: null, y: null },
             actionMenuOpen: false,
         });
-        document.removeEventListener("click", this.closeActionMenu, false);
+
+        document.removeEventListener("click", this.ActionMenuhandler, false);
     }
+
+    ActionMenuhandler = function(e){
+        if(e.target.getAttribute("data-position") !== "Search") {
+            this.closeActionMenu();
+        }
+    };
 
     // Convert editableBlock shape based on the chosen tag
     handleTagSelection(tag) {
@@ -176,15 +198,15 @@ class EditableBlock extends React.Component {
         });
     }
 
-    // If the user types the "/" command, the tag selector menu should be display above
+    // If the user types the "control + space bar" command, the tag selector menu should be display above
     // If it is triggered by the action menu, it should be positioned relatively to its initiator
     calculateActionMenuPosition(parent = null) {
         if(!parent) {
             const { x: caretLeft, y: caretTop } = getCaretCoordinates(true);
             return { x: caretLeft, y: caretTop + 22};
         } else {
-            const x = parent.offsetLeft - parent.scrollLeft + parent.clientLeft - 120;
-            const y = parent.offsetTop - parent.scrollTop + parent.clientTop - 70;
+            const x = parent.offsetLeft - parent.scrollLeft + parent.clientLeft - 130;
+            const y = parent.offsetTop - parent.scrollTop + parent.clientTop - 12;
             return { x: x, y: y };
         }
     }
@@ -195,6 +217,7 @@ class EditableBlock extends React.Component {
             {this.state.actionMenuOpen && (
                 <ActionMenu
                     position={this.state.actionMenuPosition}
+                    blockPosition={this.props.position}
                     closeMenu={this.closeActionMenu}
                     handleSelection={this.handleTagSelection}
                     handlePropertyChange={this.handlePropertyChange}
