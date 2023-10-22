@@ -115,6 +115,10 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
         setCommand(e.target.value);
     };
 
+    function changeSelectedTag(index: number){
+        setSelectedTag(index);
+    }
+
     return (
         <div className={styles.menuWrapper} style={{ top: position.y, left: position.x}}>
             <div className={styles.menu}>
@@ -126,7 +130,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
                                 <div className="px-2 py-1">{object.title}</div>
                                 {object.menuItems.map((tag, key) => {
                                     return (
-                                    <div key={key} className={menuItemList.indexOf(tag) === selectedTag ? [styles.item, styles.selectedTag].join(" ") : styles.item} role="button" tabIndex={0} onClick={tag.action ? tag.action : () => handleSelection(tag.id)}>
+                                    <div key={key} className={menuItemList.indexOf(tag) === selectedTag ? [styles.item, styles.selectedTag].join(" ") : styles.item} role="button" tabIndex={0} onMouseOver={() => changeSelectedTag(menuItemList.indexOf(tag))} onClick={tag.action ? tag.action : () => handleSelection(tag.id)}>
                                     {tag.label}
                                     </div>
                                     );
