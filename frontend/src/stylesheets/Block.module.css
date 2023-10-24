@@ -22,18 +22,7 @@
     overflow-wrap: break-word;
 }
 
-.block {
-    width: calc(100% - 2rem);
-    -webkit-user-select: text;
-    user-select: text;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    overflow-wrap: break-word;
-}
-
-.block:focus,
-.title:focus,
-.blockSelected {
+.title:focus {
     background: var(tertiary);
     outline: 0px solid transparent;
 }
@@ -63,25 +52,12 @@
     width: 1rem;
     height: 1rem;
     align-self: center;
-    padding: 0.25rem; 
-    margin: 0.25rem;
+    padding: 0.25rem;
 }
 
 .dragHandle i {
     display: block;
     opacity: 0.4;
-}
-
-.blockSelected.image {
-    opacity: 0.75;
-}
-
-.fileInputLabel {
-    display: block;
-    padding: 0.5rem 0.25rem;
-    color: #888888;
-    font-size: 0.875rem;
-    letter-spacing: 0.5px;
 }
 
 .addButton {

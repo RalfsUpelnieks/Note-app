@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Checklist(props: any){
 
     function handleClick(e){
