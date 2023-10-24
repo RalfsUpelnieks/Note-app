@@ -2,7 +2,9 @@ import PageTitle from "../components/editableComp/pageTitle";
 import Heading from "../components/editableComp/heading";
 import Subheading from "../components/editableComp/subheading";
 import Paragraph from "../components/editableComp/paragraph";
-import checklist from "../components/editableComp/checklist"
+import Checklist from "../components/editableComp/checklist";
+import VideoEmbed from "../components/editableComp/videoEmbed";
+import Divider from "../components/editableComp/divider";
 
 const blockList = [
     {
@@ -27,10 +29,20 @@ const blockList = [
         label: "Paragraph",
     },{
         id: "checklist",
-        tag: checklist,
+        tag: Checklist,
         properties: {"text": "", "checkbox": false},
         label: "Checklist",
-    },
+    },{
+        id: "videoEmbed",
+        tag: VideoEmbed,
+        properties: {"text": ""},
+        label: "videoEmbed"
+    },{
+        id: "divider",
+        tag: Divider,
+        properties: null,
+        label: "Divider"
+    }
 ];
 
 export default blockList;
