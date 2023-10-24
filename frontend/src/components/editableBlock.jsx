@@ -66,7 +66,7 @@ class EditableBlock extends React.Component {
     }
 
     handleChange(e) {
-        this.setState({ ...this.state, properties: {...this.state.properties, text: e.target.textContent} });
+        this.setState({ ...this.state, properties: {...this.state.properties, text: e.target.innerHTML} });
 
         clearTimeout(this.timer);
         if(this.props.properties != e.target.textContent) {
@@ -240,8 +240,7 @@ class EditableBlock extends React.Component {
                             onFocus: this.handleFocus,
                             onBlur: this.handleBlur,
                             onKeyDown: this.handleKeyDown,
-                            onKeyUp: this.handleKeyUp,
-                            className: [styles.block, this.state.isTyping || this.state.actionMenuOpen ? styles.blockSelected : null].join(" "),
+                            onKeyUp: this.handleKeyUp
                         })
                     }
                     </div>
