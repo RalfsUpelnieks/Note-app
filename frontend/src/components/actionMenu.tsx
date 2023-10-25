@@ -120,28 +120,26 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
     }
 
     return (
-        <div className={styles.menuWrapper} style={{ top: position.y, left: position.x}}>
-            <div className={styles.menu}>
-                <input className="w-[7.5rem] h-8 mx-auto mt-1 center" data-position="Search" placeholder="Search..." onChange={handleChange}></input>
-                {menuList.length !== 0 ? (
-                    menuList.map((object) => {
-                        return (
-                            <div key={object.title}>
-                                <div className="px-2 py-1">{object.title}</div>
-                                {object.menuItems.map((tag, key) => {
-                                    return (
-                                    <div key={key} className={menuItemList.indexOf(tag) === selectedTag ? [styles.item, styles.selectedTag].join(" ") : styles.item} role="button" tabIndex={0} onMouseOver={() => changeSelectedTag(menuItemList.indexOf(tag))} onClick={tag.action ? tag.action : () => handleSelection(tag.id)}>
-                                    {tag.label}
-                                    </div>
-                                    );
-                                })}
-                            </div>
-                        );
-                    })
-                ) : (
-                    <div className="px-2 py-1 text-gray-500">No results</div>
-                )}
-            </div>
+        <div className="absolute flex flex-col w-32 h-64 bg-white shadow-[rgba(0,0,0,0.16)_0px_10px_36px_0px,rgba(0,0,0,0.06)_0px_0px_0px_1px] rounded-lg overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>
+            <input className="w-11/12 h-8 mx-auto mt-1 center" data-position="Search" placeholder="Search..." onChange={handleChange}></input>
+            {menuList.length !== 0 ? (
+                menuList.map((object) => {
+                    return (
+                        <div key={object.title}>
+                            <div className="px-2 py-[0.20rem] font-lg font-semibold">{object.title}</div>
+                            {object.menuItems.map((tag, key) => {
+                                return (
+                                <div key={key} className={"px-4 py-2 hover:cursor-pointer" + (menuItemList.indexOf(tag) === selectedTag ? " bg-[rgb(228,228,228)]" : "")} role="button" tabIndex={0} onMouseOver={() => changeSelectedTag(menuItemList.indexOf(tag))} onClick={tag.action ? tag.action : () => handleSelection(tag.id)}>
+                                {tag.label}
+                                </div>
+                                );
+                            })}
+                        </div>
+                    );
+                })
+            ) : (
+                <div className="px-2 py-1 text-gray-500">No results</div>
+            )}
         </div>
     );
 };
