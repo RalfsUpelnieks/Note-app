@@ -101,8 +101,9 @@ namespace backend.Controllers {
             if (page is null) { return BadRequest(); }
 
             if (page.userId == user.Id) {
-                var blocksToUpdate = _context.blocks.Where(c => c.pageId == data.pageId).Where(c => c.position >= data.position).ToList();
-                blocksToUpdate.ForEach(a => a.position += 1);
+                _context.blocks.Where(c => c.pageId == data.pageId && c.position >= data.position)
+                    .ToList()
+                    .ForEach(a => a.position += 1);
 
                 var block = new Block {
                     blockId = data.blockId,
@@ -112,7 +113,6 @@ namespace backend.Controllers {
                     pageId = data.pageId
                 };
                 _context.blocks.Add(block);
-
 
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -219,6 +219,10 @@ namespace backend.Controllers {
 
             if (page.userId == user.Id)
             {
+                _context.blocks.Where(c => c.pageId == page.pageId && c.position > blocksToRemove.position)
+                .ToList()
+                .ForEach(a => a.position -= 1);
+
                 _context.blocks.Remove(blocksToRemove);
                 await _context.SaveChangesAsync();
                 return Ok();

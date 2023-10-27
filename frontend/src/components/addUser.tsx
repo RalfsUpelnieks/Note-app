@@ -19,10 +19,12 @@ function AddUser({setTabOpen, users}: AddUserProps) {
     const [isAdmin, setIsAdmin] = useState(false);
     const [errMsg, setErrMsg] = useState('');
 
-    async function registerUser(Name: string, Surname: string, Username: string, Email: string, Password: string, IsAdmin: boolean, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
+    async function registerUser(Name: string, Surname: string, Username: string, Email: string, Password: string, IsAdmin: boolean, setErrMsg: React.Dispatch<React.SetStateAction<string>>) {
+        let bearer = 'Bearer ' + localStorage.getItem('token');
+
         await fetch('http://localhost:' + configData.APIPort + '/api/Auth/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Authorization': bearer, 'Content-Type': 'application/json' },
             body: JSON.stringify({Name, Surname, Username, Email, Password, IsAdmin})
         })
         .then(response => {
