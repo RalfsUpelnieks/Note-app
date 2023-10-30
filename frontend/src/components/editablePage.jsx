@@ -6,7 +6,6 @@ import EditableBlock from "./editableBlock";
 import RenameBlock from "./renameBlock";
 import objectId from "../utils/objectId";
 import { setCaretToEnd } from "../utils/caretControl";
-import styles from "../stylesheets/Block.module.css";
 import configData from '../config.json';
 
 function EditablePage({ pageId, blocks, setBlocks, err }) {
@@ -235,7 +234,7 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
             />
             <DragDropContext onDragEnd={onDragEndHandler}>
                 <Droppable droppableId={pageId}>
-                    {(provided) => (
+                    {(provided, snapshot) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}>
                         {blocks.map((block) => {
                         const position = blocks.map((b) => b.blockId).indexOf(block.blockId) + 1;
@@ -247,6 +246,7 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
                             type={block.type}
                             properties={block.properties}
                             pageId={pageId}
+                            isDraggingOver={snapshot.isDraggingOver}
                             addBlock={addBlockHandler}
                             deleteBlock={deleteBlockHandler}
                             updateBlock={updateBlockHandler}/>
@@ -257,7 +257,7 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
                     )}
                 </Droppable>
             </DragDropContext>
-            <button className={styles.addButton} onClick={addBlockToEndHandler}><i className="fa fa-plus"></i></button>
+            <button className="w-full h-[22px] bg-neutral-100 border-none rounded text-base/4 text-neutral-400 opacity-0 hover:cursor-pointer hover:opacity-100" onClick={addBlockToEndHandler}><i className="fa fa-plus"></i></button>
         </>
     );
 };

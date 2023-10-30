@@ -1,7 +1,6 @@
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
-import styles from '../stylesheets/Block.module.css'
 import ActionMenu from "./actionMenu";
 import { getCaretCoordinates, setCaretToEnd } from "../utils/caretControl";
 import menuList from "../utils/BlockList"
@@ -225,24 +224,25 @@ class EditableBlock extends React.Component {
             )}
             <Draggable key={this.props.id} draggableId={this.props.id} index={this.props.position}>
                 {(provided, snapshot) => (
-                    <div ref={provided.innerRef} className={styles.draggable} {...provided.draggableProps} style={!snapshot.isDropAnimating ? provided.draggableProps.style : { ...provided.draggableProps.style, transitionDuration: '0.01s' }}> 
-                    <span role="button" tabIndex="0" className={styles.dragHandle} onClick={this.handleDragHandleClick} {...provided.dragHandleProps}>
-                        <i className="fa fa-bars" alt="Icon"/>
-                    </span>
-                    {
-                        React.createElement(menuList.find((element) => element.id == this.state.type).tag, {
-                            startingProperties: this.state.startingProperties,
-                            properties: this.state.properties,
-                            position: this.props.position,
-                            placeholder: PLACEHOLDER,
-                            onInput: this.handleChange,
-                            onPropertyChange: this.handlePropertyChange,
-                            onFocus: this.handleFocus,
-                            onBlur: this.handleBlur,
-                            onKeyDown: this.handleKeyDown,
-                            onKeyUp: this.handleKeyUp
-                        })
-                    }
+                    <div ref={provided.innerRef} className={"flex" + (this.props.isDraggingOver ? "" : " group")} {...provided.draggableProps} style={!snapshot.isDropAnimating ? provided.draggableProps.style : { ...provided.draggableProps.style, transitionDuration: '0.01s' }}> 
+                        <span role="button" tabIndex="0" className="self-center p-1 w-4 opacity-0 group-hover:opacity-100" onClick={this.handleDragHandleClick} {...provided.dragHandleProps}>
+                            <i className="fa fa-bars opacity-40 block" alt="Icon"/>
+                        </span>
+                        {
+                            React.createElement(menuList.find((element) => element.id == this.state.type).tag, {
+                                startingProperties: this.state.startingProperties,
+                                properties: this.state.properties,
+                                position: this.props.position,
+                                placeholder: PLACEHOLDER,
+                                isDragging: snapshot.isDragging,
+                                onInput: this.handleChange,
+                                onPropertyChange: this.handlePropertyChange,
+                                onFocus: this.handleFocus,
+                                onBlur: this.handleBlur,
+                                onKeyDown: this.handleKeyDown,
+                                onKeyUp: this.handleKeyUp
+                            })
+                        }
                     </div>
                 )}
             </Draggable>

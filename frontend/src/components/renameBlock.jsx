@@ -1,5 +1,4 @@
 import React from "react";
-import styles from '../stylesheets/Block.module.css'
 
 class RenameBlock extends React.Component {
     constructor(props) {
@@ -58,19 +57,17 @@ class RenameBlock extends React.Component {
 
     render() {
         return (
-            <div className={styles.draggable}>
-                <h1 dangerouslySetInnerHTML={{__html: this.props.html}}
-                    key={this.props.pageId}
-                    data-position={0}
-                    onInput={this.handleChange}
-                    onFocus={this.handleFocus}
-                    onBlur={this.handleBlur} 
-                    onKeyDown={this.handleKeyDown}
-                    placeholder="Untitled"
-                    contentEditable="true" 
-                    className={styles.title}
-                ></h1>
-            </div>
+            <h1 dangerouslySetInnerHTML={{__html: this.props.html}}
+                key={this.props.pageId}
+                data-position={0}
+                onInput={this.handleChange}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur} 
+                onKeyDown={this.handleKeyDown}
+                placeholder="Untitled"
+                contentEditable="true" 
+                className="w-[calc(100%-2rem)] my-1 break-words cursor-text empty:before:content-[attr(placeholder)] empty:before:text-neutral-400 focus:outline-none"
+            ></h1>
         );
     }
 }
