@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Link, NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import styles from '../stylesheets/Layout.module.css';
 import configData from '../config.json'

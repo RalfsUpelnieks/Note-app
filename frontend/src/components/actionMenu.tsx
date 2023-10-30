@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import blockList from "../utils/BlockList"
-import styles from "../stylesheets/actionMenu.module.css"
+import blockList from "../utils/BlockList";
 import { setCaretToEnd } from "../utils/caretControl";
 
 interface DeleteAction {
@@ -81,7 +80,8 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
                 }
             } else if (e.key === "Backspace") {
                 if (!command) {
-                    const block = document.querySelector(`[data-position="${blockPosition}"]`);
+                    e.preventDefault();
+                    const block = (document.querySelector(`[data-position="${blockPosition}"]`) as HTMLElement);
                     if (block) {
                         setCaretToEnd(block);
                     }
@@ -89,7 +89,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
                     closeMenu();
                 }
             } else if (e.key === "Escape") {
-                const block = document.querySelector(`[data-position="${blockPosition}"]`);
+                const block = (document.querySelector(`[data-position="${blockPosition}"]`) as HTMLElement);
                 if (block) {
                     setCaretToEnd(block);
                 }

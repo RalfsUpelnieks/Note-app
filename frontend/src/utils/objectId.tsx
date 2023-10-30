@@ -1,4 +1,4 @@
-const objectId = () => {
+function objectId () {
     const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
     return (
       timestamp +
@@ -10,4 +10,4 @@ const objectId = () => {
     );
   };
   
-  export default objectId;
+export default objectId;

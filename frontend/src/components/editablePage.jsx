@@ -9,7 +9,7 @@ import { setCaretToEnd } from "../utils/caretControl";
 import styles from "../stylesheets/Block.module.css";
 import configData from '../config.json';
 
-const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
+function EditablePage({ pageId, blocks, setBlocks, err }) {
     const navigate = useNavigate();
     const [pages, setPages] = useOutletContext();
     const [title, setTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(pageId)].title);
@@ -34,7 +34,7 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         setSelectedIndex(-1);
     }, [pageId]);
 
-    const updateTitleOnServer = async () => {
+    async function updateTitleOnServer() {
         try {
             const pageIndex = pages.map((p) => p.pageId).indexOf(pageId);
             let bearer = 'Bearer ' + localStorage.getItem('token');
@@ -63,7 +63,7 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         }
     };
 
-    const addBlockOnServer = async (block, position) => {
+    async function addBlockOnServer(block, position) {
         try {
             let bearer = 'Bearer ' + localStorage.getItem('token');
 
@@ -91,7 +91,7 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         }
     };
 
-    const updateBlockOnServer = async (block, position) => {
+    async function updateBlockOnServer(block, position) {
         try {
             let bearer = 'Bearer ' + localStorage.getItem('token');
 
@@ -119,7 +119,7 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         }
     };
 
-    const deleteBlockServer = async (blockId) => {
+    async function deleteBlockServer(blockId) {
         try {
             let bearer = 'Bearer ' + localStorage.getItem('token');
 
@@ -155,7 +155,7 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         );
     }
 
-    const updateBlockHandler = (currentBlock) => {
+    function updateBlockHandler(currentBlock) {
         const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
         const updatedBlocks = [...blocks];
         updatedBlocks[index] = {
@@ -167,7 +167,7 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         setBlocks(updatedBlocks);
     };
 
-    const addBlockHandler = (currentBlock) => {
+    function addBlockHandler(currentBlock) {
         const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
         const updatedBlocks = [...blocks];
         const newBlock = { blockId: objectId(), type: "p", properties: {"text": ""}};
@@ -182,21 +182,21 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         setSelectedIndex(index + 2);
     };
 
-    const addBlockToStartHandler = () => {
+    function addBlockToStartHandler() {
         const newBlock = { blockId: objectId(), type: "p", properties: {"text": ""} };
         setBlocks([newBlock, ...blocks]);
         addBlockOnServer(newBlock, 1);
         setSelectedIndex(1)
     };
 
-    const addBlockToEndHandler = () => {
+    function addBlockToEndHandler() {
         const newBlock = { blockId: objectId(), type: "p", properties: {"text": ""} };
         addBlockOnServer(newBlock, blocks.length + 1);
         setBlocks([...blocks, newBlock]);
         setSelectedIndex(blocks.length + 1);
     };
 
-    const deleteBlockHandler = (currentBlock) => {
+    function deleteBlockHandler(currentBlock) {
         const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
         const updatedBlocks = [...blocks];
         updatedBlocks.splice(index, 1);
@@ -205,7 +205,7 @@ const EditablePage = ({ pageId, blocks, setBlocks, err }) => {
         setSelectedIndex(index);
     };
 
-    const onDragEndHandler = (result) => {
+    function onDragEndHandler(result) {
         const { destination, source } = result;
 
         // If we don't have a destination (due to dropping outside the droppable)

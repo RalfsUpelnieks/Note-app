@@ -1,19 +1,22 @@
-export const setCaretToEnd = (element) => {
+export function setCaretToEnd(element: HTMLElement) {
     const range = document.createRange();
     const selection = window.getSelection();
-    range.selectNodeContents(element);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-    element.focus();
+    if(selection) {
+      range.selectNodeContents(element);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      element.focus();
+    }
+    
 };
 
-export const getCaretCoordinates = (fromStart = true) => {
+export function getCaretCoordinates(fromStart = true) {
     let x, y;
     const isSupported = typeof window.getSelection !== "undefined";
     if (isSupported) {
       const selection = window.getSelection();
-      if (selection.rangeCount !== 0) {
+      if (selection && selection.rangeCount !== 0) {
         const range = selection.getRangeAt(0);
         let rect = range.getBoundingClientRect();
         // For some reason if you set the caret using addRange() by calling the setCaretToEnd method
@@ -33,11 +36,11 @@ export const getCaretCoordinates = (fromStart = true) => {
     return { x, y };
 };
 
-export const getSelection = (element) => {
+export function getSelection(element) {
     let selectionStart, selectionEnd;
-    const isSupported = typeof window.getSelection !== "undefined";
-    if (isSupported) {
-      const range = window.getSelection().getRangeAt(0);
+    const selection = window.getSelection();
+    if (selection) {
+      const range = selection.getRangeAt(0);
       const preSelectionRange = range.cloneRange();
       preSelectionRange.selectNodeContents(element);
       preSelectionRange.setEnd(range.startContainer, range.startOffset);
