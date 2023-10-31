@@ -192,6 +192,11 @@ class EditableBlock extends React.Component {
         }
         
         this.setState({ ...this.state, type: tag, startingProperties: newProperties, properties: newProperties }, () => {
+            const block = document.querySelector(`[data-position="${this.props.position}"]`);
+            if (block) {
+                setCaretToEnd(block);
+            }
+
             this.closeActionMenu();
         });
     }
