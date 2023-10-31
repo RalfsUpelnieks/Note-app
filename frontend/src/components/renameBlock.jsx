@@ -25,6 +25,10 @@ class RenameBlock extends React.Component {
     }
 
     handleChange(e) {
+        if(e.target.innerHTML == "<br>") {
+            e.target.innerHTML = "";
+        }
+        
         this.inputValue = e.target.innerHTML;
 
         const index = this.props.pages.map((p) => p.pageId).indexOf(this.props.pageId);

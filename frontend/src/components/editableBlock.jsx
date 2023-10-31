@@ -105,7 +105,7 @@ class EditableBlock extends React.Component {
 
     
     handleKeyDown(e) {
-        if (e.key === "Backspace" && (!this.state.properties.text || this.state.properties.text === "<br>")) {
+        if (e.key === "Backspace" && !this.state.properties.text) {
             e.preventDefault();
             clearTimeout(this.timer);
             this.props.deleteBlock({ id: this.props.id });
@@ -133,6 +133,8 @@ class EditableBlock extends React.Component {
     handleKeyUp(e) {
         if (e.key === "Control") {
             delete this.keysPressed[e.key];
+        } else if (e.key === "Backspace" && this.state.properties.text === "<br>"){
+            this.setState({ ...this.state, startingProperties: "", properties: "" });
         }
     }
 
