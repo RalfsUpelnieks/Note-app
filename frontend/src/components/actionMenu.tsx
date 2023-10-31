@@ -44,7 +44,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
             const search = command.toLowerCase();
 
             for (const category of menu){
-                if(category.title.toLowerCase().includes(search)){
+                if(category.title.toLowerCase().includes(search)) {
                     list.push(category);
                 } else {
                     var items : any = [];
@@ -55,7 +55,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
                         }
                     }
 
-                    if(items.length !== 0){
+                    if(items.length !== 0) {
                         list.push({title: category.title, menuItems: items})
                     }
                 }
@@ -73,10 +73,13 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
             if (e.key === "Enter") {
                 e.preventDefault();
                 const menutime = (menuItemList[selectedTag] as any);
-                if(menutime.action){
-                    menutime.action();
-                } else {
-                    handleSelection(menutime.id);
+
+                if(menutime) {
+                    if(menutime.action) {
+                        menutime.action();
+                    } else {
+                        handleSelection(menutime.id);
+                    }
                 }
             } else if (e.key === "Backspace") {
                 if (!command) {
@@ -115,7 +118,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
         setCommand(e.target.value);
     };
 
-    function changeSelectedTag(index: number){
+    function changeSelectedTag(index: number) {
         setSelectedTag(index);
     }
 
