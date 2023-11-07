@@ -123,6 +123,7 @@ class EditableBlock extends React.Component {
             this.keysPressed[e.key] = true;
         } else if (this.keysPressed["Control"] && e.key == " ") {
             e.preventDefault();
+
             const coordinates = this.calculateActionMenuPosition();
             this.openActionMenu(coordinates);
             
@@ -158,6 +159,7 @@ class EditableBlock extends React.Component {
         // the double click of the text selection
         setTimeout(() => {
             document.addEventListener("click", this.ActionMenuhandler, false);
+            document.body.style.overflowY = 'hidden';
 
             const block = document.querySelector(`[data-position="Search"]`);
             if (block) {
@@ -174,6 +176,7 @@ class EditableBlock extends React.Component {
         });
 
         document.removeEventListener("click", this.ActionMenuhandler, false);
+        document.body.style.overflowY = 'auto';
     }
 
     ActionMenuhandler = function(e){
@@ -207,11 +210,30 @@ class EditableBlock extends React.Component {
     // If it is triggered by the action menu, it should be positioned relatively to its initiator
     calculateActionMenuPosition(parent = null) {
         if(!parent) {
-            const { x: caretLeft, y: caretTop } = getCaretCoordinates(true);
-            return { x: caretLeft, y: caretTop + 22};
+            let {x, y} = getCaretCoordinates(true);
+
+            if (y < 80){
+                y = 80;
+            } else if (y + 280 > window.innerHeight) {
+                y -= 256;
+            } else {
+                y += 22
+            }
+
+            return { x: x, y: y};
         } else {
-            const x = parent.offsetLeft - parent.scrollLeft + parent.clientLeft - 130;
-            const y = parent.offsetTop - parent.scrollTop + parent.clientTop - 12;
+            const react = parent.getBoundingClientRect();
+            let x = react.left - 135;
+            let y;
+
+            if (react.top < 80){
+                y = 80;
+            } else if (react.top + 258 > window.innerHeight) {
+                y = window.innerHeight - 268;
+            } else {
+                y = react.top - 11;
+            }
+
             return { x: x, y: y };
         }
     }

@@ -123,7 +123,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, handl
     }
 
     return (
-        <div className="absolute flex flex-col w-32 max-h-64 bg-white shadow-[rgba(0,0,0,0.16)_0px_10px_36px_0px,rgba(0,0,0,0.06)_0px_0px_0px_1px] rounded-lg overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>
+        <div className="fixed z-10 flex flex-col w-32 max-h-64 bg-white shadow-[rgba(0,0,0,0.16)_0px_10px_36px_0px,rgba(0,0,0,0.06)_0px_0px_0px_1px] rounded-lg overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>
             <input className="w-11/12 h-8 mx-auto mt-1 center" data-position="Search" placeholder="Search..." onChange={handleChange}></input>
             {menuList.length !== 0 ? (
                 menuList.map((object) => {
