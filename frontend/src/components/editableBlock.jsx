@@ -124,6 +124,8 @@ class EditableBlock extends React.Component {
         } else if (this.keysPressed["Control"] && e.key == " ") {
             e.preventDefault();
 
+            e.target.blur();
+            e.target.focus();
             const coordinates = this.calculateActionMenuPosition();
             this.openActionMenu(coordinates);
             
@@ -263,13 +265,13 @@ class EditableBlock extends React.Component {
                                 properties: this.state.properties,
                                 position: this.props.position,
                                 placeholder: PLACEHOLDER,
-                                isDragging: snapshot.isDragging,
                                 onInput: this.handleChange,
                                 onPropertyChange: this.handlePropertyChange,
                                 onFocus: this.handleFocus,
                                 onBlur: this.handleBlur,
                                 onKeyDown: this.handleKeyDown,
-                                onKeyUp: this.handleKeyUp
+                                onKeyUp: this.handleKeyUp,
+                                selectionStyling: (snapshot.isDragging || this.state.actionMenuOpen ? " bg-neutral-100" : "") + (snapshot.isDragging ? " opacity-80" : "")
                             })
                         }
                     </div>
