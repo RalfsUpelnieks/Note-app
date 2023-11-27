@@ -1,58 +1,6 @@
 @import "variables.css";
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
 
-/* Header */
-.header {
-    display: flex;
-    position: fixed;
-    left: 0%;
-    top: 0%;
-    right: 0%;
-    bottom: auto;
-    padding-right: 1rem;
-    padding-left: 1rem;
-    background-color: rgb(233, 233, 233);
-    justify-content: space-between;
-    z-index: 2;
-    align-items: center;
-    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
-}
-
-.header h1 {
-    font-size: 2rem;
-    text-align: center;
-    font-family: var(--title);
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
-
-.header h4{
-    align-self: flex-end;
-    margin-left: 10px;
-    margin-right: auto;
-    margin-bottom: 1.2rem;
-}
-
-.header button {
-    border: 3px solid #000;
-    border-radius: 3rem;
-    background-color: #000;
-    transition: all 100ms ease-in-out;
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 700;
-    text-align: center;
-    width: 8rem;
-    height: 2.5rem;
-}
-
-.header button:hover {
-    background-color: #e03327;
-    box-shadow: -1px 1px 0 0 #000;
-    transform: translate(1px, -1px);
-    cursor: pointer;
-}
-
 /* Side navigation */
 
 .sideNav {
@@ -68,7 +16,7 @@
 }
 
 .sideNav ul {
-    padding-top: 75px;
+    padding-top: 60px;
     max-height: 100%;
     height: 100%;
     box-sizing: border-box;

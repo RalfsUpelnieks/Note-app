@@ -100,19 +100,6 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
                 </>
                 : 
                 <>
-                    <li className={window.location.pathname == "/search" ? styles.selectedNote : ""}>
-                        <Link to="/search">
-                            <i className='fa fa-search'></i>
-                            <span className={styles.navText}>Search</span>
-                        </Link>
-                    </li>
-                    
-                    {/* <li>
-                        <Link to="/events">
-                            <i className="fa fa-calendar-o"></i>
-                            <span className={styles.navText}>Events</span>
-                        </Link>
-                    </li> */}
                     <li className={window.location.pathname == "/profile" ? styles.selectedNote : ""}>
                         <Link to="/profile">
                             <i className='fa fa-user'></i>

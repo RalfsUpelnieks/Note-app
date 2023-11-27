@@ -52,7 +52,7 @@ function Login({setUser}: LoginProps) {
     return(
         localStorage.getItem('token') ? <Navigate to="/"/> :
         <form className={styles.form} onSubmit={handleSubmit}>
-            <h1 className={styles.title}>Note App</h1>   
+            <h1 className={styles.title}>SwiftNotes</h1>   
             <div className={styles.formGroup}>
                 <label>Email</label>
                 <input type="text" onChange={e => setEmail(e.target.value)} required name="username"/>
