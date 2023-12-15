@@ -2,13 +2,13 @@ import { useState, useEffect} from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import {Navigate, useOutletContext, useNavigate } from 'react-router-dom';
 
-import EditableBlock from "./editableBlock";
-import RenameBlock from "./renameBlock";
+import ContentBlock from "./contentBlock";
+import TitleBlock from "./titleBlock";
 import objectId from "../utils/objectId";
 import { setCaretToEnd } from "../utils/caretControl";
 import configData from '../config.json';
 
-function EditablePage({ pageId, blocks, setBlocks, err }) {
+function EditablePage({ pageId, blocks, setBlocks }) {
     const navigate = useNavigate();
     const [pages, setPages] = useOutletContext();
     const [title, setTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(pageId)].title);
@@ -33,9 +33,8 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
         setSelectedIndex(-1);
     }, [pageId]);
 
-    async function updateTitleOnServer() {
+    async function updateTitleOnServer(title) {
         try {
-            const pageIndex = pages.map((p) => p.pageId).indexOf(pageId);
             let bearer = 'Bearer ' + localStorage.getItem('token');
 
             await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdateTitle', {
@@ -44,9 +43,10 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
                     'Authorization': bearer,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({pageId: pageId, title: pages[pageIndex].title})
+                body: JSON.stringify({pageId: pageId, title: title})
             }).then(response => {
                 if (response.ok) {
+                    setTitle(title);
                     console.log("Page updated");
                     return true;
                 } else if (response.status === 401) {
@@ -145,37 +145,28 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
         }
     };
 
-    if (err) {
-        return (
-            <div status="ERROR">
-                <h3>Something went wrong!</h3>
-                <p>Have you tried to restart the app at '/' ?</p>
-            </div>
-        );
-    }
-
-    function updateBlockHandler(currentBlock) {
-        const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
+    function updateBlockHandler(blockId, properties, type) {
+        const index = blocks.map((b) => b.blockId).indexOf(blockId);
         const updatedBlocks = [...blocks];
         updatedBlocks[index] = {
             ...updatedBlocks[index],
-            type: currentBlock.type,
-            properties: currentBlock.properties
+            type: type,
+            properties: properties
         };
         updateBlockOnServer(updatedBlocks[index], index + 1);
         setBlocks(updatedBlocks);
     };
 
-    function addBlockHandler(currentBlock) {
-        const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
+    function addBlockHandler(blockId, properties, type) {
+        const index = blocks.map((b) => b.blockId).indexOf(blockId);
         const updatedBlocks = [...blocks];
         const newBlock = { blockId: objectId(), type: "p", properties: {"text": ""}};
         addBlockOnServer(newBlock, index + 1);
         updatedBlocks.splice(index + 1, 0, newBlock);
         updatedBlocks[index] = {
             ...updatedBlocks[index],
-            type: currentBlock.type,
-            properties: currentBlock.properties
+            type: type,
+            properties: properties
         };
         setBlocks(updatedBlocks);
         setSelectedIndex(index + 2);
@@ -195,11 +186,11 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
         setSelectedIndex(blocks.length + 1);
     };
 
-    function deleteBlockHandler(currentBlock) {
-        const index = blocks.map((b) => b.blockId).indexOf(currentBlock.id);
+    function deleteBlockHandler(blockId) {
+        const index = blocks.map((b) => b.blockId).indexOf(blockId);
         const updatedBlocks = [...blocks];
         updatedBlocks.splice(index, 1);
-        deleteBlockServer(currentBlock.id);
+        deleteBlockServer(blockId);
         setBlocks(updatedBlocks);
         setSelectedIndex(index);
     };
@@ -224,8 +215,8 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
     return (
         !localStorage.getItem('token') ? <Navigate to="/login"/> :
         <>
-            <RenameBlock 
-                html={title}
+            <TitleBlock 
+                title={title}
                 pageId={pageId}
                 addBlock={addBlockToStartHandler}
                 updateTitle={updateTitleOnServer}
@@ -237,20 +228,20 @@ function EditablePage({ pageId, blocks, setBlocks, err }) {
                     {(provided, snapshot) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}>
                         {blocks.map((block) => {
-                        const position = blocks.map((b) => b.blockId).indexOf(block.blockId) + 1;
-                        return (
-                            <EditableBlock
-                            key={block.blockId}
-                            position={position}
-                            id={block.blockId}
-                            type={block.type}
-                            properties={block.properties}
-                            pageId={pageId}
-                            isDraggingOver={snapshot.isDraggingOver}
-                            addBlock={addBlockHandler}
-                            deleteBlock={deleteBlockHandler}
-                            updateBlock={updateBlockHandler}/>
-                        );
+                            return (
+                                <ContentBlock
+                                    key={block.blockId}
+                                    blockId={block.blockId}
+                                    pageId={pageId}
+                                    position={blocks.map((b) => b.blockId).indexOf(block.blockId) + 1}
+                                    type={block.type}
+                                    properties={block.properties}
+                                    isDraggingOver={snapshot.isDraggingOver}
+                                    addBlock={addBlockHandler}
+                                    deleteBlock={deleteBlockHandler}
+                                    updateBlock={updateBlockHandler}
+                                />
+                            );
                         })}
                         {provided.placeholder}
                     </div>

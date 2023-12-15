@@ -38,7 +38,7 @@ function NotePage({pages, navigate}: any) {
             <div></div>
         );
     } else {
-        return <EditablePage pageId={params.id} blocks={blocks} setBlocks={setBlocks} err={""} />;
+        return <EditablePage pageId={params.id} blocks={blocks} setBlocks={setBlocks} />;
     }
 }
 
