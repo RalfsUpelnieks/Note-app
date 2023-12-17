@@ -5,6 +5,8 @@ import Paragraph from "../components/editableComp/paragraph";
 import Checklist from "../components/editableComp/checklist";
 import VideoEmbed from "../components/editableComp/videoEmbed";
 import Divider from "../components/editableComp/divider";
+import BulletPoint from "../components/editableComp/bulletPoint";
+import NumberedList from "../components/editableComp/numberedList";
 
 const blockList = [
     {
@@ -28,6 +30,16 @@ const blockList = [
         properties: {"text": ""},
         label: "Paragraph",
     },{
+        id: "bulletpoint",
+        tag: BulletPoint,
+        properties: {"text": ""},
+        label: "Bulletpoint",
+    },{
+        id: "numberlist",
+        tag: NumberedList,
+        properties: {"text": "", "number": "1"},
+        label: "Numberlist",
+    },{
         id: "checklist",
         tag: Checklist,
         properties: {"text": "", "checkbox": false},
@@ -36,7 +48,7 @@ const blockList = [
         id: "videoEmbed",
         tag: VideoEmbed,
         properties: {"text": ""},
-        label: "videoEmbed"
+        label: "Embed"
     },{
         id: "divider",
         tag: Divider,
