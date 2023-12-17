@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import styles from '../stylesheets/Table.module.css';
 import configData from '../config.json'
 import AddUser from './addUser';
 import User from '../interfaces/userInterface'
@@ -97,38 +96,38 @@ function Users() {
                 <AddUser setTabOpen={setAddPanelOpen} users={users}/>
             )}
             <h2>Users</h2>
-            <table className={styles.table}>
-                <thead>
+            <table className="border-collapse shadow-lg rounded-xl overflow-hidden">
+                <thead className="text-sm bg-neutral-100 uppercase">
                     <tr>
-                        <th className={styles.column1}>Username</th>
-                        <th className={styles.column2}>Email</th>
-                        <th className={styles.column3}>Full Name</th>
-                        <th className={styles.column4}>Storage Used</th>
-                        <th className={styles.column5}>Admin</th>
-                        <th className={styles.column6}></th>
+                        <th className="px-2 py-1">Username</th>
+                        <th className="px-2 py-1">Email</th>
+                        <th className="px-2 py-1">Full Name</th>
+                        <th className="px-2 py-0 w-[4%]">Storage Used</th>
+                        <th className="px-2 py-1">Admin</th>
+                        <th className="px-2 py-1"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {users.map((Object: { id: string; name: string; surname: string; username: string; emailAddress: string; role: string }) => {
                         return (
-                            <tr>
-                                <td>{Object.username}</td>
-                                <td>{Object.emailAddress}</td>
-                                <td>{Object.name} {Object.surname}</td>
-                                <td>N/A</td>
-                                <td>
-                                    <input type="checkbox" onChange={() => ChangeRole(Object.id, Object.role)} checked={Object.role == "1"}/>
+                            <tr className="border-0 border-solid border-t border-gray-300">
+                                <td className="px-2 py-2">{Object.username}</td>
+                                <td className="px-2 py-2">{Object.emailAddress}</td>
+                                <td className="px-2 py-2">{Object.name} {Object.surname}</td>
+                                <td className="text-center">N/A</td>
+                                <td className="text-center">
+                                    <input className="m-0" type="checkbox" onChange={() => ChangeRole(Object.id, Object.role)} checked={Object.role == "1"}/>
                                 </td>
                                 <td>
-                                <button onClick={DeleteUserData}>Delete Data</button>
-                                <button onClick={() => DeleteUser(Object.id)}>Delete User</button>
+                                    <button className='mr-1 w-20 h-6 text-xs bg-blue-600 text-white hover:bg-blue-900 hover:cursor-pointer border-none rounded' onClick={DeleteUserData}>Delete Data</button>
+                                    <button className='w-20 h-6 text-xs bg-red-600 text-white hover:bg-red-900 hover:cursor-pointer border-none rounded' onClick={() => DeleteUser(Object.id)}>Delete User</button>
                                 </td>
                             </tr>
                         );
                     })}
                 </tbody>
             </table>
-            <button onClick={() => setAddPanelOpen(!addPanelOpen)}>Add User</button>
+            <button className='mt-2 w-20 h-8 font-semibold text-xs bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={() => setAddPanelOpen(!addPanelOpen)}>Add User</button>
         </div>
     );
 }
