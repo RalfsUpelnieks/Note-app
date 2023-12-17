@@ -69,7 +69,7 @@ function Header({isAdmin, pages}: any) {
                     }
                 </div>
             )}
-            <button onClick={logOutUser} className='w-24 h-9 font-semibold text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded '>Log out</button>
+            <button onClick={logOutUser} className='w-24 h-9 font-semibold text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded'>Log out</button>
         </header>
     )
 }

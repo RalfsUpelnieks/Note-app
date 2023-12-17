@@ -16,7 +16,7 @@ interface ContentBlockProps {
     isDraggingOver: true
     addBlock(blockId: string, properties: string, type: string): void
     deleteBlock(BlockId: string): void
-    updateBlock(blockId: string, properties: string, type: string): void
+    updateBlock(blockId: string, properties: {}, type: string): void
 }
 
 function ContentBlock(props : ContentBlockProps) {
@@ -60,12 +60,15 @@ function ContentBlock(props : ContentBlockProps) {
             setProperties(newProperties);
             setStartingProperties(newProperties);
 
-            props.updateBlock(props.blockId, String(newProperties), type);
+            clearTimeout(timer.current);
+            props.updateBlock(props.blockId, newProperties, type);
 
-            const block: HTMLElement | null = document.querySelector(`[data-position="${props.position}"]`);
-            if (block) {
-                setCaretToEnd(block);
-            }
+            setTimeout(() => {
+                const block: HTMLElement | null = document.querySelector(`[data-position="${props.position}"]`);
+                if (block) {
+                    setCaretToEnd(block);
+                }
+            }, 100);
 
             closeActionMenu();
         }
@@ -75,7 +78,7 @@ function ContentBlock(props : ContentBlockProps) {
         changeProperty("text", e.target.innerHTML);
     }
 
-    function onBlur(e) {
+    function onBlur() {
         if (JSON.stringify(props.properties) !== JSON.stringify(properties)) {
             clearTimeout(timer.current);
             props.updateBlock(props.blockId, properties, type);
@@ -90,7 +93,6 @@ function ContentBlock(props : ContentBlockProps) {
         } else if (e.key === "Enter" && !e.shiftKey && !isMenuOpen) {
             e.preventDefault();
 
-            //fix the updating of the current block ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
             props.addBlock(props.blockId, properties, type);
         } else if (e.key == " " && e.ctrlKey) {
             e.preventDefault();
@@ -143,7 +145,6 @@ function ContentBlock(props : ContentBlockProps) {
         // Add listener asynchronously to avoid conflicts with
         // the double click of the text selection
         setTimeout(() => {
-            console.log("Open")
             document.addEventListener("click", ActionMenuhandler, true);
             document.body.style.overflowY = 'hidden';
 

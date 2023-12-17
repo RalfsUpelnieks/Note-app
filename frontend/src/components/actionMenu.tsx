@@ -72,6 +72,8 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
                 const menutime = (menuItemList[selectedAction] as any);
 
                 if(menutime) {
+                    closeMenu();
+                    
                     if(menutime.action) {
                         menutime.action();
                     } else {

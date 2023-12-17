@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface TitleBlockProps {
+    startingTitle: string
     title: string
     pageId: string
     addBlock(): void
@@ -9,17 +10,20 @@ interface TitleBlockProps {
     setPages: any
 }
 
-function TitleBlock({title, pageId, addBlock, updateTitle, pages, setPages} : TitleBlockProps) {
-    const [inputTitle, setInputTitle] = useState(title);
-    const startingTitle = useRef(title);
+function TitleBlock({startingTitle, title, pageId, addBlock, updateTitle, pages, setPages} : TitleBlockProps) {
+    const inputTitle = useRef(startingTitle);
     const timer : any = useRef(null)
+
+    useEffect(() => {
+        inputTitle.current = title;
+    }, [title]);
 
     function onChange(e) {
         if(e.target.innerHTML == "<br>") {
             e.target.innerHTML = "";
         }
         
-        setInputTitle(e.target.innerHTML);
+        inputTitle.current = e.target.innerHTML;
 
         const index = pages.map((p) => p.pageId).indexOf(pageId);
         const updatedPages = [...pages];
@@ -35,9 +39,9 @@ function TitleBlock({title, pageId, addBlock, updateTitle, pages, setPages} : Ti
     }
 
     function onBlur() {
-        if (title !== inputTitle) {
+        if (title !== inputTitle.current) {
             clearTimeout(timer.current);
-            updateTitle(inputTitle);
+            updateTitle(inputTitle.current);
         }
     }
 
@@ -49,7 +53,7 @@ function TitleBlock({title, pageId, addBlock, updateTitle, pages, setPages} : Ti
     }
 
     return (
-        <h1 dangerouslySetInnerHTML={{__html: startingTitle.current}}
+        <h1 dangerouslySetInnerHTML={{__html: startingTitle}}
             key={pageId}
             data-position={0}
             onInput={onChange}
