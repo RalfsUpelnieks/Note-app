@@ -73,12 +73,6 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
             <ul>
                 {isAdmin ?
                 <>
-                    <li className={window.location.pathname == "/admin" ? styles.selectedNote : ""}>
-                        <Link to="/admin">
-                            <i className='fa fa-home'></i>
-                            <span className={styles.navText}>Dashboard</span>
-                        </Link>
-                    </li>
                     <li className={window.location.pathname == "/profile" ? styles.selectedNote : ""}>
                         <Link to="/profile">
                             <i className='fa fa-user'></i>

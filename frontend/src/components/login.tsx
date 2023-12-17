@@ -26,7 +26,7 @@ function Login({setUser}: LoginProps) {
                     localStorage.setItem('token', data.token);
                     setUser(data);
                     if(data.role == "1"){
-                        navigate("/admin");
+                        navigate("/profile");
                     } else {
                         navigate("/dashboard");
                     }

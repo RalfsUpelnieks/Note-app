@@ -3,6 +3,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 namespace FileUploadDownload.Controllers
@@ -131,7 +132,7 @@ namespace FileUploadDownload.Controllers
         }
 
         [HttpPost("DeleteFile/{id}"), Authorize]
-        public async Task<IActionResult> DeleteFile(string id)
+        public IActionResult DeleteFile(string id)
         {
             try
             {
@@ -149,9 +150,31 @@ namespace FileUploadDownload.Controllers
 
                 if (page.userId == user.Id)
                 {
+                    Files? file = _context.files.FirstOrDefault(p => p.blockId == id);
+                    if (page is null) { return BadRequest(); }
+
+                    var extension = "." + file.filename.Split('.')[file.filename.Split('.').Length - 1];
+                    string filename = id + extension;
+
+                    var filepath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", filename);
+
+                    if (System.IO.File.Exists(filepath))
+                    {
+                        System.IO.File.Delete(filepath);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+
+                    _context.files.Remove(file);
+                    _context.SaveChanges();
                     return Ok();
                 }
-                else { return Unauthorized(); }
+                else
+                {
+                    return Unauthorized();
+                }
             }
             catch (Exception ex)
             {

@@ -28,7 +28,7 @@ function File(props: any){
         }).then(response => {
             if (response.ok) {
                 console.log("File uploded");
-                setMsg("Upload succesful")
+                setMsg("")
                 props.onPropertyChange("filename", file[0].name);
             } else {
                 setMsg("Upload failed")
@@ -66,6 +66,9 @@ function File(props: any){
             if (response.ok) {
                 console.log("File deleted");
                 props.onPropertyChange("filename", "");
+            } if (response.status === 404) {
+                console.log("File not found");
+                props.onPropertyChange("filename", "");
             }
         })
     }
@@ -76,7 +79,7 @@ function File(props: any){
                 <div className="flex cursor-pointer w-full">
                     <i className="fa fa-file mr-1 mt-1 text-xs text-neutral-700" onClick={downloadFile}></i>
                     <span className='w-full text-sm text-neutral-700' onClick={downloadFile}>{props.properties.filename}</span>
-                    <button className='' onClick={handleDelete}>Delete</button>
+                    <button className='w-5 h-5 pt-0 text-xs my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleDelete}><i className='fa fa-trash'></i></button>
                 </div>
             :
                 <div className="w-full">
@@ -89,7 +92,7 @@ function File(props: any){
                         hover:file:bg-gray-200 border-0
                         "/>
                         
-                        <button onClick={handleUpload}>Upload</button>
+                        <button className='w-24 h-8 text-sm my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleUpload}>Upload</button>
                     </div>
                     {msg && <span className='block w-36 mx-auto'>{msg}</span>}
                 </div>

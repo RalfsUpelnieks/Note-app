@@ -25,7 +25,7 @@ function App() {
                 <Route path="/users" element={<Users/>}/>
                 <Route path="/storage" element={<StoragePage/>}/>
             </Route>
-            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user?.role == "1" ? '/admin' : '/profile'} /> : <Navigate to="/login" />} />
+            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user?.role == "1" ? '/profile' : '/profile'} /> : <Navigate to="/login" />} />
         </Routes>
     );
 };
