@@ -187,6 +187,7 @@ function ContentBlock(props : ContentBlockProps) {
                         </span>
                         {
                             React.createElement(menuList.find((element) => element.id == type)!.tag, {
+                                blockId: props.blockId,
                                 startingProperties: startingProperties,
                                 properties: properties,
                                 position: props.position,

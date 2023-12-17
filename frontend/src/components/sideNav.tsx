@@ -100,12 +100,6 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
                 </>
                 : 
                 <>
-                    <li className={window.location.pathname == "/profile" ? styles.selectedNote : ""}>
-                        <Link to="/profile">
-                            <i className='fa fa-user'></i>
-                            <span className={styles.navText}>Profile</span>
-                        </Link>
-                    </li>
                     <span className={styles.pagesText}>Pages</span>
                     <div>
                         {pages.map((Object: { pageId: string; title: string; }) => {

@@ -18,12 +18,10 @@ function NumberedList(props: any){
         setType("");
 
         if(/^\d{1,3}$/.test(e.target.value)){
-            console.log(true)
             setInputValue(e.target.value + ".");
             props.onPropertyChange("number" , e.target.value)
         }
         else {
-            console.log(false)
             setInputValue("1.");
             props.onPropertyChange("number" , "1")
         }

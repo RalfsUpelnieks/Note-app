@@ -58,7 +58,7 @@ function Layout({pages, setPages, user, setUser} : LayoutProps) {
 
     return (
         <div>
-            <Header isAdmin={user?.role == "1"} pages={pages}/>
+            <Header user={user} pages={pages}/>
             <SideNav pages={pages} setPages={setPages} isAdmin={user?.role == "1"}/>
             <main className={styles.content}>
                 <Outlet context={[pages, setPages]} />  

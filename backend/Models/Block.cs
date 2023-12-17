@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models {
     public class Block {
@@ -18,5 +17,6 @@ namespace backend.Models {
         public string pageId { get; set; } = null!;
 
         public Page Page { get; set; } = null!;
+        public Files File { get; set; } = null!;
     }
 }

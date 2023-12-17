@@ -7,6 +7,7 @@ import VideoEmbed from "../components/editableComp/videoEmbed";
 import Divider from "../components/editableComp/divider";
 import BulletPoint from "../components/editableComp/bulletPoint";
 import NumberedList from "../components/editableComp/numberedList";
+import File from "../components/editableComp/file";
 
 const blockList = [
     {
@@ -45,15 +46,20 @@ const blockList = [
         properties: {"text": "", "checkbox": false},
         label: "Checklist",
     },{
-        id: "videoEmbed",
-        tag: VideoEmbed,
-        properties: {"text": ""},
-        label: "Embed"
-    },{
         id: "divider",
         tag: Divider,
         properties: null,
         label: "Divider"
+    },{
+        id: "file",
+        tag: File,
+        properties: {"filename": ""},
+        label: "File"
+    },{
+        id: "videoEmbed",
+        tag: VideoEmbed,
+        properties: {"text": ""},
+        label: "Embed"
     }
 ];
 
