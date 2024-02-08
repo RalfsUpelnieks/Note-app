@@ -45,8 +45,8 @@ function Header({user, pages}: any) {
     }
     
     return (
-        <header className='flex fixed left-0 right-0 top-0 bottom-auto px-4 justify-between z-10 items-center bg-[rgb(233,233,233)] shadow-[0px_3px_5px_-1px_rgba(0,0,0,0.2),_0px_1px_14px_0px_rgba(0,0,0,0.12)]'>
-            <h1 className='text-3xl my-3'>SwiftNotes</h1>
+        <header className='flex select-none fixed left-0 right-0 top-0 bottom-auto px-4 justify-between z-10 items-center bg-[rgb(233,233,233)] shadow-[0px_3px_5px_-1px_rgba(0,0,0,0.2),_0px_1px_14px_0px_rgba(0,0,0,0.12)]'>
+            <h1 className='text-3xl my-3'>NoteBooks</h1>
             {user?.role == "1" ? (
                 <h4 className='self-end ml-2 mr-auto mb-4 opacity-70'>admin page</h4>
             ) : (
@@ -71,12 +71,11 @@ function Header({user, pages}: any) {
             )}
             
             <div className='flex'>
-                <Link className={'inline-block border border-solid rounded h-9 mr-2 px-1 no-underline text-gray-900 border-neutral-400 ' + (window.location.pathname == "/profile" ? "bg-neutral-400 border-neutral-600 text-gray-950" : "hover:bg-neutral-300")} to="/profile">
+                <Link className={'inline-block border border-solid rounded h-9 mr-2 px-1 no-underline text-gray-900 border-neutral-400 ' + (window.location.pathname == "/profile" ? "bg-black border-neutral-600 text-white" : "bg-white hover:bg-neutral-200")} to="/profile">
                     <h4 className='m-0 text-xs mt-[0.10rem]'>{user?.username}</h4>
                     <p className='m-0 text-xs'>{user?.name} {user?.surname}</p>
                 </Link>
                 <button onClick={logOutUser} className='w-24 h-9 font-semibold text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded'>Log out</button>
-
             </div>
         </header>
     )

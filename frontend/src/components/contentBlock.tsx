@@ -78,6 +78,12 @@ function ContentBlock(props : ContentBlockProps) {
         changeProperty("text", e.target.innerHTML);
     }
 
+    function onPaste(e) {
+        e.preventDefault();
+        var text = e.clipboardData.getData('text/plain')
+        document.execCommand('insertText', false, text)
+    }
+
     function onBlur() {
         if (JSON.stringify(props.properties) !== JSON.stringify(properties)) {
             clearTimeout(timer.current);
@@ -197,6 +203,8 @@ function ContentBlock(props : ContentBlockProps) {
                                 onBlur: onBlur,
                                 onKeyDown: onKeyDown,
                                 onKeyUp: onKeyUp,
+                                onPaste: onPaste,
+                                textInputStyling: " px-[2px] py-[2px] my-[2px] break-words outline-none",
                                 selectionStyling: (snapshot.isDragging || isMenuOpen ? " bg-neutral-100" : "") + (snapshot.isDragging ? " opacity-80" : "")
                             })
                         }

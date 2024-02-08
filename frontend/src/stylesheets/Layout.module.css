@@ -5,6 +5,7 @@
 
 .sideNav {
     background:#212121;
+    user-select: none;
     border-right:1px solid #e5e5e5;
     position: fixed;
     top:0;
@@ -171,4 +172,8 @@ nav ul,nav li {
     padding: 10rem 0 1rem 280px;
     margin-left: auto;
     margin-right: auto;
+}
+
+input{
+    &:focus{ position: relative; }
 }

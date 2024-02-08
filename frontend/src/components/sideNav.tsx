@@ -94,7 +94,7 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
                 </>
                 : 
                 <>
-                    <span className={styles.pagesText}>Pages</span>
+                    <span className={styles.pagesText}>Books</span>
                     <div>
                         {pages.map((Object: { pageId: string; title: string; }) => {
                             var isSelected = Object.pageId == openTab;
