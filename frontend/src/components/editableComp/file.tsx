@@ -1,7 +1,9 @@
-import configData from '../../config.json'
 import { useState } from 'react';
+import useAuth from '../../hooks/useAuth';
+import api from '../../utils/api';
 
 function File(props: any){
+    const { LogOut } : any = useAuth()
     const [file, setFile]: any = useState(null);
     const [msg, setMsg] = useState("");
 
@@ -17,60 +19,48 @@ function File(props: any){
         formdata.append('file', file[0]);
         setMsg("Uploading...")
 
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        fetch('http://localhost:' + configData.APIPort + `/api/Files/UploadFile`, {
-            method: 'POST',
-            headers: {
-                'Authorization': bearer
-            },
-            body: formdata
-        }).then(response => {
-            if (response.ok) {
+        api.postType("/api/Files/UploadFile", formdata, null).then(response => {
+            if (response?.ok) {
                 console.log("File uploded");
                 setMsg("")
                 props.onPropertyChange("filename", file[0].name);
+            } else if (response?.status == 401) {
+                LogOut();
             } else {
                 setMsg("Upload failed")
             }
-        })
+        });
     }
 
     function downloadFile() {
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        fetch('http://localhost:' + configData.APIPort + `/api/Files/DownloadFile/${props.blockId}`, {
-            method: 'Get',
-            headers: {
-                'Authorization': bearer
-            },
-        }).then(response => { 
-            return response.blob();
-            }).then(function(blob) {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.setAttribute('download', props.properties.filename);
-                link.click();
-            });
+        api.get(`/api/Files/DownloadFile/${props.blockId}`).then(response => {
+            if (response?.ok) {
+                response?.blob().then(function(blob) { 
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.setAttribute('download', props.properties.filename);
+                    link.click();
+                });
+            } else if (response?.status == 401) {
+                LogOut();
+            } else {
+                setMsg("Download failed")
+            }
+        });
     }
 
     function handleDelete() {
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        fetch('http://localhost:' + configData.APIPort + `/api/Files/DeleteFile/${props.blockId}`, {
-            method: 'POST',
-            headers: {
-                'Authorization': bearer
-            }
-        }).then(response => {
-            if (response.ok) {
+        api.delete(`/api/Files/DeleteFile/${props.blockId}`).then(response => {
+            if (response?.ok) {
                 console.log("File deleted");
                 props.onPropertyChange("filename", "");
-            } if (response.status === 404) {
+            } else if (response?.status == 401) {
+                LogOut();
+            } else if (response?.status === 404) {
                 console.log("File not found");
                 props.onPropertyChange("filename", "");
-            }
-        })
+            } 
+        });
     }
     
     return (
@@ -98,8 +88,6 @@ function File(props: any){
                 </div>
             }
         </>
-        
-        
     )
 }
 

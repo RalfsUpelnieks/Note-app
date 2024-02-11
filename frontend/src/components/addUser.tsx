@@ -1,8 +1,8 @@
 import React, { useEffect, useState} from 'react';
-import { useNavigate} from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css'
-import configData from '../config.json'
 import User from '../interfaces/userInterface'
+import useAuth from '../hooks/useAuth';
+import api from '../utils/api';
 
 interface AddUserProps {
     setTabOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -10,7 +10,7 @@ interface AddUserProps {
 }
 
 function AddUser({setTabOpen, users}: AddUserProps) {
-    const navigate = useNavigate();
+    const { LogOut } : any = useAuth()
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [username, setUsername] = useState('');
@@ -20,31 +20,21 @@ function AddUser({setTabOpen, users}: AddUserProps) {
     const [errMsg, setErrMsg] = useState('');
 
     async function registerUser(Name: string, Surname: string, Username: string, Email: string, Password: string, IsAdmin: boolean, setErrMsg: React.Dispatch<React.SetStateAction<string>>) {
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        await fetch('http://localhost:' + configData.APIPort + '/api/Auth/register', {
-            method: 'POST',
-            headers: { 'Authorization': bearer, 'Content-Type': 'application/json' },
-            body: JSON.stringify({Name, Surname, Username, Email, Password, IsAdmin})
-        })
-        .then(response => {
-            if (response.ok) {
+        api.post("/api/Auth/register", JSON.stringify({Name, Surname, Username, Email, Password, IsAdmin})).then(response => {
+            if (response?.ok) {
                 response.json().then(data => { 
                     console.log("User added");
                     users.push(data);
                     setTabOpen(false);
                 });
-            } else if (response.status == 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status == 401) {
+                LogOut();
             } else {
-                response.json().then(data => {
+                response?.json().then(data => {
                     setErrMsg(data.error);
-                    console.log(data.error);
-                    console.log(data);
                 });
             }
-        })
+        });
     }
 
     async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {

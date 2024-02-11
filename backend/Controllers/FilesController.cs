@@ -92,7 +92,7 @@ namespace FileUploadDownload.Controllers
 
 
         [Route("DownloadFile/{id}")]
-        [HttpPost("DownloadFile"), Authorize]
+        [HttpGet("DownloadFile"), Authorize]
         public async Task<IActionResult> DownloadFile(string id)
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
@@ -131,7 +131,7 @@ namespace FileUploadDownload.Controllers
             return BadRequest();
         }
 
-        [HttpPost("DeleteFile/{id}"), Authorize]
+        [HttpDelete("DeleteFile/{id}"), Authorize]
         public IActionResult DeleteFile(string id)
         {
             try

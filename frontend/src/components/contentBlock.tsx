@@ -204,7 +204,7 @@ function ContentBlock(props : ContentBlockProps) {
                                 onKeyDown: onKeyDown,
                                 onKeyUp: onKeyUp,
                                 onPaste: onPaste,
-                                textInputStyling: " px-[2px] py-[2px] my-[2px] break-words outline-none",
+                                textInputStyling: " px-[2px] py-[2px] my-[1px] break-words outline-none",
                                 selectionStyling: (snapshot.isDragging || isMenuOpen ? " bg-neutral-100" : "") + (snapshot.isDragging ? " opacity-80" : "")
                             })
                         }

@@ -1,32 +1,25 @@
 import React, { useState}  from 'react';
-import { useParams , useNavigate } from 'react-router-dom';
+import { useParams, useOutletContext } from 'react-router-dom';
 import NotePage from './notePage';
-import configData from '../config.json'
+import useAuth from '../hooks/useAuth';
+import api from '../utils/api';
 
-function PageManager({pages}: any) {
+function PageManager() {
+    const { LogOut } : any = useAuth()
     const params = useParams();
-    const navigate = useNavigate();
     const [blocks, setBlocks] = useState([]);
+    const [pages, setPages] : any = useOutletContext();
 
     React.useEffect(() => {
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        fetch('http://localhost:' + configData.APIPort + `/api/Note/GetBlockData/${params.id}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
+        api.get(`/api/Note/GetBlockData/${params.id}`).then(response => {
+            if (response?.ok) {
                 response.json().then(data => { 
                     console.log("Get block data from server");
                     data.forEach(element => element.properties = JSON.parse(element.properties));
                     setBlocks(data);
                 });
-            } else if (response.status === 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status === 401) {
+                LogOut();
             }
         })
     }, [params.id]);

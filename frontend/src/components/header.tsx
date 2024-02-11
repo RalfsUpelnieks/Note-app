@@ -1,10 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
-
+import useAuth from '../hooks/useAuth';
 
 function Header({user, pages}: any) {
+    const { LogOut } : any = useAuth()
     const emptyTextPlaceholder = "untitled";
-    const navigate = useNavigate();
     const [pageList, setPageList] : any = useState(pages);
     const [search, setSearch] = useState("");
     const [selectedTag, setSelectedTag] = useState(0);
@@ -40,8 +40,7 @@ function Header({user, pages}: any) {
     }
 
     function logOutUser(){
-        localStorage.removeItem('token');
-        navigate("/login")
+        LogOut();
     }
     
     return (
@@ -71,7 +70,7 @@ function Header({user, pages}: any) {
             )}
             
             <div className='flex'>
-                <Link className={'inline-block border border-solid rounded h-9 mr-2 px-1 no-underline text-gray-900 border-neutral-400 ' + (window.location.pathname == "/profile" ? "bg-black border-neutral-600 text-white" : "bg-white hover:bg-neutral-200")} to="/profile">
+                <Link className={'inline-block border border-solid rounded h-9 mr-2 px-1 no-underline text-gray-900 border-neutral-400 ' + (window.location.pathname == "/profile" ? "bg-zinc-700 border-neutral-600 text-white" : "bg-white hover:bg-neutral-200")} to="/profile">
                     <h4 className='m-0 text-xs mt-[0.10rem]'>{user?.username}</h4>
                     <p className='m-0 text-xs'>{user?.name} {user?.surname}</p>
                 </Link>

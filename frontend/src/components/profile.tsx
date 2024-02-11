@@ -1,20 +1,15 @@
 import React, { useEffect, useState} from 'react';
-import {Navigate, useNavigate} from 'react-router-dom';
 import styles from '../stylesheets/Profile.module.css'
-import configData from '../config.json'
-import User from '../interfaces/userInterface'
+import useAuth from '../hooks/useAuth';
+import api from '../utils/api';
 
-interface ProfileProps {
-    user?: User
-    setUser: React.Dispatch<React.SetStateAction<User | undefined>>
-}
+function Profile() {
+    const { auth, setAuth, LogOut } : any = useAuth()
 
-function Profile({user, setUser}: ProfileProps) {
-    const navigate = useNavigate();
-    const [name, setName] = useState(user?.name);
-    const [surname, setSurname] = useState(user?.surname);
-    const [username, setUsername] = useState(user?.username);
-    const [email, setEmail] = useState(user?.emailAddress);
+    const [name, setName] = useState(auth.user?.name);
+    const [surname, setSurname] = useState(auth.user?.surname);
+    const [username, setUsername] = useState(auth.user?.username);
+    const [email, setEmail] = useState(auth.user?.emailAddress);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
 
@@ -23,141 +18,87 @@ function Profile({user, setUser}: ProfileProps) {
     const [emailMsg, setEmailMsg] = useState('');
     const [passwordMsg, setPasswordMsg] = useState('');
 
-
     async function ChangeName(Name: string, Surname: string, setNameMsg: React.Dispatch<React.SetStateAction<string>>){
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeName', {
-            method: 'POST',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({Name, Surname})
-        })
-        .then(response => {
-            if (response.ok) {
-                response.text().then(data => { 
+        api.post("/api/User/ChangeName", JSON.stringify({Name, Surname})).then(response => {
+            if (response?.ok) {
+                response?.text().then(data => { 
                     console.log("Name Changed");
-                    setUser({ ...user!, name: Name, surname: Surname })
+                    setAuth({ ...auth, user: { ...auth.user, name: Name, surname: Surname }})
                     setNameMsg(data);
                 });
-            } else if (response.status == 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status == 401) {
+                LogOut();
             } else {
-                response.json().then(data => {
+                response?.json().then(data => {
                     setNameMsg(data.error);
                 });
             }
-        })
+        });
     }
 
     async function ChangeUsername(Username: string, setUsernameMsg: React.Dispatch<React.SetStateAction<string>>){
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeUsername', {
-            method: 'POST',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({Username})
-        })
-        .then(response => {
-            if (response.ok) {
-                response.text().then(data => { 
+        api.post("/api/User/ChangeUsername", JSON.stringify({Username})).then(response => {
+            if (response?.ok) {
+                response?.text().then(data => { 
                     console.log("Username Changed");
-                    setUser({ ...user!, username: Username })
+                    setAuth({ ...auth, user: { ...auth.user, username: Username }})
                     setUsernameMsg(data);
                 });
-            } else if (response.status == 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status == 401) {
+                LogOut();
             } else {
-                response.json().then(data => {
+                response?.json().then(data => {
                     setUsernameMsg(data.error);
                 });
             }
-        })
+        });
     }
 
     async function ChangeEmail(Email: string, setEmailMsg: React.Dispatch<React.SetStateAction<string>>){
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-
-        await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeEmail', {
-            method: 'POST',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({Email})
-        })
-        .then(response => {
-            if (response.ok) {
+        api.post("/api/User/ChangeEmail", JSON.stringify({Email})).then(response => {
+            if (response?.ok) {
                 response.text().then(data => { 
-                    console.log("Username Changed");
-                    setUser({ ...user!, emailAddress: Email })
+                    console.log("Email Changed");
+                    setAuth({ ...auth, user: { ...auth.user, emailAddress: Email }})
                     setEmailMsg(data);
                 });
-            } else if (response.status == 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status == 401) {
+                LogOut();
             } else {
-                response.json().then(data => {
+                response?.json().then(data => {
                     setEmailMsg(data.error);
                 });
             }
-        })
+        });
     }
 
     async function ChangePassword(currentPassword: string, newPassword: string, setPasswordMsg: React.Dispatch<React.SetStateAction<string>>){
-        let bearer = 'Bearer ' + localStorage.getItem('token');
 
-        await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangePassword', {
-            method: 'POST',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({currentPassword, newPassword})
-        })
-        .then(response => {
-            if (response.ok) {
+        api.post("/api/User/ChangePassword", JSON.stringify({currentPassword, newPassword})).then(response => {
+            if (response?.ok) {
                 response.text().then(data => { 
                     console.log("Password Changed");
                     setPasswordMsg(data);
                 });
-            } else if (response.status == 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status == 401) {
+                LogOut();
             } else {
-                response.json().then(data => {
+                response?.json().then(data => {
                     setPasswordMsg(data.error);
                 });
             }
-        })
+        });
     }
 
     async function DeleteUser(){
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-    
-        await fetch('http://localhost:' + configData.APIPort + '/api/User/DeleteUser', {
-            method: 'DELETE',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-            localStorage.removeItem('token');
-            navigate('/login');
+        api.delete("/api/User/DeleteUser").then(() => {
+            LogOut();
         });
     }
 
     async function SaveName (event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        if(name != user?.name || surname != user?.surname){
+        if(name != auth.user?.name || surname != auth.user?.surname){
             await ChangeName(name!, surname!, setNameMsg);
         } else {
             setNameMsg("No changes made");
@@ -166,7 +107,7 @@ function Profile({user, setUser}: ProfileProps) {
 
     async function SaveUsername (event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        if (username != user?.username){
+        if (username != auth.user?.username){
             await ChangeUsername(username!, setUsernameMsg);
         } else {
             setUsernameMsg("No changes made");
@@ -175,7 +116,7 @@ function Profile({user, setUser}: ProfileProps) {
 
     async function SaveEmail (event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        if (email != user?.emailAddress){
+        if (email != auth.user?.emailAddress){
             await ChangeEmail(email!, setEmailMsg);
         } else {
             setEmailMsg("No changes made");
@@ -192,11 +133,11 @@ function Profile({user, setUser}: ProfileProps) {
     }
 
     useEffect(() => {
-        setName(user?.name);
-        setSurname(user?.surname);
-        setUsername(user?.username);
-        setEmail(user?.emailAddress);
-    }, [user]);
+        setName(auth.user?.name);
+        setSurname(auth.user?.surname);
+        setUsername(auth.user?.username);
+        setEmail(auth.user?.emailAddress);
+    }, [auth.user]);
     
     useEffect(() => {
         setNameMsg('');
@@ -215,7 +156,6 @@ function Profile({user, setUser}: ProfileProps) {
     }, [currentPassword, newPassword]);
 
     return(
-        !localStorage.getItem('token') ? <Navigate to="/login"/> :
         <div className={styles.profile}> 
             <h2>Profile settings</h2>
             <form onSubmit={SaveName}> 

@@ -1,15 +1,17 @@
 import { useState, useEffect} from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import {Navigate, useOutletContext, useNavigate } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 
 import ContentBlock from "./contentBlock";
 import TitleBlock from "./titleBlock";
 import objectId from "../utils/objectId";
 import { setCaretToEnd } from "../utils/caretControl";
-import configData from '../config.json';
+import useAuth from '../hooks/useAuth';
+import api from '../utils/api';
 
 function NotePage({ pageId, blocks, setBlocks }: any) {
     const navigate = useNavigate();
+    const { LogOut } : any = useAuth()
     const [pages, setPages]: any = useOutletContext();
     const [startingTitle, setStartingTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(pageId)].title);
     const [title, setTitle] = useState(pages[pages.map((p) => p.pageId).indexOf(pageId)].title);
@@ -36,115 +38,44 @@ function NotePage({ pageId, blocks, setBlocks }: any) {
     }, [pageId]);
 
     async function updateTitleOnServer(title) {
-        try {
-            let bearer = 'Bearer ' + localStorage.getItem('token');
-
-            await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdateTitle', {
-                method: 'PUT',
-                headers: {
-                    'Authorization': bearer,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({pageId: pageId, title: title})
-            }).then(response => {
-                if (response.ok) {
-                    console.log("Page updated");
-                    setTitle(title);
-                    return true;
-                } else if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    console.log("Unauthorized");
-                    navigate('/login');
-                }
-            });
-            return false;
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
+        api.put("/api/Note/UpdateTitle", JSON.stringify({pageId: pageId, title: title})).then(response => {
+            if (response?.ok) {
+                console.log("Page updated");
+                setTitle(title);
+            } else if (response?.status == 401) {
+                LogOut();
+            }
+        });
     };
 
     async function addBlockOnServer(block, position) {
-        try {
-            let bearer = 'Bearer ' + localStorage.getItem('token');
-
-            await fetch('http://localhost:' + configData.APIPort + '/api/Note/AddBlock', {
-                method: 'POST',
-                headers: {
-                    'Authorization': bearer,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({blockId: block.blockId, type: block.type, properties: JSON.stringify(block.properties), position: position, pageId: pageId })
-            }).then(response => {
-                if (response.ok) {
-                    console.log("New block added to server");
-                    return true;
-                } else if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    console.log("Unauthorized");
-                    navigate('/login');
-                }
-            });
-            return false;
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
+        api.post("/api/Note/AddBlock", JSON.stringify({blockId: block.blockId, type: block.type, properties: JSON.stringify(block.properties), position: position, pageId: pageId })).then(response => {
+            if (response?.ok) {
+                console.log("New block added to server");
+            } else if (response?.status == 401) {
+                LogOut();
+            }
+        });
     };
 
     async function updateBlockOnServer(block, position) {
-        try {
-            let bearer = 'Bearer ' + localStorage.getItem('token');
-
-            await fetch('http://localhost:' + configData.APIPort + '/api/Note/UpdateBlock', {
-                method: 'PUT',
-                headers: {
-                    'Authorization': bearer,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({blockId: block.blockId, type: block.type, properties: JSON.stringify(block.properties), position: position, pageId: pageId })
-            }).then(response => {
-                if (response.ok) {
-                    console.log("Block updated");
-                    return true;
-                } else if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    console.log("Unauthorized");
-                    navigate('/login');
-                }
-            });
-            return false;
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
+        api.put("/api/Note/UpdateBlock", JSON.stringify({blockId: block.blockId, type: block.type, properties: JSON.stringify(block.properties), position: position, pageId: pageId })).then(response => {
+            if (response?.ok) {
+                console.log("Block updated");
+            } else if (response?.status == 401) {
+                LogOut();
+            }
+        });
     };
 
     async function deleteBlockServer(blockId) {
-        try {
-            let bearer = 'Bearer ' + localStorage.getItem('token');
-
-            await fetch('http://localhost:' + configData.APIPort + `/api/Note/RemoveBlock/${blockId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': bearer,
-                    'Content-Type': 'application/json'
-                },
-            }).then(response => {
-                if (response.ok) {
-                    console.log("Block removed from server");
-                    return true;
-                } else if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    console.log("Unauthorized");
-                    navigate('/login');
-                }
-            });
-            return false;
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
+        api.delete(`/api/Note/RemoveBlock/${blockId}`).then(response => {
+            if (response?.ok) {
+                console.log("Block removed from server");
+            } else if (response?.status == 401) {
+                LogOut();
+            }
+        });
     };
 
     function updateBlockHandler(blockId, properties, type) {
@@ -219,7 +150,6 @@ function NotePage({ pageId, blocks, setBlocks }: any) {
     };
 
     return (
-        !localStorage.getItem('token') ? <Navigate to="/login"/> :
         pages.length === 0 ? <div></div> :
         <>
             <TitleBlock 

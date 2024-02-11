@@ -1,31 +1,40 @@
-import React, { useState }  from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate  } from 'react-router-dom';
+import { GetStoredAuthToken } from './utils/authToken';
+import useAuth from './hooks/useAuth';
+import Roles from './utils/Roles';
+
+import RequireAuth from './components/RequireAuth';
 import Login from './components/login';
 import Profile from './components/profile';
 import Users from './components/users';
 import AdminPage from './components/adminPage';
 import Layout from './components/layout';
-import User from './interfaces/userInterface'
-import Events from './components/events';
 import StoragePage from './components/storage';
 import PageManager from './components/pageManager';
+
 function App() {
-    const [pages, setPages] = useState([]);
-    const [user, setUser] = useState<User>();
+    const { auth } : any = useAuth()
 
     return (
         <Routes>
-            <Route path="/login" element={<Login setUser={setUser}/>}/>
-            
-            <Route element={<Layout pages={pages} setPages={setPages} user={user} setUser={setUser}/>}>
-                <Route path="/events" element={<Events />}/>
-                <Route path="/profile" element={<Profile user={user} setUser={setUser}/>}/>
-                <Route path="/page/:id" element={<PageManager pages={pages}/>}/>
-                <Route path="/admin" element={<AdminPage/>}/>
-                <Route path="/users" element={<Users/>}/>
-                <Route path="/storage" element={<StoragePage/>}/>
+            <Route path="/login" element={<Login/>}/>
+            <Route element={<Layout/>}>
+                <Route element={<RequireAuth allowedRoles={[Roles.User]}/>}>
+                    <Route path="/page/:id" element={<PageManager/>}/>
+                </Route>
+
+                <Route element={<RequireAuth allowedRoles={[Roles.Admin]}/>}>
+                    <Route path="/admin" element={<AdminPage/>}/>
+                    <Route path="/users" element={<Users/>}/>
+                    <Route path="/storage" element={<StoragePage/>}/>
+                </Route>
+
+                <Route element={<RequireAuth allowedRoles={[Roles.User, Roles.Admin]}/>}>
+                    <Route path="/profile" element={<Profile/>}/>
+                </Route>
+                
             </Route>
-            <Route path="*" element={localStorage.getItem('token') ? <Navigate to={user?.role == "1" ? '/profile' : '/profile'} /> : <Navigate to="/login" />} />
+            <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? '/users' : '/profile'} /> : <Navigate to="/login" />} />
         </Routes>
     );
 };

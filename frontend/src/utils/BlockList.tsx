@@ -9,7 +9,7 @@ import BulletPoint from "../components/editableComp/bulletPoint";
 import NumberedList from "../components/editableComp/numberedList";
 import File from "../components/editableComp/file";
 
-const blockList = [
+const BLOCK_LIST = [
     {
         id: "h1",
         tag: PageTitle,
@@ -63,4 +63,4 @@ const blockList = [
     }
 ];
 
-export default blockList;
+export default BLOCK_LIST;

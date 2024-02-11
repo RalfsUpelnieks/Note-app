@@ -1,58 +1,8 @@
-import { Link, NavigateFunction, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from '../stylesheets/Layout.module.css';
-import configData from '../config.json'
 import objectId from "../utils/objectId";
-
-async function AddPage(navigate: NavigateFunction, pages: any){
-    var pageId = objectId();
-    let bearer = 'Bearer ' + localStorage.getItem('token');
-
-    await fetch('http://localhost:' + configData.APIPort + '/api/Note/AddPage', {
-        method: 'POST',
-        headers: {
-            'Authorization': bearer,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({pageId: pageId, title: ""})
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log("Page added");
-            pages.push({pageId: pageId, title: ""});
-            navigate(`/page/${pageId}`);
-        } else {
-            localStorage.removeItem('token');
-            console.log("Unauthorized");
-            navigate('/login');
-        }
-    });
-}
-
-async function RemovePage(navigate: NavigateFunction, pageId: string, pages : any, setPages : any, isSelected: boolean){
-    let bearer = 'Bearer ' + localStorage.getItem('token');
-
-    await fetch('http://localhost:' + configData.APIPort + `/api/Note/RemovePage/${pageId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': bearer,
-            'Content-Type': 'application/json'
-        },
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log("Page removed");
-            setPages(pages.filter((page: { pageId: string; }) => page.pageId !== pageId));
-            if(isSelected){
-                navigate('/dashboard');
-            }
-
-        } else {
-            localStorage.removeItem('token');
-            console.log("Unauthorized");
-            navigate('/login');
-        }
-    });
-}
+import useAuth from '../hooks/useAuth';
+import api from '../utils/api';
 
 interface SideNavProps {
     pages: never[]
@@ -61,11 +11,40 @@ interface SideNavProps {
 }
 
 function SideNav({pages, setPages, isAdmin} : SideNavProps){
+    const { LogOut } : any = useAuth()
     const navigate = useNavigate()
     const openTab = useParams().id;
 
+    async function AddPage(pages: any){
+        var pageId = objectId();
+    
+        api.post("/api/Note/AddPage", JSON.stringify({pageId: pageId, title: ""})).then(response => {
+            if (response?.ok) {
+                console.log("Page added");
+                pages.push({pageId: pageId, title: ""});
+                navigate(`/page/${pageId}`);
+            } else if (response?.status == 401) {
+                LogOut();
+            }
+        });
+    }
+
+    async function RemovePage(pageId: string, pages : any, setPages : any, isSelected: boolean){
+        api.delete(`/api/Note/RemovePage/${pageId}`).then(response => {
+            if (response?.ok) {
+                console.log("Page removed");
+                setPages(pages.filter((page: { pageId: string; }) => page.pageId !== pageId));
+                if(isSelected){
+                    navigate('/dashboard');
+                }
+            } else if (response?.status == 401) {
+                LogOut();
+            }
+        });
+    }
+
     async function handlePageSubmit() {
-        await AddPage(navigate, pages);
+        await AddPage(pages);
     }
 
     return (
@@ -103,7 +82,7 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
                                     <Link to={`/page/${Object.pageId}`} className={styles.textLink}>
                                         <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
                                     </Link>
-                                    <a href="#!" onClick={() => RemovePage(navigate, Object.pageId, pages, setPages, isSelected)} className={styles.noteIcon}><i className="fa fa-trash"></i></a>
+                                    <a href="#!" onClick={() => RemovePage(Object.pageId, pages, setPages, isSelected)} className={styles.noteIcon}><i className="fa fa-trash"></i></a>
                                 </li>
                             );
                         })}

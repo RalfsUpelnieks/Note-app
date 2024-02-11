@@ -1,33 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import configData from '../config.json'
 import AddUser from './addUser';
 import User from '../interfaces/userInterface'
+import useAuth from '../hooks/useAuth';
+import api from '../utils/api';
 
 function Users() {
-    const navigate = useNavigate()
+    const { LogOut } : any = useAuth()
 
     const [users, setUsers] = useState<User[]>([]);
     const [addPanelOpen, setAddPanelOpen] = useState(false);
 
     useEffect(() => {
         async function updatePages() {
-            let bearer = 'Bearer ' + localStorage.getItem('token');
-
-            await fetch('http://localhost:' + configData.APIPort + '/api/User/GetAllUsers', {
-                method: 'GET',
-                headers: {
-                    'Authorization': bearer,
-                    'Content-Type': 'application/json'
-            }}).then(response => {
-                if (response.ok) {
+            api.get("/api/User/GetAllUsers").then(response => {
+                if (response?.ok) {
                     response.json().then(data => { 
                         console.log("Get all users data from server");
                         setUsers(data);
                     });
-                } else {
-                    localStorage.removeItem('token');
-                    navigate('/login');
+                } else if (response?.status === 401) {
+                    LogOut();
                 }
             })
         };
@@ -38,29 +30,18 @@ function Users() {
         console.log("Data deleted");
     }
 
-    async function DeleteUser(id: string){
-        let bearer = 'Bearer ' + localStorage.getItem('token');
-    
-        await fetch('http://localhost:' + configData.APIPort + '/api/User/DeleteUser/' + id, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-            if (response.ok) {
+    async function DeleteUser(id: string) {
+        api.delete(`/api/User/DeleteUser/${id}`).then(response => {
+            if (response?.ok) {
                 console.log("User deleted");
                 setUsers((users) => users.filter(element => element.id !== id));
-            } else if (response.status === 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status == 401) {
+                LogOut();
             }
         });
     }
 
-    async function ChangeRole(id: string, role: string){
-        let bearer = 'Bearer ' + localStorage.getItem('token');
+    async function ChangeRole(id: string, role: string) {
         var newRole: string;
         if(role || role == "1"){
             newRole = "0";
@@ -68,30 +49,21 @@ function Users() {
             newRole = "1";
         }
 
-        await fetch('http://localhost:' + configData.APIPort + '/api/User/ChangeRole/' + id, {
-            method: 'POST',
-            headers: {
-                'Authorization': bearer,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newRole)
-        })
-        .then(response => {
-            if (response.ok) {
+        api.post(`/api/User/ChangeRole/${id}`, JSON.stringify(newRole)).then(response => {
+            if (response?.ok) {
                 console.log("Role changed");
                 const index = users.map((u) => u.id).indexOf(id);
                 const updatedUsers = [...users];
                 updatedUsers[index] = {...updatedUsers[index], role: newRole};
                 setUsers(updatedUsers);
-            } else if (response.status === 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
+            } else if (response?.status == 401) {
+                LogOut();
             }
         });
     }
 
     return (
-        !localStorage.getItem('token') ? <Navigate to="/"/> :<div>
+        <div>
             {addPanelOpen && (
                 <AddUser setTabOpen={setAddPanelOpen} users={users}/>
             )}

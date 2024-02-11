@@ -1,48 +1,18 @@
 import React, { useEffect, useState} from 'react';
-import {Navigate, useNavigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css'
-import configData from '../config.json'
-import User from '../interfaces/userInterface'
+import useAuth from '../hooks/useAuth';
 
-interface LoginProps {
-    setUser: React.Dispatch<React.SetStateAction<User | undefined>>
-}
-
-function Login({setUser}: LoginProps) {
-    const navigate = useNavigate();
+function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errMsg, setErrMsg] = useState('');
 
-    async function loginUser(Username: string, Password: string, setErrMsg: React.Dispatch<React.SetStateAction<string>>){
-        await fetch('http://localhost:' + configData.APIPort + '/api/Auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({Username, Password})
-        })
-        .then(response => {
-            if (response.ok) {
-                response.json().then(data => { 
-                    localStorage.setItem('token', data.token);
-                    setUser(data);
-                    if(data.role == "1"){
-                        navigate("/profile");
-                    } else {
-                        navigate("/dashboard");
-                    }
-                });
-            } else {
-                response.json().then(data => {
-                    setErrMsg(data.error);
-                    console.log(data);
-                });
-            }
-        })
-    }
+    const { LogIn } : any = useAuth()
 
     async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        await loginUser(email, password, setErrMsg);
+        await LogIn(email, password, setErrMsg);
     }
     
     useEffect(() => {
