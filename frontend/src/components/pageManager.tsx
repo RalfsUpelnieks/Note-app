@@ -1,11 +1,12 @@
 import React, { useState}  from 'react';
-import { useParams, useOutletContext } from 'react-router-dom';
+import { useParams, useOutletContext, useNavigate } from 'react-router-dom';
 import NotePage from './notePage';
 import useAuth from '../hooks/useAuth';
 import api from '../utils/api';
 
 function PageManager() {
-    const { LogOut } : any = useAuth()
+    const navigate = useNavigate();
+    const { LogOut } : any = useAuth();
     const params = useParams();
     const [blocks, setBlocks] = useState([]);
     const [pages, setPages] : any = useOutletContext();
@@ -20,6 +21,8 @@ function PageManager() {
                 });
             } else if (response?.status === 401) {
                 LogOut();
+            } else {
+                navigate("/");
             }
         })
     }, [params.id]);
