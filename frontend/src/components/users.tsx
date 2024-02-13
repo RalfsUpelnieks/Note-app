@@ -62,10 +62,29 @@ function Users() {
         });
     }
 
+    function openAddUserPanel() {
+        setAddPanelOpen(true)
+
+        setTimeout(() => {
+            document.addEventListener("click", ClickOnBlurhandler, true);
+        }, 100);
+    }
+
+    function closeAddUserPanel() {
+        setAddPanelOpen(false);
+        document.removeEventListener("click", ClickOnBlurhandler, true);
+    }
+
+    function ClickOnBlurhandler(e) {
+        if(e.target.id === "blur") {
+            closeAddUserPanel();
+        }
+    };
+
     return (
         <div>
             {addPanelOpen && (
-                <AddUser setTabOpen={setAddPanelOpen} users={users}/>
+                <AddUser closePanel={closeAddUserPanel} users={users}/>
             )}
             <h2>Users</h2>
             <table className="border-collapse shadow-lg rounded-xl overflow-hidden">
@@ -99,7 +118,7 @@ function Users() {
                     })}
                 </tbody>
             </table>
-            <button className='mt-2 w-20 h-8 font-semibold text-xs bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={() => setAddPanelOpen(!addPanelOpen)}>Add User</button>
+            <button className='mt-2 w-20 h-8 font-semibold text-xs bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={openAddUserPanel}>Add User</button>
         </div>
     );
 }

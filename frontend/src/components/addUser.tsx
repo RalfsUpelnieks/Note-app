@@ -1,15 +1,14 @@
 import React, { useEffect, useState} from 'react';
-import styles from '../stylesheets/Login.module.css'
 import User from '../interfaces/userInterface'
 import useAuth from '../hooks/useAuth';
 import api from '../utils/api';
 
 interface AddUserProps {
-    setTabOpen: React.Dispatch<React.SetStateAction<boolean>>
+    closePanel(): void
     users: User[]
 }
 
-function AddUser({setTabOpen, users}: AddUserProps) {
+function AddUser({closePanel, users}: AddUserProps) {
     const { LogOut } : any = useAuth()
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
@@ -25,7 +24,7 @@ function AddUser({setTabOpen, users}: AddUserProps) {
                 response.json().then(data => { 
                     console.log("User added");
                     users.push(data);
-                    setTabOpen(false);
+                    closePanel();
                 });
             } else if (response?.status == 401) {
                 LogOut();
@@ -47,42 +46,40 @@ function AddUser({setTabOpen, users}: AddUserProps) {
     }, [name, surname, username, email, password, isAdmin]);
 
     return(
-        <div className={styles.overlay}>
-            <form className={styles.popup} onSubmit={handleSubmit}>
-                <div className={styles.firstRow}>
-                    <h2>Add user</h2>
-                    <i className="fa fa-times" onClick={() => setTabOpen(false)}></i>
+        <div id='blur' className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-[rgba(0,0,0,0.7)]'>
+            <form className='relative max-w-sm p-5 pt-3 mx-auto mt-32 rounded-xl bg-white' onSubmit={handleSubmit}>
+                <div className="flex justify-between items-center mb-3">
+                    <h2 className='m-0'>Add user</h2>
+                    <i className="fa fa-times text-xl font-thin cursor-pointer" onClick={closePanel}></i>
                 </div>
-                <div className={styles.name}>
-                    <div>
+                <div className='flex justify-between mb-4'>
+                    <div className='w-[48%]'>
                         <label>Name</label>
-                        <input type="text" onChange={e => setName(e.target.value)} required name="text"/>
+                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" onChange={e => setName(e.target.value)} required name="text"/>
                     </div> 
-                    <div>
+                    <div className='w-[48%]'>
                         <label>Surname</label>
-                        <input type="text" onChange={e => setSurname(e.target.value)} required name="text"/>
+                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" onChange={e => setSurname(e.target.value)} required name="text"/>
                     </div> 
                 </div>
-                <div className={styles.formGroup}>
+                <div className='mb-3'>
                     <label>Username</label>
-                    <input type="username" onChange={e => setUsername(e.target.value)} required name="username"/>
+                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="username" onChange={e => setUsername(e.target.value)} required name="username"/>
                 </div> 
-                <div className={styles.formGroup}>
+                <div className='mb-3'>
                     <label>Email</label>
-                    <input type="email" onChange={e => setEmail(e.target.value)} required name="username"/>
+                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="email" onChange={e => setEmail(e.target.value)} required name="username"/>
                 </div>                    
-                <div className={styles.formGroup}>
+                <div className='mb-3'>
                     <label>Password</label>
-                    <input type="password" onChange={e => setPassword(e.target.value)} required name="password"/>
+                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setPassword(e.target.value)} required name="password"/>
                 </div>
-                <div className={styles.isAdmin}>
-                    <input type="checkbox" onChange={e => setIsAdmin(e.target.checked)}/>
+                <div>
+                    <input className='h-4 w-4 ml-0 mr-1' type="checkbox" onChange={e => setIsAdmin(e.target.checked)}/>
                     <label>Admin</label>
                 </div>
-                <div className={styles.formGroup}>
-                    <p className={errMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{errMsg}</p>
-                </div>
-                <button className={styles.loginButton} type="submit">Add user</button>
+                <p className={errMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{errMsg}</p>
+                <button className='w-full h-10 mt-2 font-Roboto font-bold text-base bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Add user</button>
             </form>
         </div>
     )

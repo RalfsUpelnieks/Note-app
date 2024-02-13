@@ -50,7 +50,7 @@ function Header({user, pages}: any) {
                 <h4 className='self-end ml-2 mr-auto mb-4 opacity-70'>admin page</h4>
             ) : (
                 <div className='group relative w-2/6 mx-3 lg:ml-[12%]'>
-                    <input type="text" placeholder="Search..." onChange={handleChange} onFocus={updatePageList}/>
+                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" placeholder="Search..." onChange={handleChange} onFocus={updatePageList}/>
                     {search && 
                         <div className='hidden group-focus-within:flex peer-focus-within:flex flex-col w-[calc(100%-2px)] top-8 absolute bg-white rounded-b-[4px] border border-solid border-t-neutral-200 border-[#ced4da]'>
                             {pageList.length !== 0 ? (
@@ -74,7 +74,7 @@ function Header({user, pages}: any) {
                     <h4 className='m-0 text-xs mt-[0.10rem]'>{user?.username}</h4>
                     <p className='m-0 text-xs'>{user?.name} {user?.surname}</p>
                 </Link>
-                <button onClick={logOutUser} className='w-24 h-9 font-semibold text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded'>Log out</button>
+                <button onClick={logOutUser} className='w-24 h-9 font-Roboto font-bold bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded'>Log out</button>
             </div>
         </header>
     )

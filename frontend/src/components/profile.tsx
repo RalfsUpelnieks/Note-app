@@ -162,11 +162,11 @@ function Profile() {
                 <div className={styles.formGroup}>
                     <div className={styles.inputGroup}>
                         <label>Name</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} required name="name"/>
+                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={name} onChange={e => setName(e.target.value)} required name="name"/>
                     </div> 
                     <div className={styles.inputGroup}>
                         <label>Surname</label>
-                        <input type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
+                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
                     </div>
                     <button className={styles.button} type="submit">Save</button>
                 </div>
@@ -177,7 +177,7 @@ function Profile() {
                 <div className={styles.formGroup}>
                     <div className={styles.inputGroup}>
                         <label>Username</label>
-                        <input type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
+                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
                     </div>
                     <button className={styles.button} type="submit">Save</button>
                 </div>
@@ -187,7 +187,7 @@ function Profile() {
                 <div className={styles.formGroup}>
                     <div className={styles.inputGroup}>
                         <label>Email</label>
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
+                        <input type="email" className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
                     </div>
                     <button className={styles.button} type="submit">Save</button>
                 </div>
@@ -197,11 +197,11 @@ function Profile() {
                 <div className={styles.formGroup}>
                     <div className={styles.inputGroup}>
                         <label>Current Password</label>
-                        <input type="password" onChange={e => setCurrentPassword(e.target.value)} required name="oldPassword"/>
+                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setCurrentPassword(e.target.value)} required name="oldPassword"/>
                     </div>
                     <div className={styles.inputGroup}>
                         <label>New password</label>
-                        <input type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
+                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
                     </div>
                     <button className={styles.button} type="submit">Change</button>
                 </div>
