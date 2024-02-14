@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from '../stylesheets/Layout.module.css';
 import objectId from "../utils/objectId";
 import useAuth from '../hooks/useAuth';
+import ConfirmModal from './ConfirmModal';
 import api from '../utils/api';
 
 interface SideNavProps {
@@ -10,7 +12,14 @@ interface SideNavProps {
     isAdmin: boolean
 }
 
-function SideNav({pages, setPages, isAdmin} : SideNavProps){
+const confirmDeletionInitialState : any = {
+    isOpen: false,
+    action: null,
+    itemName: ''
+};
+
+function SideNav({pages, setPages, isAdmin} : SideNavProps) {
+    const [confirmDeletion, setConfirmDeletion] = useState(confirmDeletionInitialState);
     const { LogOut } : any = useAuth()
     const navigate = useNavigate()
     const openTab = useParams().id;
@@ -47,59 +56,70 @@ function SideNav({pages, setPages, isAdmin} : SideNavProps){
         await AddPage(pages);
     }
 
+    function handlePageDeletionCheck(page, isSelected) {
+        setConfirmDeletion({
+            isOpen: true,
+            action: () => RemovePage(page.pageId, pages, setPages, isSelected),
+            itemName: `book "${page.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}"`
+        })
+    }
+
     return (
-        <nav className={styles.sideNav}>
-            <ul>
-                {isAdmin ?
-                <>
-                    <li className={window.location.pathname == "/profile" ? styles.selectedNote : ""}>
-                        <Link to="/profile">
-                            <i className='fa fa-user'></i>
-                            <span className={styles.navText}>Profile</span>
-                        </Link>
-                    </li>
-                    <li className={window.location.pathname == "/users" ? styles.selectedNote : ""}>
-                        <Link to="/users">
-                            <i className="fa fa-users"></i>
-                            <span className={styles.navText}>Users</span>
-                        </Link>
-                    </li>
-                    <li className={window.location.pathname == "/storage" ? styles.selectedNote : ""}>
-                        <Link to="/storage">
-                            <i className="fa fa-database"></i>
-                            <span className={styles.navText}>Storage</span>
-                        </Link>
-                    </li>
-                </>
-                : 
-                <>
-                    <span className={styles.pagesText}>Books</span>
-                    <div>
-                        {pages.map((Object: { pageId: string; title: string; }) => {
-                            var isSelected = Object.pageId == openTab;
-                            return (
-                                <li key={Object.pageId} className={`${styles.notePage} ${isSelected ? styles.selectedNote : null}`}>
-                                    <Link to={`/page/${Object.pageId}`} className={styles.textLink}>
-                                        <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
-                                    </Link>
-                                    <a href="#!" onClick={() => RemovePage(Object.pageId, pages, setPages, isSelected)} className={styles.noteIcon}><i className="fa fa-trash"></i></a>
-                                </li>
-                            );
-                        })}
-                        <li className={styles.innerAddPage}>
-                            <a href="#!" onClick={handlePageSubmit} className={styles.textLink}>
-                                <i className="fa fa-plus"></i>
-                                <span>Add page</span>
-                            </a>
+        <>
+            {confirmDeletion.isOpen && <ConfirmModal closePanel={() => setConfirmDeletion({ ...confirmDeletion, isOpen: false })} action={confirmDeletion.action} itemName={confirmDeletion.itemName} />}
+            <nav className={styles.sideNav}>
+                <ul>
+                    {isAdmin ?
+                    <>
+                        <li className={window.location.pathname == "/profile" ? styles.selectedNote : ""}>
+                            <Link to="/profile">
+                                <i className='fa fa-user'></i>
+                                <span className={styles.navText}>Profile</span>
+                            </Link>
                         </li>
-                    </div>
-                    <a href="#!" onClick={handlePageSubmit} className={styles.addPage}>
-                        <i className="fa fa-plus"></i>
-                        <span className={styles.navText}>Add page</span>
-                    </a>
-                </>}
-            </ul>
-        </nav>
+                        <li className={window.location.pathname == "/users" ? styles.selectedNote : ""}>
+                            <Link to="/users">
+                                <i className="fa fa-users"></i>
+                                <span className={styles.navText}>Users</span>
+                            </Link>
+                        </li>
+                        <li className={window.location.pathname == "/storage" ? styles.selectedNote : ""}>
+                            <Link to="/storage">
+                                <i className="fa fa-database"></i>
+                                <span className={styles.navText}>Storage</span>
+                            </Link>
+                        </li>
+                    </>
+                    : 
+                    <>
+                        <span className={styles.pagesText}>Books</span>
+                        <div>
+                            {pages.map((Object: { pageId: string; title: string; }) => {
+                                var isSelected = Object.pageId == openTab;
+                                return (
+                                    <li key={Object.pageId} className={`${styles.notePage} ${isSelected ? styles.selectedNote : null}`}>
+                                        <Link to={`/page/${Object.pageId}`} className={styles.textLink}>
+                                            <span>{Object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
+                                        </Link>
+                                        <a href="#!" onClick={() => handlePageDeletionCheck(Object, isSelected)} className={styles.noteIcon}><i className="fa fa-trash"></i></a>
+                                    </li>
+                                );
+                            })}
+                            <li className={styles.innerAddPage}>
+                                <a href="#!" onClick={handlePageSubmit} className={styles.textLink}>
+                                    <i className="fa fa-plus"></i>
+                                    <span>Add page</span>
+                                </a>
+                            </li>
+                        </div>
+                        <a href="#!" onClick={handlePageSubmit} className={styles.addPage}>
+                            <i className="fa fa-plus"></i>
+                            <span className={styles.navText}>Add page</span>
+                        </a>
+                    </>}
+                </ul>
+            </nav>
+        </>
     );
 }
 

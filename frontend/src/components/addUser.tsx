@@ -45,6 +45,19 @@ function AddUser({closePanel, users}: AddUserProps) {
         setErrMsg('');
     }, [name, surname, username, email, password, isAdmin]);
 
+    useEffect(() => {
+        document.addEventListener('click', ClickOnBlurhandler);
+        return () => {
+            document.removeEventListener('click', ClickOnBlurhandler);
+        };
+    }, []);
+
+    function ClickOnBlurhandler(e) {
+        if(e.target.id === "blur") {
+            closePanel();
+        }
+    };
+
     return(
         <div id='blur' className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-[rgba(0,0,0,0.7)]'>
             <form className='relative max-w-sm p-5 pt-3 mx-auto mt-32 rounded-xl bg-white' onSubmit={handleSubmit}>

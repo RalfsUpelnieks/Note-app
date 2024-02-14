@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import AddUser from './addUser';
 import User from '../interfaces/userInterface'
+import ConfirmModal from './ConfirmModal';
 import useAuth from '../hooks/useAuth';
 import api from '../utils/api';
+
+const confirmDeletionInitialState : any = {
+    isOpen: false,
+    action: null,
+    itemName: ''
+};
 
 function Users() {
     const { LogOut } : any = useAuth()
 
     const [users, setUsers] = useState<User[]>([]);
     const [addPanelOpen, setAddPanelOpen] = useState(false);
+    const [confirmDeletion, setConfirmDeletion] = useState(confirmDeletionInitialState);
 
     useEffect(() => {
         async function updatePages() {
@@ -27,7 +35,7 @@ function Users() {
     }, []);
 
     function DeleteUserData(){
-        console.log("Data deleted");
+        console.log("Data deletion not implemented");
     }
 
     async function DeleteUser(id: string) {
@@ -62,30 +70,22 @@ function Users() {
         });
     }
 
-    function openAddUserPanel() {
-        setAddPanelOpen(true)
-
-        setTimeout(() => {
-            document.addEventListener("click", ClickOnBlurhandler, true);
-        }, 100);
+    function handleUserDeletionCheck(user) {
+        setConfirmDeletion({
+            isOpen: true,
+            action: () => DeleteUser(user.id),
+            itemName: `user with username "${user.username}"`
+        })
     }
-
-    function closeAddUserPanel() {
-        setAddPanelOpen(false);
-        document.removeEventListener("click", ClickOnBlurhandler, true);
-    }
-
-    function ClickOnBlurhandler(e) {
-        if(e.target.id === "blur") {
-            closeAddUserPanel();
-        }
-    };
 
     return (
         <div>
-            {addPanelOpen && (
-                <AddUser closePanel={closeAddUserPanel} users={users}/>
-            )}
+            {addPanelOpen &&
+                <AddUser closePanel={() => setAddPanelOpen(false)} users={users}/>
+            }
+            {confirmDeletion.isOpen &&
+                <ConfirmModal closePanel={() => setConfirmDeletion({ ...confirmDeletion, isOpen: false })} action={confirmDeletion.action} itemName={confirmDeletion.itemName} />
+            }
             <h2>Users</h2>
             <table className="border-collapse shadow-lg rounded-xl overflow-hidden">
                 <thead className="text-sm bg-neutral-100 uppercase">
@@ -111,14 +111,14 @@ function Users() {
                                 </td>
                                 <td>
                                     <button className='mr-1 w-20 h-6 text-xs bg-blue-600 text-white hover:bg-blue-900 hover:cursor-pointer border-none rounded' onClick={DeleteUserData}>Delete Data</button>
-                                    <button className='w-20 h-6 text-xs bg-red-600 text-white hover:bg-red-900 hover:cursor-pointer border-none rounded' onClick={() => DeleteUser(Object.id)}>Delete User</button>
+                                    <button className='w-20 h-6 text-xs bg-red-600 text-white hover:bg-red-900 hover:cursor-pointer border-none rounded' onClick={() => handleUserDeletionCheck(Object)}>Delete User</button>
                                 </td>
                             </tr>
                         );
                     })}
                 </tbody>
             </table>
-            <button className='mt-2 w-20 h-8 font-semibold text-xs bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={openAddUserPanel}>Add User</button>
+            <button className='mt-2 w-20 h-8 font-semibold text-xs bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={() => setAddPanelOpen(true)}>Add User</button>
         </div>
     );
 }

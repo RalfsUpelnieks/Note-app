@@ -2,6 +2,7 @@ import React, { useEffect, useState} from 'react';
 import styles from '../stylesheets/Profile.module.css'
 import useAuth from '../hooks/useAuth';
 import api from '../utils/api';
+import ConfirmModal from './ConfirmModal';
 
 function Profile() {
     const { auth, setAuth, LogOut } : any = useAuth()
@@ -17,6 +18,8 @@ function Profile() {
     const [usernameMsg, setUsernameMsg] = useState('');
     const [emailMsg, setEmailMsg] = useState('');
     const [passwordMsg, setPasswordMsg] = useState('');
+
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     async function ChangeName(Name: string, Surname: string, setNameMsg: React.Dispatch<React.SetStateAction<string>>){
         api.post("/api/User/ChangeName", JSON.stringify({Name, Surname})).then(response => {
@@ -207,7 +210,8 @@ function Profile() {
                 </div>
                 <p className={passwordMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{passwordMsg}</p>
             </form>
-            <button className={[styles.button, styles.deleteButton].join(" ")} onClick={DeleteUser}>Delete Profile</button>
+            <button className={[styles.button, styles.deleteButton].join(" ")} onClick={() => setDeleteModalOpen(true)}>Delete Profile</button>
+            {deleteModalOpen && <ConfirmModal closePanel={() => setDeleteModalOpen(false)} action={DeleteUser} itemName='this user' />}
         </div>
     )
 }

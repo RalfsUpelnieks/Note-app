@@ -9,7 +9,7 @@ const initialState = {
     isAuthenticated: false,
     isLoading: true,
     user: null
-  };
+};
 
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(initialState);
