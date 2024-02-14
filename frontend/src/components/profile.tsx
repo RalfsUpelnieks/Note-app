@@ -1,10 +1,13 @@
 import React, { useEffect, useState} from 'react';
-import styles from '../stylesheets/Profile.module.css'
 import useAuth from '../hooks/useAuth';
 import api from '../utils/api';
 import ConfirmModal from './ConfirmModal';
 
-function Profile() {
+interface profileProps {
+    closePanel(): void
+}
+
+function Profile({ closePanel }: profileProps) {
     const { auth, setAuth, LogOut } : any = useAuth()
 
     const [name, setName] = useState(auth.user?.name);
@@ -158,61 +161,83 @@ function Profile() {
         setPasswordMsg('');
     }, [currentPassword, newPassword]);
 
+    useEffect(() => {
+        document.addEventListener('click', ClickOnBlurhandler);
+        return () => {
+            document.removeEventListener('click', ClickOnBlurhandler);
+        };
+    }, []);
+
+    function ClickOnBlurhandler(e) {
+        if(e.target.id === "profileBlur") {
+            closePanel();
+        }
+    };
+
     return(
-        <div className={styles.profile}> 
-            <h2>Profile settings</h2>
-            <form onSubmit={SaveName}> 
-                <div className={styles.formGroup}>
-                    <div className={styles.inputGroup}>
-                        <label>Name</label>
-                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={name} onChange={e => setName(e.target.value)} required name="name"/>
-                    </div> 
-                    <div className={styles.inputGroup}>
-                        <label>Surname</label>
-                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
+        (deleteModalOpen ?
+            <ConfirmModal closePanel={() => setDeleteModalOpen(false)} action={DeleteUser} itemName='this user' /> 
+            :
+            <div id='profileBlur' className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-[rgba(0,0,0,0.7)]'>
+                <div className='relative max-w-sm px-4 pt-2 pb-3 mx-auto mt-56 rounded-xl bg-white'>
+                    <div className="flex justify-between items-center mb-3 mt-0">
+                        <h2 className='m-0'>Profile settings</h2>
+                        <i className="fa fa-times text-xl font-thin cursor-pointer" onClick={closePanel}></i>
                     </div>
-                    <button className={styles.button} type="submit">Save</button>
+                    <form onSubmit={SaveName} className='mb-2'> 
+                        <div className='flex justify-between'>
+                            <div className='mr-2'>
+                                <label>Name</label>
+                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={name} onChange={e => setName(e.target.value)} required name="name"/>
+                            </div> 
+                            <div className='mr-2'>
+                                <label>Surname</label>
+                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
+                            </div>
+                            <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                        </div>
+                        <p className={nameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{nameMsg}</p>
+                    </form>
+                        
+                    <form onSubmit={SaveUsername} className='mb-2'>
+                        <div className='flex justify-between'>
+                            <div className='mr-2 w-full'>
+                                <label>Username</label>
+                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
+                            </div>
+                            <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                        </div>
+                        <p className={usernameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{usernameMsg}</p>
+                    </form> 
+                    <form onSubmit={SaveEmail} className='mb-2'>
+                        <div className='flex justify-between'>
+                            <div className='mr-2 w-full'>
+                                <label>Email</label>
+                                <input type="email" className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
+                            </div>
+                            <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                        </div>
+                        <p className={emailMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{emailMsg}</p>
+                    </form>                    
+                    <form onSubmit={SavePassword} className='mb-2'>
+                        <div className='flex justify-between'>
+                            <div className='mr-2 w-full'>
+                                <label>Current Password</label>
+                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setCurrentPassword(e.target.value)} required name="oldPassword"/>
+                            </div>
+                            <div className='mr-2 w-full'>
+                                <label>New password</label>
+                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
+                            </div>
+                            <button className='w-48 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Change</button>
+                        </div>
+                        <p className={passwordMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{passwordMsg}</p>
+                    </form>
+                    <button className='w-28 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={() => setDeleteModalOpen(true)}>Delete Profile</button>
+                    {deleteModalOpen && <ConfirmModal closePanel={() => setDeleteModalOpen(false)} action={DeleteUser} itemName='this user' />}
                 </div>
-                <p className={nameMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{nameMsg}</p>
-            </form>
-                
-            <form onSubmit={SaveUsername}>
-                <div className={styles.formGroup}>
-                    <div className={styles.inputGroup}>
-                        <label>Username</label>
-                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
-                    </div>
-                    <button className={styles.button} type="submit">Save</button>
-                </div>
-                <p className={usernameMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{usernameMsg}</p>
-            </form> 
-            <form onSubmit={SaveEmail}>
-                <div className={styles.formGroup}>
-                    <div className={styles.inputGroup}>
-                        <label>Email</label>
-                        <input type="email" className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
-                    </div>
-                    <button className={styles.button} type="submit">Save</button>
-                </div>
-                <p className={emailMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{emailMsg}</p>
-            </form>                    
-            <form onSubmit={SavePassword}>
-                <div className={styles.formGroup}>
-                    <div className={styles.inputGroup}>
-                        <label>Current Password</label>
-                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setCurrentPassword(e.target.value)} required name="oldPassword"/>
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>New password</label>
-                        <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
-                    </div>
-                    <button className={styles.button} type="submit">Change</button>
-                </div>
-                <p className={passwordMsg ? styles.errMessage : styles.offscreen} aria-live="assertive">{passwordMsg}</p>
-            </form>
-            <button className={[styles.button, styles.deleteButton].join(" ")} onClick={() => setDeleteModalOpen(true)}>Delete Profile</button>
-            {deleteModalOpen && <ConfirmModal closePanel={() => setDeleteModalOpen(false)} action={DeleteUser} itemName='this user' />}
-        </div>
+            </div>
+        )
     )
 }
 

@@ -2,6 +2,7 @@ import { createContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { GetStoredAuthToken, RemoveStoredAuthToken } from '../utils/authToken';
 import api from '../utils/api';
+import ROLES from "../utils/Roles";
 
 const AuthContext = createContext({});
 
@@ -67,7 +68,8 @@ export const AuthProvider = ({ children }) => {
                         isLoading: false,
                         user: data
                     });
-                    navigate("/profile");
+
+                    navigate(data.role == ROLES.Admin ? '/users' : '/page' );
                 });
             } else {
                 response?.json().then(data => {
@@ -91,9 +93,8 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{ auth, setAuth, LogIn, LogOut }}>
             {
-                auth.isLoading 
-                    ? <></>
-                    : children
+                !auth.isLoading 
+                    && children
             }
         </AuthContext.Provider>
     )

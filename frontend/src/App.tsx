@@ -5,7 +5,6 @@ import Roles from './utils/Roles';
 
 import RequireAuth from './components/RequireAuth';
 import Login from './components/login';
-import Profile from './components/profile';
 import Users from './components/users';
 import AdminPage from './components/adminPage';
 import Layout from './components/layout';
@@ -20,21 +19,16 @@ function App() {
             <Route path="/login" element={<Login/>}/>
             <Route element={<Layout/>}>
                 <Route element={<RequireAuth allowedRoles={[Roles.User]}/>}>
+                    <Route path="/page" element={<PageManager/>}/>
                     <Route path="/page/:id" element={<PageManager/>}/>
                 </Route>
-
                 <Route element={<RequireAuth allowedRoles={[Roles.Admin]}/>}>
                     <Route path="/admin" element={<AdminPage/>}/>
                     <Route path="/users" element={<Users/>}/>
                     <Route path="/storage" element={<StoragePage/>}/>
                 </Route>
-
-                <Route element={<RequireAuth allowedRoles={[Roles.User, Roles.Admin]}/>}>
-                    <Route path="/profile" element={<Profile/>}/>
-                </Route>
-                
             </Route>
-            <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? '/users' : '/profile'} /> : <Navigate to="/login" />} />
+            <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? '/users' : '/page'} /> : <Navigate to="/login" />} />
         </Routes>
     );
 };

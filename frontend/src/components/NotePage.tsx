@@ -186,7 +186,10 @@ function NotePage({ pageId, blocks, setBlocks }: any) {
                     )}
                 </Droppable>
             </DragDropContext>
-            <button className="w-full h-[22px] bg-neutral-100 border-none rounded text-base/4 text-neutral-400 opacity-0 hover:cursor-pointer hover:opacity-100" onClick={addBlockToEndHandler}><i className="fa fa-plus"></i></button>
+            <button className="w-full h-6 items-center bg-neutral-100 border-none rounded text-base/4 text-neutral-400 opacity-0 hover:cursor-pointer hover:opacity-100" onClick={addBlockToEndHandler}>
+                <i className="fa fa-plus text-sm"></i>
+                <span className="text-sm font-bold ml-1">Add block</span>
+            </button>
         </>
     );
 };
