@@ -7,7 +7,11 @@ module.exports = {
     extend: {
       fontFamily: {
         'Roboto': ['Arial', 'sans-serif'],
-        'Helvetica': ['sans-serif']
+      },
+      colors: {
+        'SideMenuBackground': '#2f323a',
+        'SideMenuHover': '#282a31',
+        'SideMenuSelected': '#1f2227'
       }
     }
   },

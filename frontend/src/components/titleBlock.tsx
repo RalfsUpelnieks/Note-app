@@ -1,67 +1,29 @@
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
 
 interface TitleBlockProps {
-    startingTitle: string
-    title: string
+    content: string
+    placeholder: string
     pageId: string
-    addBlock(): void
-    updateTitle(title: string): void
-    pages: any
-    setPages: any
+    className?: string
+    onChange?(e): void
+    onBlur?(e): void
+    onKeyDown?(e): void 
 }
 
-function TitleBlock({startingTitle, title, pageId, addBlock, updateTitle, pages, setPages} : TitleBlockProps) {
-    const inputTitle = useRef(startingTitle);
-    const timer : any = useRef(null)
+function TitleBlock({content, placeholder, pageId, className, onChange, onBlur, onKeyDown} : TitleBlockProps) {
 
-    useEffect(() => {
-        inputTitle.current = title;
-    }, [title]);
-
-    function onChange(e) {
-        if(e.target.innerHTML == "<br>") {
-            e.target.innerHTML = "";
-        }
-        
-        inputTitle.current = e.target.innerHTML;
-
-        const index = pages.map((p) => p.pageId).indexOf(pageId);
-        const updatedPages = [...pages];
-        updatedPages[index] = {...updatedPages[index], title: e.target.innerHTML};
-        setPages(updatedPages);
-
-        clearTimeout(timer.current);
-        if(title != e.target.innerHTML) {
-            timer.current = setTimeout(() => {
-                updateTitle(e.target.innerHTML);
-            }, 1200);
-        }
-    }
-
-    function onBlur() {
-        if (title !== inputTitle.current) {
-            clearTimeout(timer.current);
-            updateTitle(inputTitle.current);
-        }
-    }
-
-    function onKeyDown(e) {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            addBlock();
-        }
-    }
+    const title = useMemo(() => content, [pageId]);
 
     return (
-        <h1 dangerouslySetInnerHTML={{__html: startingTitle}}
-            key={pageId}
+        <h1 key={pageId}
+            dangerouslySetInnerHTML={{__html: title}}
+            placeholder={placeholder}
             data-position={0}
             onInput={onChange}
             onBlur={onBlur} 
             onKeyDown={onKeyDown}
-            placeholder="Untitled"
             contentEditable="true" 
-            className="w-[calc(100%-2rem)] my-1 break-words cursor-text empty:before:content-[attr(placeholder)] empty:before:text-neutral-400 focus:outline-none"
+            className={`break-all cursor-text empty:before:content-[attr(placeholder)] empty:before:text-neutral-400 focus:outline-none ${className}`}
         ></h1>
     );
 }

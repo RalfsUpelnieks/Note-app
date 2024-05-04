@@ -3,13 +3,16 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import { AuthProvider } from './contexts/authProvider';
+import { ConfirmationProvider } from './contexts/confirmationProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
     <BrowserRouter>
         <AuthProvider>
-            <App />
+            <ConfirmationProvider>
+                <App />
+            </ConfirmationProvider>
         </AuthProvider>
     </BrowserRouter>
 );

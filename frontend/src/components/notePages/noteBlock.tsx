@@ -1,13 +1,14 @@
 import  React from "react";
 import { useState, useRef} from "react";
 import { Draggable } from "react-beautiful-dnd";
-import ActionMenu from "./actionMenu";
-import { getCaretCoordinates, setCaretToEnd } from "../utils/caretControl";
-import menuList from "../utils/BlockList"
+import ActionMenu from "../actionMenu";
+import { getCaretCoordinates, setCaretToEnd } from "../../utils/caretControl";
+import menuList from "../../utils/blockList"
+import { IconDrag } from "../../icons";
 
 const PLACEHOLDER = `Press 'Control' + 'Space bar' for commands`;
 
-interface ContentBlockProps {
+interface NoteBlockProps {
     blockId: string
     pageId: string
     position: number
@@ -19,7 +20,7 @@ interface ContentBlockProps {
     updateBlock(blockId: string, properties: {}, type: string): void
 }
 
-function ContentBlock(props : ContentBlockProps) {
+function NoteBlock(props : NoteBlockProps) {
     const [properties, setProperties] = useState(props.properties);
     const [startingProperties, setStartingProperties] = useState(props.properties);
     const [type, setType] = useState(props.type);
@@ -42,8 +43,8 @@ function ContentBlock(props : ContentBlockProps) {
         }
     }
 
-    function changeType(type) {
-        const newBlock = menuList.find((element) => element.id == type)
+    function changeType(newType) {
+        const newBlock = menuList.find((element) => element.id == newType)
 
         if(newBlock !== undefined){
             // Assigning default element properties
@@ -56,12 +57,12 @@ function ContentBlock(props : ContentBlockProps) {
                 }
             }
             
-            setType(type);
+            setType(newType);
             setProperties(newProperties);
             setStartingProperties(newProperties);
 
             clearTimeout(timer.current);
-            props.updateBlock(props.blockId, newProperties, type);
+            props.updateBlock(props.blockId, newProperties, newType);
 
             setTimeout(() => {
                 const block: HTMLElement | null = document.querySelector(`[data-position="${props.position}"]`);
@@ -92,6 +93,15 @@ function ContentBlock(props : ContentBlockProps) {
     }
 
     function onKeyDown(e) {
+        // Bold formating for select editing
+        // ----------------------------------------------------------------------------------
+        // if(e.key === "b"){
+        //     e.preventDefault();
+        //     document.execCommand('bold');
+        //     console.log("Works")
+        // }
+        // -----------------------------------------------------------------------------------
+
         if (e.key === "Backspace" && !properties.text) {
             e.preventDefault();
             clearTimeout(timer.current);
@@ -187,10 +197,10 @@ function ContentBlock(props : ContentBlockProps) {
             )}
             <Draggable key={props.blockId} draggableId={props.blockId} index={props.position}>
                 {(provided, snapshot) => (
-                    <div ref={provided.innerRef} className={"flex" + (props.isDraggingOver ? "" : " group")} {...provided.draggableProps} style={!snapshot.isDropAnimating ? provided.draggableProps.style : { ...provided.draggableProps.style, transitionDuration: '0.01s' }}> 
-                        <span role="button" tabIndex="0" className="self-center p-1 w-4 opacity-0 group-hover:opacity-100" onClick={onHandleClick} {...provided.dragHandleProps}>
-                            <i className="fa fa-bars opacity-40 block"/>
-                        </span>
+                    <div ref={provided.innerRef} {...provided.draggableProps} className={`flex ${props.isDraggingOver ? "" : "group"}`} style={!snapshot.isDropAnimating ? provided.draggableProps.style : { ...provided.draggableProps.style, transitionDuration: '0.01s' }}> 
+                        <div onClick={onHandleClick} tabIndex="0" className="flex text-neutral-400 self-center opacity-0 group-hover:opacity-100"  {...provided.dragHandleProps}>
+                            <IconDrag></IconDrag>
+                        </div>
                         {
                             React.createElement(menuList.find((element) => element.id == type)!.tag, {
                                 blockId: props.blockId,
@@ -215,4 +225,4 @@ function ContentBlock(props : ContentBlockProps) {
     );
 }
 
-export default ContentBlock;
+export default NoteBlock;

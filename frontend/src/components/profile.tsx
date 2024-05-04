@@ -1,7 +1,9 @@
 import React, { useEffect, useState} from 'react';
 import useAuth from '../hooks/useAuth';
 import api from '../utils/api';
-import ConfirmModal from './ConfirmModal';
+import useConfirmation from '../hooks/useConfirmation';
+import PopUp from './popup';
+import { IconClose } from '../icons';
 
 interface profileProps {
     closePanel(): void
@@ -9,6 +11,7 @@ interface profileProps {
 
 function Profile({ closePanel }: profileProps) {
     const { auth, setAuth, LogOut } : any = useAuth()
+    const { OpenDeletionConfirmation, confirmDeletion } : any = useConfirmation();
 
     const [name, setName] = useState(auth.user?.name);
     const [surname, setSurname] = useState(auth.user?.surname);
@@ -21,8 +24,6 @@ function Profile({ closePanel }: profileProps) {
     const [usernameMsg, setUsernameMsg] = useState('');
     const [emailMsg, setEmailMsg] = useState('');
     const [passwordMsg, setPasswordMsg] = useState('');
-
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     async function ChangeName(Name: string, Surname: string, setNameMsg: React.Dispatch<React.SetStateAction<string>>){
         api.post("/api/User/ChangeName", JSON.stringify({Name, Surname})).then(response => {
@@ -175,67 +176,64 @@ function Profile({ closePanel }: profileProps) {
     };
 
     return(
-        (deleteModalOpen ?
-            <ConfirmModal closePanel={() => setDeleteModalOpen(false)} action={DeleteUser} itemName='this user' /> 
+        (confirmDeletion.isOpen ?
+            <></>
             :
             <div id='profileBlur' className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-[rgba(0,0,0,0.7)]'>
-                <div className='relative max-w-sm px-4 pt-2 pb-3 mx-auto mt-56 rounded-xl bg-white'>
-                    <div className="flex justify-between items-center mb-3 mt-0">
-                        <h2 className='m-0'>Profile settings</h2>
-                        <i className="fa fa-times text-xl font-thin cursor-pointer" onClick={closePanel}></i>
+                <PopUp title='Profile settings' navChildren={<div onClick={closePanel} className='flex text-neutral-700 items-center hover:cursor-pointer'><IconClose></IconClose></div>}>
+                    <div className=' px-6 pt-4 pb-4 mx-auto rounded bg-white'>
+                        <form onSubmit={SaveName} className='mb-4'> 
+                            <div className='flex justify-between'>
+                                <div className='mr-2'>
+                                    <label>Name</label>
+                                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={name} onChange={e => setName(e.target.value)} required name="name"/>
+                                </div> 
+                                <div className='mr-2'>
+                                    <label>Surname</label>
+                                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
+                                </div>
+                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                            </div>
+                            <p className={nameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{nameMsg}</p>
+                        </form>
+                            
+                        <form onSubmit={SaveUsername} className='mb-4'>
+                            <div className='flex justify-between'>
+                                <div className='mr-2 w-full'>
+                                    <label>Username</label>
+                                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
+                                </div>
+                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                            </div>
+                            <p className={usernameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{usernameMsg}</p>
+                        </form> 
+                        <form onSubmit={SaveEmail} className='mb-4'>
+                            <div className='flex justify-between'>
+                                <div className='mr-2 w-full'>
+                                    <label>Email</label>
+                                    <input type="email" className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
+                                </div>
+                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                            </div>
+                            <p className={emailMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{emailMsg}</p>
+                        </form>                    
+                        <form onSubmit={SavePassword} className='mb-4'>
+                            <div className='flex justify-between'>
+                                <div className='mr-2 w-full'>
+                                    <label>Current Password</label>
+                                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setCurrentPassword(e.target.value)} required name="oldPassword"/>
+                                </div>
+                                <div className='mr-2 w-full'>
+                                    <label>New password</label>
+                                    <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
+                                </div>
+                                <button className='w-48 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Change</button>
+                            </div>
+                            <p className={passwordMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{passwordMsg}</p>
+                        </form>
+                        <button className='w-28 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-red-600 hover:cursor-pointer border-none rounded' onClick={() => OpenDeletionConfirmation(DeleteUser, 'this user')}>Delete Profile</button>
                     </div>
-                    <form onSubmit={SaveName} className='mb-2'> 
-                        <div className='flex justify-between'>
-                            <div className='mr-2'>
-                                <label>Name</label>
-                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={name} onChange={e => setName(e.target.value)} required name="name"/>
-                            </div> 
-                            <div className='mr-2'>
-                                <label>Surname</label>
-                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
-                            </div>
-                            <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
-                        </div>
-                        <p className={nameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{nameMsg}</p>
-                    </form>
-                        
-                    <form onSubmit={SaveUsername} className='mb-2'>
-                        <div className='flex justify-between'>
-                            <div className='mr-2 w-full'>
-                                <label>Username</label>
-                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
-                            </div>
-                            <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
-                        </div>
-                        <p className={usernameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{usernameMsg}</p>
-                    </form> 
-                    <form onSubmit={SaveEmail} className='mb-2'>
-                        <div className='flex justify-between'>
-                            <div className='mr-2 w-full'>
-                                <label>Email</label>
-                                <input type="email" className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
-                            </div>
-                            <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
-                        </div>
-                        <p className={emailMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{emailMsg}</p>
-                    </form>                    
-                    <form onSubmit={SavePassword} className='mb-2'>
-                        <div className='flex justify-between'>
-                            <div className='mr-2 w-full'>
-                                <label>Current Password</label>
-                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setCurrentPassword(e.target.value)} required name="oldPassword"/>
-                            </div>
-                            <div className='mr-2 w-full'>
-                                <label>New password</label>
-                                <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
-                            </div>
-                            <button className='w-48 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Change</button>
-                        </div>
-                        <p className={passwordMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{passwordMsg}</p>
-                    </form>
-                    <button className='w-28 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={() => setDeleteModalOpen(true)}>Delete Profile</button>
-                    {deleteModalOpen && <ConfirmModal closePanel={() => setDeleteModalOpen(false)} action={DeleteUser} itemName='this user' />}
-                </div>
+                </PopUp>
             </div>
         )
     )

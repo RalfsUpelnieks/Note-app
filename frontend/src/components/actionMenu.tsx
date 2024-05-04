@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import blockList from "../utils/BlockList";
+import blockList from "../utils/blockList";
 import { setCaretToEnd } from "../utils/caretControl";
 
 interface DeleteAction {
@@ -122,8 +122,8 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
     }
 
     return (
-        <div id="ActionMenu" className="fixed select-none z-10 flex flex-col w-32 max-h-64 bg-white shadow-[rgba(0,0,0,0.16)_0px_10px_36px_0px,rgba(0,0,0,0.06)_0px_0px_0px_1px] rounded-lg overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>
-            <input className="block w-11/12 h-8 mx-auto mt-1 center px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border" data-position="Search" placeholder="Search..." onChange={handleChange}></input>
+        <div id="ActionMenu" className="fixed select-none z-10 flex flex-col w-32 max-h-64 bg-white shadow-[rgba(0,0,0,0.16)_0px_10px_36px_0px,rgba(0,0,0,0.06)_0px_0px_0px_1px] overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>
+            <input className="block w-11/12 h-8 mx-auto mt-1 center px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded-sm leading-normal focus:outline-none box-border" data-position="Search" placeholder="Search..." onChange={handleChange}></input>
             {menuList.length !== 0 ? (
                 menuList.map((object) => {
                     return (

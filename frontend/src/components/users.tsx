@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react';
 import AddUser from './addUser';
 import User from '../interfaces/userInterface'
-import ConfirmModal from './ConfirmModal';
 import useAuth from '../hooks/useAuth';
 import api from '../utils/api';
-
-const confirmDeletionInitialState : any = {
-    isOpen: false,
-    action: null,
-    itemName: ''
-};
+import useConfirmation from '../hooks/useConfirmation';
 
 function Users() {
     const { LogOut } : any = useAuth()
+    const { OpenDeletionConfirmation } : any = useConfirmation();
 
     const [users, setUsers] = useState<User[]>([]);
     const [addPanelOpen, setAddPanelOpen] = useState(false);
-    const [confirmDeletion, setConfirmDeletion] = useState(confirmDeletionInitialState);
 
     useEffect(() => {
         async function updatePages() {
@@ -71,11 +65,7 @@ function Users() {
     }
 
     function handleUserDeletionCheck(user) {
-        setConfirmDeletion({
-            isOpen: true,
-            action: () => DeleteUser(user.id),
-            itemName: `user with username "${user.username}"`
-        })
+        OpenDeletionConfirmation(() => DeleteUser(user.id), `user with username "${user.username}"`)
     }
 
     return (
@@ -83,12 +73,9 @@ function Users() {
             {addPanelOpen &&
                 <AddUser closePanel={() => setAddPanelOpen(false)} users={users}/>
             }
-            {confirmDeletion.isOpen &&
-                <ConfirmModal closePanel={() => setConfirmDeletion({ ...confirmDeletion, isOpen: false })} action={confirmDeletion.action} itemName={confirmDeletion.itemName} />
-            }
             <h2>Users</h2>
-            <table className="border-collapse shadow-lg rounded-xl overflow-hidden">
-                <thead className="text-sm bg-neutral-100 uppercase">
+            <table className="border-collapse shadow-lg bg-white overflow-hidden">
+                <thead className="text-sm bg-zi-100 uppercase">
                     <tr>
                         <th className="px-2 py-1">Username</th>
                         <th className="px-2 py-1">Email</th>

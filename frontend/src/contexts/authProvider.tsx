@@ -2,7 +2,7 @@ import { createContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { GetStoredAuthToken, RemoveStoredAuthToken } from '../utils/authToken';
 import api from '../utils/api';
-import ROLES from "../utils/Roles";
+import ROLES from "../utils/roles";
 
 const AuthContext = createContext({});
 

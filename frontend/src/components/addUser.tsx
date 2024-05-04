@@ -18,8 +18,8 @@ function AddUser({closePanel, users}: AddUserProps) {
     const [isAdmin, setIsAdmin] = useState(false);
     const [errMsg, setErrMsg] = useState('');
 
-    async function registerUser(Name: string, Surname: string, Username: string, Email: string, Password: string, IsAdmin: boolean, setErrMsg: React.Dispatch<React.SetStateAction<string>>) {
-        api.post("/api/Auth/register", JSON.stringify({Name, Surname, Username, Email, Password, IsAdmin})).then(response => {
+    async function addUser(Name: string, Surname: string, Username: string, Email: string, Password: string, IsAdmin: boolean, setErrMsg: React.Dispatch<React.SetStateAction<string>>) {
+        api.post("/api/Auth/addUser", JSON.stringify({Name, Surname, Username, Email, Password, IsAdmin})).then(response => {
             if (response?.ok) {
                 response.json().then(data => { 
                     console.log("User added");
@@ -38,7 +38,7 @@ function AddUser({closePanel, users}: AddUserProps) {
 
     async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault(); 
-        await registerUser(name, surname, username, email, password, isAdmin, setErrMsg);
+        await addUser(name, surname, username, email, password, isAdmin, setErrMsg);
     }
     
     useEffect(() => {

@@ -1,4 +1,4 @@
-﻿using backend.Models;
+﻿using backend.Data;
 
 namespace backend.Interfaces
 {
