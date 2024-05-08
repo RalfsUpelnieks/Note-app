@@ -178,6 +178,9 @@ export const BookProvider = ({ children }) => {
         api.delete(`/api/Note/RemovePage/${pageId}`).then(response => {
             if (response?.ok) {
                 console.log("Page removed");
+                if(pageId === id){
+                    OpenViewBooks();
+                }
                 setBooks(prevBooks => prevBooks.map(book => {
                     if (book.bookId === bookId) {
                       return {
@@ -188,10 +191,6 @@ export const BookProvider = ({ children }) => {
                     }
                     return book;
                 }));
-
-                if(pageId === id){
-                    OpenViewBooks();
-                }
             } else if (response?.status == 401) {
                 LogOut();
             }
