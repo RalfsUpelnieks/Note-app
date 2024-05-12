@@ -272,7 +272,6 @@ function NoteBlock(props : NoteBlockProps) {
             {formatMenuDetails.open && (
                 <FormatMenu
                     position={formatMenuDetails.position}
-                    closeMenu={closeActionMenu}
                 />
             )}
             <Draggable key={props.blockId} draggableId={props.blockId} index={props.position}>

@@ -331,6 +331,7 @@ namespace backend.Controllers
                 return Unauthorized();
             }
 
+            // Check if page book has changed
             if (page.BookId != data.BookId)
             {
                 Book? newBook = _bookRepository.Get(b => b.BookId == data.BookId).Include(b => b.Pages).FirstOrDefault();
@@ -345,11 +346,12 @@ namespace backend.Controllers
                 .ToList()
                 .ForEach(a => a.Position -= 1);
 
-                //Changes positions for new books pages
+                
                 int minPositionAllowed = 1;
                 int maxPositionAllowed = newBook.Pages.Count + 1;
                 int position = PositionCheck(data.Position, minPositionAllowed, maxPositionAllowed);
 
+                //Changes positions for new books pages
                 newBook.Pages.Where(b => b.Position >= position)
                     .ToList()
                     .ForEach(a => a.Position += 1);

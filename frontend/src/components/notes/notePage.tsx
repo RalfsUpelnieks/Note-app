@@ -3,7 +3,7 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import NoteBlock from "./noteBlock";
-import TitleBlock from "./titleBlock";
+import EditableBlock from "./editableBlock";
 import objectId from "../../utils/objectId";
 import { setCaretToEnd } from "../../utils/caretControl";
 import useAuth from '../../hooks/useAuth';
@@ -306,7 +306,7 @@ function NotePage() {
                     </div>
                 </div>
                 <div className="px-3">
-                    <TitleBlock
+                    <EditableBlock
                         content={title}
                         placeholder="Page title"
                         className="mb-1 mt-3 mx-6"

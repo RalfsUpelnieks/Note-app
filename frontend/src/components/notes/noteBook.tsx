@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef} from "react";
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import TitleBlock from "./titleBlock";
+import EditableBlock from "./editableBlock";
 import { IconHorizontalAction, IconBookCollection, IconBook, IconArrowLeft, IconArrowRight } from "../../icons";
 import useBooks from "../../hooks/useBooks";
 import ColorMenu from "../menus/colorMenu";
@@ -204,7 +204,7 @@ function NoteBook() {
                 </div>
                 <div className="px-3">
                     <div className="flex justify-center">
-                        <TitleBlock
+                        <EditableBlock
                             content={title}
                             className="text-center min-w-[18rem] mb-0"
                             placeholder="Book title"
@@ -214,7 +214,7 @@ function NoteBook() {
                         />
                     </div>
                     
-                    <TitleBlock
+                    <EditableBlock
                         content={descrtiption}
                         className="font-normal text-lg mx-5"
                         placeholder="Description"
