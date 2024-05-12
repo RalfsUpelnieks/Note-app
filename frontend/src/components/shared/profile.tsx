@@ -181,7 +181,7 @@ function Profile({ closePanel }: profileProps) {
             :
             <div id='profileBlur' className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-[rgba(0,0,0,0.7)]'>
                 <PopUp title='Profile settings' navChildren={<div onClick={closePanel} className='flex text-neutral-700 items-center hover:cursor-pointer'><IconClose/></div>}>
-                    <div className=' px-6 pt-4 pb-4 mx-auto rounded bg-white'>
+                    <div className='px-6 pt-4 pb-4 mx-auto rounded bg-white'>
                         <form onSubmit={SaveName} className='mb-4'> 
                             <div className='flex justify-between'>
                                 <div className='mr-2'>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import api from '../../../utils/api';
+import { IconDelete, IconDownload } from '../../../icons';
 
 function File(props: any){
     const { LogOut } : any = useAuth()
@@ -67,9 +68,9 @@ function File(props: any){
         <>
             {props.properties.filename ?
                 <div className="flex cursor-pointer w-full">
-                    <i className="fa fa-file mr-1 mt-1 text-xs text-neutral-700" onClick={downloadFile}></i>
-                    <span className='w-full text-sm text-neutral-700' onClick={downloadFile}>{props.properties.filename}</span>
-                    <button className='w-5 h-5 pt-0 text-xs my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleDelete}><i className='fa fa-trash'></i></button>
+                    <IconDownload/>
+                    <span className='w-full px-1 text-sm text-neutral-700' onClick={downloadFile}>{props.properties.filename}</span>
+                    <button className='flex p-0 text-xs my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleDelete}><IconDelete/></button>
                 </div>
             :
                 <div className="w-full">

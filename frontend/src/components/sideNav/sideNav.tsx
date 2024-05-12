@@ -306,9 +306,9 @@ function SideNav() {
                         }
                     </div> 
                 </div>
-                <div onClick={AddBook} className='flex items-center mt-auto py-2 text-neutral-300 hover:bg-SideMenuHover hover:cursor-pointer'>
-                    <i className="text-center w-10 text-[20px] fa fa-plus"></i>
-                    <span className='text-[16px]'>Add a book</span>
+                <div onClick={AddBook} className='flex px-1 items-center mt-auto py-1 text-neutral-300 hover:bg-SideMenuHover hover:cursor-pointer'>
+                    <IconAdd/>
+                    <span className='flex mx-1 h-[1.1rem] leading-4 text-[16px]'>Add a book</span>
                 </div>
             </div>
         </nav>
