@@ -15,7 +15,7 @@ export interface book {
     open: boolean;
 }
 
-export interface ContainerProps {
+export interface BookProps {
     children: React.ReactNode;
     id: string;
     Title: string;
@@ -34,14 +34,14 @@ export interface ContainerProps {
     textColor?: string;
 }
 
-export const BookContainer = forwardRef<HTMLDivElement, ContainerProps>(( {Title, id, sorting, children, hover, handleProps, selected, style, open, onClick, onOpen,  onAdd, onRemove, bgColor, textColor, }: ContainerProps, ref ) => {
+export const BookContainer = forwardRef<HTMLDivElement, BookProps>(( {Title, id, sorting, children, hover, handleProps, selected, style, open, onClick, onOpen,  onAdd, onRemove, bgColor, textColor, }: BookProps, ref ) => {
     return (
         <div ref={ref} style={{...style, backgroundColor: bgColor, borderColor: hover ? '#38bdf8' : selected ? textColor : '#00000071'}}  className='flex flex-col m-2 border border-solid'>
             <div onClick={onClick} {...handleProps} className={`flex items-center group peer px-1 hover:cursor-pointer ${selected ? "bg-[#00000015]" : ""} ${!hover && onOpen && 'hover:bg-[#00000015] peer'}`}>
-                <div onClick={(e) => { e.stopPropagation(); onOpen && onOpen();}} style={{color: textColor}} className={`flex text-center transition duration-200 ${onOpen && "hover:bg-[#00000028] rounded"} ${open && "rotate-90"}`}><IconDropDown></IconDropDown></div>
+                <div onClick={(e) => { e.stopPropagation(); onOpen && onOpen();}} style={{color: textColor}} className={`flex text-center transition duration-200 ${onOpen && "hover:bg-[#00000028] rounded"} ${open && "rotate-90"}`}><IconDropDown/></div>
                 <span style={{color: textColor}}  className={`w-full text-base py-1 ps-1 overflow-hidden whitespace-nowrap text-ellipsis`} dangerouslySetInnerHTML={{__html: Title.replaceAll("<br>", " ") || "Untitled book"}}></span>
-                <div onClick={(e) => { e.stopPropagation(); onAdd && onAdd();}} style={{color: textColor}} className={`opacity-0 flex text-center ${!sorting && "group-hover:opacity-100"} ${onOpen && "hover:bg-[#00000028] rounded"}`}><IconAdd></IconAdd></div>
-                <div onClick={(e) => { e.stopPropagation(); onRemove && onRemove();}} style={{color: textColor}} className={`opacity-0 flex text-center ${!sorting && "group-hover:opacity-100"} ${onOpen && "hover:bg-[#00000028] rounded"}`}><IconDelete></IconDelete></div>
+                <div onClick={(e) => { e.stopPropagation(); onAdd && onAdd();}} style={{color: textColor}} className={`opacity-0 flex text-center ${!sorting && "group-hover:opacity-100"} ${onOpen && "hover:bg-[#00000028] rounded"}`}><IconAdd/></div>
+                <div onClick={(e) => { e.stopPropagation(); onRemove && onRemove();}} style={{color: textColor}} className={`opacity-0 flex text-center ${!sorting && "group-hover:opacity-100"} ${onOpen && "hover:bg-[#00000028] rounded"}`}><IconDelete/></div>
             </div>
             {(open || hover) &&
                 <div className={`flex flex-col ${selected ? "bg-[#00000046]" : "bg-[#00000023] peer-hover:bg-[#00000046]"}`}>
@@ -52,7 +52,7 @@ export const BookContainer = forwardRef<HTMLDivElement, ContainerProps>(( {Title
     );
 });
 
-export function DroppableBook({Title, children, id, open, onClick, onOpen, onAdd, onRemove, selected,  items, bgColor, textColor }: ContainerProps & { id: UniqueIdentifier; items: UniqueIdentifier[]; }) {
+export function DroppableBook({Title, children, id, open, onClick, onOpen, onAdd, onRemove, selected,  items, bgColor, textColor }: BookProps & { id: UniqueIdentifier; items: UniqueIdentifier[]; }) {
     const { active, attributes, isDragging, listeners, isSorting, over, setNodeRef, transition, transform, } = useSortable({
         id,
         data: {

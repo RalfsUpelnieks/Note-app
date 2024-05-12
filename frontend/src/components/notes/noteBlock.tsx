@@ -1,8 +1,9 @@
 import  React from "react";
 import { useState, useRef} from "react";
 import { Draggable } from "react-beautiful-dnd";
-import ActionMenu from "../actionMenu";
-import { getCaretCoordinates, setCaretToEnd } from "../../utils/caretControl";
+import ActionMenu from "../menus/actionMenu";
+import FormatMenu from "../menus/toolbar/formatMenu";
+import { getCaretCoordinates, setCaretToEnd, getSelection } from "../../utils/caretControl";
 import menuList from "../../utils/blockList"
 import { IconDrag } from "../../icons";
 
@@ -24,9 +25,17 @@ function NoteBlock(props : NoteBlockProps) {
     const [properties, setProperties] = useState(props.properties);
     const [startingProperties, setStartingProperties] = useState(props.properties);
     const [type, setType] = useState(props.type);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [menuPostion, setMenuPostion] = useState({ x: 0, y: 0});
     const timer : any = useRef(null);
+
+    const [actionMenuDetails, setActionMenuDetails] = useState({
+        open: false,
+        position: { x: 0, y: 0}
+    });
+
+    const [formatMenuDetails, setFormatMenuDetails] = useState({
+        open: false,
+        position: { x: 0, y: 0}
+    });
 
     function changeProperty(property, value){
         if(properties[property] !== undefined ){
@@ -82,7 +91,11 @@ function NoteBlock(props : NoteBlockProps) {
     function onPaste(e) {
         e.preventDefault();
         var text = e.clipboardData.getData('text/plain')
-        document.execCommand('insertText', false, text)
+        document.execCommand('insertText', false, text);
+    }
+
+    function onDrop(e) {
+        e.preventDefault();
     }
 
     function onBlur() {
@@ -93,20 +106,29 @@ function NoteBlock(props : NoteBlockProps) {
     }
 
     function onKeyDown(e) {
-        // Bold formating for select editing
-        // ----------------------------------------------------------------------------------
-        // if(e.key === "b"){
+        // if(e.key === "l"){
         //     e.preventDefault();
-        //     document.execCommand('bold');
-        //     console.log("Works")
+        //     var linkURL = prompt('Enter a URL:', 'http://');
+        //     var sText = document.getSelection();
+        
+        //     document.execCommand('insertHTML', false, '<a href="' + linkURL + '" target="_blank" contentEditable="false">' + sText + '</a>');
         // }
-        // -----------------------------------------------------------------------------------
+
+        // if(e.key === "c"){
+        //     e.preventDefault();
+        //     document.execCommand('foreColor', false, "rgba(0,0,0,0.5)");
+        // }
+
+        // if(e.key === "n"){
+        //     e.preventDefault();
+        //     document.execCommand('backColor', false, "rgba(2,0,0,0.5)");
+        // }
 
         if (e.key === "Backspace" && !properties.text) {
             e.preventDefault();
             clearTimeout(timer.current);
             props.deleteBlock(props.blockId);
-        } else if (e.key === "Enter" && !e.shiftKey && !isMenuOpen) {
+        } else if (e.key === "Enter" && !e.shiftKey && !actionMenuDetails.open) {
             e.preventDefault();
 
             props.addBlock(props.blockId, properties, type);
@@ -138,7 +160,7 @@ function NoteBlock(props : NoteBlockProps) {
     }
 
     function onHandleClick(e) {
-        if(!isMenuOpen) {
+        if(!actionMenuDetails.open) {
             const react = e.target.getBoundingClientRect();
             let {x, y} = { x: react.left - 135, y: 0 };
 
@@ -155,8 +177,10 @@ function NoteBlock(props : NoteBlockProps) {
     }
 
     function openActionMenu(cord) {
-        setMenuPostion(cord)
-        setIsMenuOpen(true)
+        setActionMenuDetails({
+            open: true,
+            position: cord
+        })
 
         // Add listener asynchronously to avoid conflicts with
         // the double click of the text selection
@@ -172,10 +196,35 @@ function NoteBlock(props : NoteBlockProps) {
     }
 
     function closeActionMenu() {
-        setIsMenuOpen(false);
+        setActionMenuDetails({
+            ...actionMenuDetails,
+            open: false
+        })
 
         document.removeEventListener("click", ActionMenuhandler, true);
         document.body.style.overflowY = 'auto';
+    }
+
+    function openFormatMenu(cord) {
+        setFormatMenuDetails({
+            open: true,
+            position: cord
+        })
+
+        // Add listener asynchronously to avoid conflicts with
+        // the double click of the text selection
+        setTimeout(() => {
+            document.addEventListener("click", FormatMenuhandler, true);
+        }, 100);
+    }
+
+    function closeFormatMenu() {
+        setFormatMenuDetails({
+            ...formatMenuDetails,
+            open: false
+        })
+
+        document.removeEventListener("click", FormatMenuhandler, true);
     }
 
     function ActionMenuhandler(e) {
@@ -184,22 +233,53 @@ function NoteBlock(props : NoteBlockProps) {
         }
     };
 
+    function FormatMenuhandler(e) {
+        if(e.target.closest("#FormatMenu") === null) {
+            closeFormatMenu();
+        }
+    };
+
+    function handleSelect(e) {
+        const block = e.target;
+        const { selectionStart, selectionEnd } = getSelection(block);
+
+        if (selectionStart !== selectionEnd) {
+            setTimeout(() => {
+                const { x: startX, y: startY } = getCaretCoordinates(true);
+                const { x: endX, y: endY } = getCaretCoordinates(false);
+                
+                const middleX = startX + (endX - startX) / 2;
+                openFormatMenu({ x: middleX, y: startY - 38 });
+            }, 100);
+            
+        }
+        else {
+            closeFormatMenu();
+        }
+    };
+
     return (
         <>
-            {isMenuOpen && (
+            {actionMenuDetails.open && (
                 <ActionMenu
-                    position={menuPostion}
+                    position={actionMenuDetails.position}
                     blockPosition={props.position}
                     closeMenu={closeActionMenu}
                     handleSelection={changeType}
                     actions={{ deleteBlock: () => props.deleteBlock(props.blockId) }}
                 />
             )}
+            {formatMenuDetails.open && (
+                <FormatMenu
+                    position={formatMenuDetails.position}
+                    closeMenu={closeActionMenu}
+                />
+            )}
             <Draggable key={props.blockId} draggableId={props.blockId} index={props.position}>
                 {(provided, snapshot) => (
                     <div ref={provided.innerRef} {...provided.draggableProps} className={`flex ${props.isDraggingOver ? "" : "group"}`} style={!snapshot.isDropAnimating ? provided.draggableProps.style : { ...provided.draggableProps.style, transitionDuration: '0.01s' }}> 
                         <div onClick={onHandleClick} tabIndex="0" className="flex text-neutral-400 self-center opacity-0 group-hover:opacity-100"  {...provided.dragHandleProps}>
-                            <IconDrag></IconDrag>
+                            <IconDrag/>
                         </div>
                         {
                             React.createElement(menuList.find((element) => element.id == type)!.tag, {
@@ -207,15 +287,11 @@ function NoteBlock(props : NoteBlockProps) {
                                 startingProperties: startingProperties,
                                 properties: properties,
                                 position: props.position,
-                                placeholder: PLACEHOLDER,
-                                onInput: onInputChange,
+                                contentEditableProps: { onSelect: handleSelect, onInput: onInputChange, onPaste: onPaste, onDrop: onDrop, onKeyDown: onKeyDown, onKeyUp: onKeyUp, placeholder: PLACEHOLDER, contentEditable: true },
                                 onPropertyChange: changeProperty,
                                 onBlur: onBlur,
-                                onKeyDown: onKeyDown,
-                                onKeyUp: onKeyUp,
-                                onPaste: onPaste,
                                 textInputStyling: " px-[2px] py-[2px] my-[1px] break-words outline-none",
-                                selectionStyling: (snapshot.isDragging || isMenuOpen ? " bg-neutral-100" : "") + (snapshot.isDragging ? " opacity-80" : "")
+                                selectionStyling: (snapshot.isDragging || actionMenuDetails.open ? " bg-neutral-100" : "") + (snapshot.isDragging ? " opacity-80" : "")
                             })
                         }
                     </div>

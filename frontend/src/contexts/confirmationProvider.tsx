@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 
-import ConfirmModal from "../components/confirmModal";
+import ConfirmModal from "../components/shared/confirmModal";
 
 const ConfirmationContext = createContext({});
 

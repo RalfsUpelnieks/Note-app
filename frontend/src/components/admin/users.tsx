@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import AddUser from './addUser';
-import User from '../interfaces/userInterface'
-import useAuth from '../hooks/useAuth';
-import api from '../utils/api';
-import useConfirmation from '../hooks/useConfirmation';
+import User from '../../interfaces/userInterface'
+import useAuth from '../../hooks/useAuth';
+import api from '../../utils/api';
+import useConfirmation from '../../hooks/useConfirmation';
 
 function Users() {
     const { LogOut } : any = useAuth()

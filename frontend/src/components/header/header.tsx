@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Profile from '../profile';
+import Profile from '../shared/profile';
 import useAuth from '../../hooks/useAuth';
 
 interface HeaderProps{

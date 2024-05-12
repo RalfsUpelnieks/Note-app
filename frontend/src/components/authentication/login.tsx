@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import useAuth from '../../hooks/useAuth';
-import PopUp from '../popup';
+import PopUp from '../shared/popup';
 import LinkButton from './linkButton';
 
 function Login() {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import COLORS from "../utils/colors";
+import COLORS from "../../utils/colors";
 
 interface ActionProps {
     position: {
@@ -12,8 +12,6 @@ interface ActionProps {
 
 function ColorMenu({ position, closeMenu, handleSelection }: ActionProps) {
     const [selectedAction, setSelectedAction] = useState(0);
-
-
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,10 +45,6 @@ function ColorMenu({ position, closeMenu, handleSelection }: ActionProps) {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, [selectedAction]);
-
-    function changeSelectedTag(index: number) {
-        setSelectedAction(index);
-    }
 
     return (
         <div id="ActionMenu" className="fixed select-none z-10 flex flex-col w-32 max-h-64 bg-white border border-solid border-gray-200 overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>

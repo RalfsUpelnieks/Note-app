@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react';
-import User from '../interfaces/userInterface'
-import useAuth from '../hooks/useAuth';
-import api from '../utils/api';
+import User from '../../interfaces/userInterface'
+import useAuth from '../../hooks/useAuth';
+import api from '../../utils/api';
 
 interface AddUserProps {
     closePanel(): void

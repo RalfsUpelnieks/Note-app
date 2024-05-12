@@ -8,14 +8,14 @@ import UserLayout from './layout/userLayout';
 
 import Login from './components/authentication/login';
 import Register from './components/authentication/register';
-import Users from './components/users';
-import AdminPage from './components/adminPage';
-import StoragePage from './components/storage';
-import NotePage from './components/notePages/notePage';
+import Users from './components/admin/users';
+import AdminPage from './components/admin/adminPage';
+import StoragePage from './components/admin/storage';
+import NotePage from './components/notes/notePage';
 import './stylesheets/site.css'
 import AdminLayout from './layout/adminLayout';
-import NoteBook from './components/notePages/noteBook';
-import AllBooks from './components/allBooks';
+import NoteBook from './components/notes/noteBook';
+import AllBooks from './components/notes/allBooks';
 
 function App() {
     const { auth } : any = useAuth()

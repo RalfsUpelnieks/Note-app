@@ -3,7 +3,7 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import NoteBlock from "./noteBlock";
-import TitleBlock from "../titleBlock";
+import TitleBlock from "./titleBlock";
 import objectId from "../../utils/objectId";
 import { setCaretToEnd } from "../../utils/caretControl";
 import useAuth from '../../hooks/useAuth';
@@ -292,16 +292,17 @@ function NotePage() {
                     <div className="flex">
                         <Link to="/Book/view" style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
                         <Link to={`/book/${details.bookId}`} style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBook></IconBook></Link>
-                        <div className="flex"><IconArrowLeft></IconArrowLeft></div>
-                        <div className="flex"><IconArrowRight></IconArrowRight></div>
+                        <div className="flex"><IconArrowLeft/></div>
+                        <div className="flex"><IconArrowRight/></div>
                     </div>
                     <div className="flex items-end mr-20">
-                        <div className="flex"><IconPage></IconPage></div>
+                        <div className="flex"><IconPage/></div>
                         <span>Note</span>
                         <span className="text-xs ml-1">{details.pageIndex + 1} of {books[details.bookIndex].pages.length}</span>
                     </div>
+                    
                     <div className="flex">
-                        <div className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction></IconHorizontalAction></div>
+                        <div className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction/></div>
                     </div>
                 </div>
                 <div className="px-3">

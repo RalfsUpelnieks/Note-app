@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import PopUp from '../popup';
+import PopUp from '../shared/popup';
 import LinkButton from './linkButton';
 import api from '../../utils/api';
 import useAuth from '../../hooks/useAuth';

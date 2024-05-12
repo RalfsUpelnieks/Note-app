@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef} from "react";
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import TitleBlock from "../titleBlock";
+import TitleBlock from "./titleBlock";
 import { IconHorizontalAction, IconBookCollection, IconBook, IconArrowLeft, IconArrowRight } from "../../icons";
 import useBooks from "../../hooks/useBooks";
-import ColorMenu from "../colorMenu";
+import ColorMenu from "../menus/colorMenu";
 import COLORS from "../../utils/colors";
 
 function NoteBook() {
@@ -190,16 +190,16 @@ function NoteBook() {
                 <div style={{ backgroundColor: color.backgroundColor, color: color.textColor}} className="h-5 p-2 flex items-center justify-between">
                     <div className="flex">
                         <Link to="/Book/view" style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
-                        <div className="flex"><IconArrowLeft></IconArrowLeft></div>
-                        <div className="flex"><IconArrowRight></IconArrowRight></div>
+                        <div className="flex"><IconArrowLeft/></div>
+                        <div className="flex"><IconArrowRight/></div>
                     </div>
                     <div className="flex items-end select-none mr-10">
-                        <div className="flex"><IconBook></IconBook></div>
+                        <div className="flex"><IconBook/></div>
                         <span>Book</span>
                         <span className="text-xs ml-1">{details.bookIndex + 1} of {books.length}</span>
                     </div>
                     <button style={{ color: color.textColor }} className="flex p-0 bg-transparent border-none" onClick={onHandleClick}>
-                        <div className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction></IconHorizontalAction></div>
+                        <div className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction/></div>
                     </button>
                 </div>
                 <div className="px-3">

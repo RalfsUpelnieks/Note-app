@@ -7,7 +7,7 @@ interface TitleBlockProps {
     className?: string
     onChange?(e): void
     onBlur?(e): void
-    onKeyDown?(e): void 
+    onKeyDown?(e): void
 }
 
 function TitleBlock({content, placeholder, pageId, className, onChange, onBlur, onKeyDown} : TitleBlockProps) {

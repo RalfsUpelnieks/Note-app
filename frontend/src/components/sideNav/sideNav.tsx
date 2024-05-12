@@ -90,9 +90,8 @@ function SideNav() {
             if (overBook != undefined) {
                 const containerItems = overBook.pages;
 
-                // If a container is matched and it contains items (columns 'A', 'B', 'C')
                 if (containerItems.length > 0) {
-                    // Return the closest droppable within that container
+                    // Return the closest droppable within books
                     var closesOverId = closestCenter({ ...args,
                     droppableContainers: args.droppableContainers.filter(
                         (container) =>
@@ -270,7 +269,7 @@ function SideNav() {
             <div className='flex flex-col h-full text-neutral-300'>
                 <div onClick={OpenViewBooks} className='bg-[#b3b3b32a] border-0 border-b border-solid border-zinc-800 px-1 flex items-center justify-between hover:cursor-pointer hover:bg-[#b3b3b33f]'>
                     <span className='font-sans text-[18px] text-neutral-300 py-1'>Book view</span>
-                    <div onClick={(e) => { e.stopPropagation(); AddBook && AddBook()}} className='text-neutral-300 flex hover:bg-zinc-600 rounded'><IconAdd></IconAdd></div>
+                    <div onClick={(e) => { e.stopPropagation(); AddBook && AddBook()}} className='text-neutral-300 flex hover:bg-zinc-600 rounded'><IconAdd/></div>
                 </div>
                 <div className='contents'>
                     <div className='overflow-y-auto h-full'>

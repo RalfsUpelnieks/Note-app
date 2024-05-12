@@ -1,13 +1,13 @@
-import PageTitle from "../components/editableComp/pageTitle";
-import Heading from "../components/editableComp/heading";
-import Subheading from "../components/editableComp/subheading";
-import Paragraph from "../components/editableComp/paragraph";
-import Checklist from "../components/editableComp/checklist";
-import VideoEmbed from "../components/editableComp/videoEmbed";
-import Divider from "../components/editableComp/divider";
-import BulletPoint from "../components/editableComp/bulletPoint";
-import NumberedList from "../components/editableComp/numberedList";
-import File from "../components/editableComp/file";
+import PageTitle from "../components/notes/editableComp/pageTitle";
+import Heading from "../components/notes/editableComp/heading";
+import Subheading from "../components/notes/editableComp/subheading";
+import Paragraph from "../components/notes/editableComp/paragraph";
+import Checklist from "../components/notes/editableComp/checklist";
+import VideoEmbed from "../components/notes/editableComp/videoEmbed";
+import Divider from "../components/notes/editableComp/divider";
+import BulletPoint from "../components/notes/editableComp/bulletPoint";
+import NumberedList from "../components/notes/editableComp/numberedList";
+import File from "../components/notes/editableComp/file";
 
 const BLOCK_LIST = [
     {

@@ -1,6 +1,6 @@
-import useBooks from "../hooks/useBooks";
-import COLORS from "../utils/colors";
-import { ConvertTime } from "../utils/timeConverter";
+import useBooks from "../../hooks/useBooks";
+import COLORS from "../../utils/colors";
+import { ConvertTime } from "../../utils/timeConverter";
 
 function AllBooks() {
     const { books, OpenBook, AddBook } : any = useBooks();

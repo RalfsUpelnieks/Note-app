@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import useAuth from '../../hooks/useAuth';
-import api from '../../utils/api';
+import useAuth from '../../../hooks/useAuth';
+import api from '../../../utils/api';
 
 function File(props: any){
     const { LogOut } : any = useAuth()
@@ -74,13 +74,7 @@ function File(props: any){
             :
                 <div className="w-full">
                     <div className="flex w-full">
-                        <input type="file" onChange={ (e) => {setFile(e.target.files)} } className="block w-full text-sm text-slate-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-lg file: file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-gray-100 file:text-gray-700
-                        hover:file:bg-gray-200 border-0
-                        "/>
+                        <input type="file" onChange={ (e) => {setFile(e.target.files)} } className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file: file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 border-0"/>
                         
                         <button className='w-24 h-8 text-sm my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleUpload}>Upload</button>
                     </div>
