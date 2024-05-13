@@ -18,7 +18,7 @@ function NotePage() {
     const { LogOut } : any = useAuth()
     const { id } = useParams()
 
-    const { books, setBooks, updatePage } : any = useBooks();
+    const { books, setBooks, updatePage, OpenPage } : any = useBooks();
     const [title, setTitle] = useState("");
     const [color, setColor] = useState<any>();
     const [details, setDetails] =  useState({
@@ -180,6 +180,35 @@ function NotePage() {
         });
     };
 
+    function NextPage() {
+        var indexOfPage = details.pageIndex;
+        var pageLenght = books[details.bookIndex].pages.length;
+        
+
+        var openPage = indexOfPage + 1;
+        if(openPage === pageLenght) {
+            openPage = 0;
+        }
+
+        if(indexOfPage !== openPage) {
+            OpenPage(books[details.bookIndex].pages[openPage].pageId)
+        }
+    };
+
+    function PreviousPage() {
+        var indexOfPage = details.pageIndex;
+        var pageLenght = books[details.bookIndex].pages.length;
+
+        var openPage = indexOfPage - 1;
+        if(openPage === -1){
+            openPage = pageLenght - 1;
+        }
+
+        if(indexOfPage !== openPage) {
+            OpenPage(books[details.bookIndex].pages[openPage].pageId)
+        }
+    };
+
     function updateBlockHandler(blockId, properties, type) {
         const index = blocks.map((b) => b.blockId).indexOf(blockId);
         const updatedBlocks = [...blocks];
@@ -292,8 +321,8 @@ function NotePage() {
                     <div className="flex">
                         <Link to="/Book/view" style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
                         <Link to={`/book/${details.bookId}`} style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBook></IconBook></Link>
-                        <div className="flex"><IconArrowLeft/></div>
-                        <div className="flex"><IconArrowRight/></div>
+                        <div onClick={PreviousPage} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowLeft/></div>
+                        <div onClick={NextPage} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowRight/></div>
                     </div>
                     <div className="flex items-end mr-20">
                         <div className="flex"><IconPage/></div>

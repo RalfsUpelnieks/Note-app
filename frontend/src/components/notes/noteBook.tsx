@@ -10,7 +10,7 @@ function NoteBook() {
     const navigate = useNavigate();
     const { id } = useParams()
 
-    const { books, setBooks, OpenPage, AddPage, updateBook } : any = useBooks();
+    const { books, setBooks, OpenBook, OpenPage, AddPage, updateBook } : any = useBooks();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [menuPostion, setMenuPostion] = useState({ x: 0, y: 0});
 
@@ -176,6 +176,34 @@ function NoteBook() {
         }
     }
 
+    function NextBook() {
+        var indexOfBook = books.map(b => b.bookId).indexOf(id);
+        var bookLenght = books.length;
+
+        var openBook = indexOfBook + 1;
+        if(openBook === bookLenght) {
+            openBook = 0;
+        }
+
+        if(indexOfBook !== openBook) {
+            OpenBook(books[openBook].bookId)
+        }
+    };
+
+    function PreviousBook() {
+        var indexOfBook = books.map(b => b.bookId).indexOf(id);
+        var bookLenght = books.length;
+
+        var openBook = indexOfBook - 1;
+        if(openBook === -1){
+            openBook = bookLenght - 1;
+        }
+
+        if(indexOfBook !== openBook) {
+            OpenBook(books[openBook].bookId)
+        }
+    };
+
     return (
         <>
         {isMenuOpen && (
@@ -190,17 +218,15 @@ function NoteBook() {
                 <div style={{ backgroundColor: color.backgroundColor, color: color.textColor}} className="h-5 p-2 flex items-center justify-between">
                     <div className="flex">
                         <Link to="/Book/view" style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
-                        <div className="flex"><IconArrowLeft/></div>
-                        <div className="flex"><IconArrowRight/></div>
+                        <div onClick={PreviousBook} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowLeft/></div>
+                        <div onClick={NextBook} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowRight/></div>
                     </div>
                     <div className="flex items-end select-none mr-10">
                         <div className="flex"><IconBook/></div>
                         <span>Book</span>
                         <span className="text-xs ml-1">{details.bookIndex + 1} of {books.length}</span>
                     </div>
-                    <button style={{ color: color.textColor }} className="flex p-0 bg-transparent border-none" onClick={onHandleClick}>
-                        <div className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction/></div>
-                    </button>
+                    <div onClick={onHandleClick} className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction/></div>
                 </div>
                 <div className="px-3">
                     <div className="flex justify-center">
