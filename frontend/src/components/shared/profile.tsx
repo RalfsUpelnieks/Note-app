@@ -148,7 +148,7 @@ function Profile({ closePanel }: profileProps) {
     
     useEffect(() => {
         setNameMsg('');
-    }, [name, surname]);
+    }, [name, surname, username, email, currentPassword, newPassword]);
 
     useEffect(() => {
         setUsernameMsg('');
@@ -192,9 +192,9 @@ function Profile({ closePanel }: profileProps) {
                                     <label>Surname</label>
                                     <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={surname} onChange={e => setSurname(e.target.value)} required name="surname"/>
                                 </div>
-                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer border-none rounded' type="submit">Save</button>
                             </div>
-                            <p className={nameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{nameMsg}</p>
+                            <p className={nameMsg ? 'text-gray-500 m-0' : 'hidden'} aria-live="assertive">{nameMsg}</p>
                         </form>
                             
                         <form onSubmit={SaveUsername} className='mb-4'>
@@ -203,9 +203,9 @@ function Profile({ closePanel }: profileProps) {
                                     <label>Username</label>
                                     <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="text" value={username} onChange={e => setUsername(e.target.value)} required name="username"/>    
                                 </div>
-                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer border-none rounded' type="submit">Save</button>
                             </div>
-                            <p className={usernameMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{usernameMsg}</p>
+                            <p className={usernameMsg ? 'text-gray-500 m-0' : 'hidden'} aria-live="assertive">{usernameMsg}</p>
                         </form> 
                         <form onSubmit={SaveEmail} className='mb-4'>
                             <div className='flex justify-between'>
@@ -213,9 +213,9 @@ function Profile({ closePanel }: profileProps) {
                                     <label>Email</label>
                                     <input type="email" className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' value={email} onChange={e => setEmail(e.target.value)} required name="email"/>
                                 </div>
-                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Save</button>
+                                <button className='w-20 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer border-none rounded' type="submit">Save</button>
                             </div>
-                            <p className={emailMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{emailMsg}</p>
+                            <p className={emailMsg ? 'text-gray-500 m-0' : 'hidden'} aria-live="assertive">{emailMsg}</p>
                         </form>                    
                         <form onSubmit={SavePassword} className='mb-4'>
                             <div className='flex justify-between'>
@@ -227,11 +227,11 @@ function Profile({ closePanel }: profileProps) {
                                     <label>New password</label>
                                     <input className='block w-full px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded leading-normal focus:outline-none box-border' type="password" onChange={e => setNewPassword(e.target.value)} required name="newPassword"/>
                                 </div>
-                                <button className='w-48 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' type="submit">Change</button>
+                                <button className='w-48 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer border-none rounded' type="submit">Change</button>
                             </div>
-                            <p className={passwordMsg ? 'text-red-600 m-0' : 'hidden'} aria-live="assertive">{passwordMsg}</p>
+                            <p className={passwordMsg ? 'text-gray-500 m-0' : 'hidden'} aria-live="assertive">{passwordMsg}</p>
                         </form>
-                        <button className='w-28 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-zinc-800 text-white hover:bg-red-600 hover:cursor-pointer border-none rounded' onClick={() => OpenDeletionConfirmation(DeleteUser, 'this user')}>Delete Profile</button>
+                        <button className='w-28 h-[2.3rem] self-end font-Roboto font-medium text-sm bg-red-600 text-white hover:bg-red-700 hover:cursor-pointer border-none rounded' onClick={() => OpenDeletionConfirmation(DeleteUser, 'this user')}>Delete Profile</button>
                     </div>
                 </PopUp>
             </div>

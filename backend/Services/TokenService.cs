@@ -3,6 +3,7 @@ using backend.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace backend.Services
@@ -15,7 +16,7 @@ namespace backend.Services
             _configuration = configuration;
         }
 
-        public string CreateToken(User user)
+        public string CreateJWTToken(User user)
         {
             List<Claim> claims = new List<Claim> {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
@@ -27,9 +28,19 @@ namespace backend.Services
 
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.Now.AddMinutes(60), signingCredentials: cred);
+            int validMinutes = int.Parse(_configuration["Jwt:ValidMinutes"]);
+            
+            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.Now.AddMinutes(validMinutes), signingCredentials: cred);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateResetToken(int length = 112)
+        {
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            var tokenData = new byte[length];
+            rngCryptoServiceProvider.GetBytes(tokenData);
+            return Convert.ToBase64String(tokenData);
         }
     }
 }

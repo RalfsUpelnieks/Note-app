@@ -4,6 +4,6 @@ namespace backend.Interfaces
 {
     public interface ITokenService
     {
-        string CreateToken(User user);
+        string CreateJWTToken(User user);
     }
 }

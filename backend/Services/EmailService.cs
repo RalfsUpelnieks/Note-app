@@ -7,10 +7,11 @@ namespace backend.Services
 {
     public class EmailService : IEmailService
     {
-        private const string EMAIL_SENDERS_KEY = "EmailSettings:Email";
-        private const string EMAIL_PORT_KEY = "Port";
-        private const string EMAIL_HOST_KEY = "Host";
-        private const string EMAIL_PASSWORD_KEY = "Password";
+        private const string EMAIL_SENDERS_KEY = "EmailSettings:Sender";
+        private const string EMAIL_PORT_KEY = "EmailSettings:Port";
+        private const string EMAIL_HOST_KEY = "EmailSettings:Host";
+        private const string EMAIL_USERNAME_KEY = "EmailSettings:Username";
+        private const string EMAIL_PASSWORD_KEY = "EmailSettings:Password";
 
         private readonly IConfiguration _configuration;
 
@@ -24,7 +25,7 @@ namespace backend.Services
             try
             {
                 var email = new MimeMessage();
-                email.Sender = MailboxAddress.Parse(_configuration[EMAIL_SENDERS_KEY]);
+                email.From.Add(MailboxAddress.Parse(_configuration[EMAIL_SENDERS_KEY]));
                 email.To.Add(MailboxAddress.Parse(toEmail));
                 email.Subject = subject;
 
@@ -38,7 +39,7 @@ namespace backend.Services
                 using (var smtp = new SmtpClient())
                 {
                     smtp.Connect(_configuration[EMAIL_HOST_KEY], port, SecureSocketOptions.StartTls);
-                    smtp.Authenticate(_configuration[EMAIL_SENDERS_KEY], _configuration[EMAIL_PASSWORD_KEY]);
+                    smtp.Authenticate(_configuration[EMAIL_USERNAME_KEY], _configuration[EMAIL_PASSWORD_KEY]);
 
                     var result = await smtp.SendAsync(email);
 

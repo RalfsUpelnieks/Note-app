@@ -8,6 +8,7 @@ import UserLayout from './layout/userLayout';
 
 import Login from './components/authentication/login';
 import Register from './components/authentication/register';
+import ForgotPassword from './components/authentication/forgotPassword';
 import Users from './components/admin/users';
 import AdminPage from './components/admin/adminPage';
 import StoragePage from './components/admin/storage';
@@ -16,6 +17,7 @@ import './stylesheets/site.css'
 import AdminLayout from './layout/adminLayout';
 import NoteBook from './components/notes/noteBook';
 import AllBooks from './components/notes/allBooks';
+import ResetPassword from './components/authentication/resetPassword';
 
 function App() {
     const { auth } : any = useAuth()
@@ -24,6 +26,8 @@ function App() {
         <Routes>
             <Route path="/login" element={<Login/>}/>
             <Route path="/register" element={<Register/>}/>
+            <Route path="/forgotPassword" element={<ForgotPassword/>}/>
+            <Route path="/resetpassword/:email/:token" element={<ResetPassword/>}/>
             <Route element={<RequireAuth allowedRoles={[Roles.User]}/>}>
                 <Route element={<UserLayout/>}>
                     <Route path="/Book/view" element={<AllBooks/>}/>

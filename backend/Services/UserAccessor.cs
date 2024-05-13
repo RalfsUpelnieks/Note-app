@@ -6,7 +6,7 @@ namespace backend.Services
 {
     public sealed class UserAccessor
     {
-        private IRepository<User> _userRepository;
+        private readonly IRepository<User> _userRepository;
 
         public UserAccessor(IRepository<User> userRepository)
         {
