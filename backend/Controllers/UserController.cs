@@ -2,7 +2,6 @@
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using backend.Helpers;
 using backend.Interfaces;

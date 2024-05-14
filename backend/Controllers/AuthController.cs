@@ -2,12 +2,11 @@
 using backend.Helpers;
 using backend.Interfaces;
 using backend.Models;
-using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
 using System.Web;
+using System.Security.Cryptography;
 
 namespace backend.Controllers
 {
@@ -163,7 +162,7 @@ namespace backend.Controllers
                     
                     var token = GenerateResetToken();
                     user.StampExpiresAt = DateTime.UtcNow.AddMinutes(10);
-                    user.SecurityStamp = token;
+                    user.SecurityStamp = BCrypt.Net.BCrypt.HashPassword(token);
                     _userRepository.Save();
 
                     string resetLink = $"{_configuration[WEB_CLIENT_KEY]}/resetpassword/{HttpUtility.UrlEncode(model.Email)}/{HttpUtility.UrlEncode(token)}";
@@ -230,7 +229,7 @@ namespace backend.Controllers
                 var tokenExpiresAt = user.StampExpiresAt;
 
                 //If valid token returns ok
-                if (savedToken != null && tokenExpiresAt != null && tokenExpiresAt > DateTime.UtcNow && savedToken == token)
+                if (savedToken != null && tokenExpiresAt != null && tokenExpiresAt > DateTime.UtcNow && BCrypt.Net.BCrypt.Verify(token, savedToken))
                 {
                     return true;
                 }
@@ -241,10 +240,8 @@ namespace backend.Controllers
 
         private string GenerateResetToken(int length = 112)
         {
-            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            var tokenData = new byte[length];
-            rngCryptoServiceProvider.GetBytes(tokenData);
-            return Convert.ToBase64String(tokenData);
+            string secureRandomString = Convert.ToBase64String(RandomNumberGenerator.GetBytes(114));
+            return secureRandomString;
         }
     }
 }
