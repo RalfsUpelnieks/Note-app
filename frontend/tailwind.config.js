@@ -1,3 +1,4 @@
+const plugin = require('tailwindcss/plugin')
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -15,7 +16,12 @@ module.exports = {
       }
     }
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({addVariant}) {
+        addVariant('progress-filled', ['&::-webkit-progress-bar', '&::-moz-progress-bar', '&']);
+        addVariant('progress-unfilled', ['&::-webkit-progress-value', '&::-moz-progress-value', '&']);
+    })
+  ],
   corePlugins: {
     preflight: false,
   }

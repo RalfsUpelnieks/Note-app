@@ -9,6 +9,7 @@ namespace backend.Data
         public string Filename { get; set; } = null!;
         public string Location { get; set; } = null!;
         public long Size { get; set; }
+        public DateTime CreatedAt { get; set; }
         public Block Block { get; set; } = null!;
     }
 }

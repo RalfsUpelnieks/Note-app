@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import Header from './header';
 
-function UserHeader({pages}: any) {
+function UserHeader() {
     const emptyTextPlaceholder = "untitled";
-    const [pageList, setPageList] : any = useState(pages);
+    const [pageList, setPageList] : any = useState();
     const [search, setSearch] = useState("");
     const [selectedTag, setSelectedTag] = useState(0);
 
@@ -25,13 +25,13 @@ function UserHeader({pages}: any) {
             var list : any = [];
             const searchLowercase = search.toLowerCase();
 
-            for (const item of pages){
-                if(item.title.toLowerCase().includes(searchLowercase)) {
-                    list.push(item);
-                } else if (item.title === "" && emptyTextPlaceholder.includes(searchLowercase)) {
-                    list.push(item);
-                }
-            }
+            // for (const item of pages){
+            //     if(item.title.toLowerCase().includes(searchLowercase)) {
+            //         list.push(item);
+            //     } else if (item.title === "" && emptyTextPlaceholder.includes(searchLowercase)) {
+            //         list.push(item);
+            //     }
+            // }
             setPageList(list);
         } else {
             setPageList([]);

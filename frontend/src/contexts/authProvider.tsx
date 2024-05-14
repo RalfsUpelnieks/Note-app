@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
                         user: data
                     });
 
-                    navigate(data.role == ROLES.Admin ? '/users' : '/page' );
+                    navigate(data.role == ROLES.Admin ? '/dashboard' : '/page' );
                 });
             } else {
                 response?.json().then(data => {

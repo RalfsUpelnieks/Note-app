@@ -131,6 +131,8 @@ namespace backend.Controllers
                 .ToList()
                 .ForEach(a => a.Position += 1);
 
+            var dateTimeNow = DateTime.UtcNow;
+
             var book = new Book
             {
                 BookId = data.BookId,
@@ -139,8 +141,8 @@ namespace backend.Controllers
                 Position = position,
                 Color = data.Color,
                 UserId = user.UserId,
-                CreatedAt = DateTime.UtcNow,
-                LastUpdatedAt = DateTime.UtcNow
+                CreatedAt = dateTimeNow,
+                LastUpdatedAt = dateTimeNow
             };
 
             _bookRepository.Add(book);
@@ -182,17 +184,19 @@ namespace backend.Controllers
                 .ToList()
                 .ForEach(a => a.Position += 1);
 
+            var dateTimeNow = DateTime.UtcNow;
+
             var page = new Page
             {
                 PageId = data.PageId,
                 Title = data.Title,
                 Position = position,
                 BookId = data.BookId,
-                CreatedAt = DateTime.UtcNow,
-                LastUpdatedAt = DateTime.UtcNow
+                CreatedAt = dateTimeNow,
+                LastUpdatedAt = dateTimeNow
             };
 
-            book.LastUpdatedAt = DateTime.UtcNow;
+            book.LastUpdatedAt = dateTimeNow;
 
             _pageRepository.Add(page);
             _pageRepository.Save();
@@ -233,17 +237,21 @@ namespace backend.Controllers
                 .ToList()
                 .ForEach(a => a.Position += 1);
 
+            var dateTimeNow = DateTime.UtcNow;
+
             var block = new Block
             {
                 BlockId = data.BlockId,
                 Type = data.Type,
                 Properties = data.Properties,
                 Position = position,
-                PageId = data.PageId
+                PageId = data.PageId,
+                LastUpdatedAt = dateTimeNow,
+                CreatedAt = dateTimeNow
             };
 
-            page.Book.LastUpdatedAt = DateTime.UtcNow;
-            page.LastUpdatedAt = DateTime.UtcNow;
+            page.Book.LastUpdatedAt = dateTimeNow;
+            page.LastUpdatedAt = dateTimeNow;
 
             _blockRepository.Add(block);
             _blockRepository.Save();
@@ -298,10 +306,12 @@ namespace backend.Controllers
                 book.Position = position;
             }
 
+            var dateTimeNow = DateTime.UtcNow;
+
             book.Title = data.Title;
             book.Description = data.Description;
             book.Color = data.Color;
-            book.LastUpdatedAt = DateTime.UtcNow;
+            book.LastUpdatedAt = dateTimeNow;
 
             _bookRepository.Update(book);
             _bookRepository.Save();
@@ -381,9 +391,11 @@ namespace backend.Controllers
 
                 page.Position = position;
             }
-            
+
+            var dateTimeNow = DateTime.UtcNow;
+
             page.Title = data.Title;
-            page.LastUpdatedAt = DateTime.UtcNow;
+            page.LastUpdatedAt = dateTimeNow;
             page.Book.LastUpdatedAt = DateTime.UtcNow;
 
             _pageRepository.Save();
@@ -436,11 +448,16 @@ namespace backend.Controllers
                 block.Position = position;
             }
 
+            
+
             block.Type = data.Type;
             block.Properties = data.Properties;
 
-            block.Page.Book.LastUpdatedAt = DateTime.UtcNow;
-            block.Page.LastUpdatedAt = DateTime.UtcNow;
+            var dateTimeNow = DateTime.UtcNow;
+
+            block.LastUpdatedAt = dateTimeNow;
+            block.Page.LastUpdatedAt = dateTimeNow;
+            block.Page.Book.LastUpdatedAt = dateTimeNow;
 
             _blockRepository.Save();
             return Ok();
@@ -540,8 +557,10 @@ namespace backend.Controllers
                 .ToList()
                 .ForEach(a => a.Position -= 1);
 
-            blockToRemove.Page.Book.LastUpdatedAt = DateTime.UtcNow;
-            blockToRemove.Page.LastUpdatedAt = DateTime.UtcNow;
+            var dateTimeNow = DateTime.UtcNow;
+
+            blockToRemove.Page.Book.LastUpdatedAt = dateTimeNow;
+            blockToRemove.Page.LastUpdatedAt = dateTimeNow;
 
             _blockRepository.Delete(blockToRemove);
             _blockRepository.Save();

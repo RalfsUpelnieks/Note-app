@@ -1,4 +1,4 @@
-function StoragePage() {
+function Files() {
     return (
         <div>
             <h2>Storage</h2>
@@ -6,4 +6,4 @@ function StoragePage() {
     );
 }
 
-export default StoragePage;
+export default Files;

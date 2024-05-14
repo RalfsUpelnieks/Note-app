@@ -38,7 +38,8 @@ namespace backend.Controllers
                     Username = "admin",
                     EmailAddress = "example@example.com",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin"),
-                    Role = int.Parse(Roles.Admin)
+                    Role = int.Parse(Roles.Admin),
+                    RegisteredAt = DateTime.UtcNow
                 };
 
                 _userRepository.Add(user);
@@ -60,6 +61,8 @@ namespace backend.Controllers
 
             if (requestDto.Password.Length < 6) { return BadRequest(new { Error = "Password must be at least 6 characters" }); }
 
+            var dateTimeNow = DateTime.UtcNow;
+
             var user = new User
             {
                 Name = requestDto.Name,
@@ -68,8 +71,8 @@ namespace backend.Controllers
                 EmailAddress = requestDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password),
                 Role = int.Parse(Roles.User),
-                LastLoginAt = DateTime.UtcNow,
-                RegisteredAt = DateTime.UtcNow
+                LastLoginAt = dateTimeNow,
+                RegisteredAt = dateTimeNow
             };
 
             _userRepository.Add(user);
@@ -90,6 +93,8 @@ namespace backend.Controllers
 
             if (requestDto.Password.Length < 6) { return BadRequest(new { Error = "Password must be at least 6 characters" }); }
 
+            var dateTimeNow = DateTime.UtcNow;
+
             var user = new User {
                 Name = requestDto.Name,
                 Surname = requestDto.Surname,
@@ -97,8 +102,8 @@ namespace backend.Controllers
                 EmailAddress = requestDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password),
                 Role = int.Parse(requestDto.IsAdmin ? Roles.Admin : Roles.User),
-                LastLoginAt = DateTime.UtcNow,
-                RegisteredAt = DateTime.UtcNow
+                LastLoginAt = dateTimeNow,
+                RegisteredAt = dateTimeNow
             };
 
             _userRepository.Add(user);

@@ -10,8 +10,7 @@ import Login from './components/authentication/login';
 import Register from './components/authentication/register';
 import ForgotPassword from './components/authentication/forgotPassword';
 import Users from './components/admin/users';
-import AdminPage from './components/admin/adminPage';
-import StoragePage from './components/admin/storage';
+import Dashboard from './components/admin/dashboard';
 import NotePage from './components/notes/notePage';
 import './stylesheets/site.css'
 import AdminLayout from './layout/adminLayout';
@@ -37,12 +36,12 @@ function App() {
             </Route>
             <Route element={<RequireAuth allowedRoles={[Roles.Admin]}/>}>
                 <Route element={<AdminLayout/>}>
-                    <Route path="/admin" element={<AdminPage/>}/>
+                    <Route path="/dashboard" element={<Dashboard/>}/>
                     <Route path="/users" element={<Users/>}/>
-                    <Route path="/storage" element={<StoragePage/>}/>
+                    
                 </Route>
             </Route>
-            <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? '/users' : '/Book/view'} /> : <Navigate to="/login" />} />
+            <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? '/dashboard' : '/Book/view'} /> : <Navigate to="/login" />} />
         </Routes>
     );
 };

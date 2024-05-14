@@ -5,22 +5,22 @@ function AdminSideNav() {
     const NAVIGATION_LIST = [
         {
             Name: "Dashboard",
-            To: "/storage",
-            Icon: <IconUsers/>
+            To: "/dashboard",
+            Icon: <IconDashboard/>
         },
         {
             Name: "Users",
             To: "/users",
-            Icon: <IconDashboard/>
+            Icon: <IconUsers/>
         }
     ];
 
     return (
-        <nav className='fixed top-0 bottom-0 left-0 w-64 select-none bg-SideMenuBackground border-0 border-r border-solid border-gray-200'>
-            <ul className='pt-[57px] ps-0 m-0 list-none text-neutral-300'>
+        <nav className='max-w-[15rem] w-full select-none bg-SideMenuBackground border-0 border-r border-solid border-gray-200'>
+            <ul className='ps-0 m-0 list-none text-neutral-300'>
                 {NAVIGATION_LIST.map((list: {Name: string, To: string, Icon: JSX.Element}) => {
                     return (
-                    <li className={(window.location.pathname == list.To ? ' bg-SideMenuSelected' : 'hover:bg-SideMenuHover')}>
+                    <li key={list.Name} className={(window.location.pathname == list.To ? ' bg-SideMenuSelected' : 'hover:bg-SideMenuHover')}>
                         <Link to={list.To} className='flex py-1 items-center  box-border text-gray-300 no-underline w-full'>
                             <div className='mx-2'>
                                 {list.Icon}

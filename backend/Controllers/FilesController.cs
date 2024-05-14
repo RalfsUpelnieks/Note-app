@@ -61,7 +61,8 @@ namespace FileUploadDownload.Controllers
                     Filename = file.FileName,
                     Location = "Upload\\Files",
                     Size = file.Length,
-                    Block = block
+                    Block = block,
+                    CreatedAt = DateTime.UtcNow,
                 };
 
                 var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
