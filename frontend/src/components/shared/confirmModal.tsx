@@ -17,7 +17,7 @@ function ConfirmModal({closePanel, action, actionName, title, description}) {
 
     return(
         <div id='blur' className='fixed top-0 bottom-0 left-0 right-0 z-10 bg-[rgba(0,0,0,0.7)]'>
-            <PopUp title='Delete'>
+            <PopUp title={actionName}>
                 <form className='px-3 py-3 rounded bg-white' onSubmit={closePanel}>
                     <h4 className='mx-1 mt-0 mb-2 break-words'>{title}</h4>
                     <p className='text-xs m-0 mx-1 mb-1'>{description}</p>

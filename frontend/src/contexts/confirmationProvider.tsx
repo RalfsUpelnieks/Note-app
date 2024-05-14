@@ -22,9 +22,19 @@ export const ConfirmationProvider = ({ children }) => {
             description: 'This item will be permanently deleted. This action is not reversible.'
         })
     }
+
+    function OpenConfirmation(title: string, description: string, actionName: string, action: Promise<void>){
+        setConfirmDeletion({
+            isOpen: true,
+            action: action,
+            actionName: actionName,
+            title: title,
+            description: description
+        })
+    }
     
     return (
-        <ConfirmationContext.Provider value={{ OpenDeletionConfirmation, confirmDeletion }}>
+        <ConfirmationContext.Provider value={{ OpenDeletionConfirmation, OpenConfirmation, confirmDeletion }}>
             { children }
             { confirmDeletion.isOpen && 
                 <ConfirmModal closePanel={() => setConfirmDeletion({ ...confirmDeletion, isOpen: false })} action={confirmDeletion.action} actionName={confirmDeletion.actionName} title={confirmDeletion.title} description={confirmDeletion.description}/> 

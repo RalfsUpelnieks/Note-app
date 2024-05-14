@@ -67,10 +67,10 @@ namespace backend.Controllers
                             PageId = page.PageId,
                             Title = page.Title,
                             CreatedAt = page.CreatedAt,
-                            LastUpdatedAt = page.LastUpdatedAt
+                            LastUpdatedAt = page.UpdatedAt
                         }).ToList(),
                     CreatedAt = book.CreatedAt,
-                    LastUpdatedAt = book.LastUpdatedAt
+                    LastUpdatedAt = book.UpdatedAt
                 })
                 .ToListAsync();
         }
@@ -142,7 +142,7 @@ namespace backend.Controllers
                 Color = data.Color,
                 UserId = user.UserId,
                 CreatedAt = dateTimeNow,
-                LastUpdatedAt = dateTimeNow
+                UpdatedAt = dateTimeNow
             };
 
             _bookRepository.Add(book);
@@ -193,10 +193,10 @@ namespace backend.Controllers
                 Position = position,
                 BookId = data.BookId,
                 CreatedAt = dateTimeNow,
-                LastUpdatedAt = dateTimeNow
+                UpdatedAt = dateTimeNow
             };
 
-            book.LastUpdatedAt = dateTimeNow;
+            book.UpdatedAt = dateTimeNow;
 
             _pageRepository.Add(page);
             _pageRepository.Save();
@@ -246,12 +246,12 @@ namespace backend.Controllers
                 Properties = data.Properties,
                 Position = position,
                 PageId = data.PageId,
-                LastUpdatedAt = dateTimeNow,
+                UpdatedAt = dateTimeNow,
                 CreatedAt = dateTimeNow
             };
 
-            page.Book.LastUpdatedAt = dateTimeNow;
-            page.LastUpdatedAt = dateTimeNow;
+            page.Book.UpdatedAt = dateTimeNow;
+            page.UpdatedAt = dateTimeNow;
 
             _blockRepository.Add(block);
             _blockRepository.Save();
@@ -311,7 +311,7 @@ namespace backend.Controllers
             book.Title = data.Title;
             book.Description = data.Description;
             book.Color = data.Color;
-            book.LastUpdatedAt = dateTimeNow;
+            book.UpdatedAt = dateTimeNow;
 
             _bookRepository.Update(book);
             _bookRepository.Save();
@@ -395,8 +395,8 @@ namespace backend.Controllers
             var dateTimeNow = DateTime.UtcNow;
 
             page.Title = data.Title;
-            page.LastUpdatedAt = dateTimeNow;
-            page.Book.LastUpdatedAt = DateTime.UtcNow;
+            page.UpdatedAt = dateTimeNow;
+            page.Book.UpdatedAt = DateTime.UtcNow;
 
             _pageRepository.Save();
 
@@ -455,9 +455,9 @@ namespace backend.Controllers
 
             var dateTimeNow = DateTime.UtcNow;
 
-            block.LastUpdatedAt = dateTimeNow;
-            block.Page.LastUpdatedAt = dateTimeNow;
-            block.Page.Book.LastUpdatedAt = dateTimeNow;
+            block.UpdatedAt = dateTimeNow;
+            block.Page.UpdatedAt = dateTimeNow;
+            block.Page.Book.UpdatedAt = dateTimeNow;
 
             _blockRepository.Save();
             return Ok();
@@ -524,7 +524,7 @@ namespace backend.Controllers
                 .ToList()
                 .ForEach(a => a.Position -= 1);
 
-            pageToRemove.Book.LastUpdatedAt = DateTime.UtcNow;
+            pageToRemove.Book.UpdatedAt = DateTime.UtcNow;
 
             _pageRepository.Delete(pageToRemove);
             _pageRepository.Save();
@@ -559,8 +559,8 @@ namespace backend.Controllers
 
             var dateTimeNow = DateTime.UtcNow;
 
-            blockToRemove.Page.Book.LastUpdatedAt = dateTimeNow;
-            blockToRemove.Page.LastUpdatedAt = dateTimeNow;
+            blockToRemove.Page.Book.UpdatedAt = dateTimeNow;
+            blockToRemove.Page.UpdatedAt = dateTimeNow;
 
             _blockRepository.Delete(blockToRemove);
             _blockRepository.Save();

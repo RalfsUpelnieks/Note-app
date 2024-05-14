@@ -31,7 +31,7 @@ namespace backend.Data
 
         public DateTime? StampExpiresAt { get; set; }
 
-        public DateTime LastLoginAt { get; set; }
+        public DateTime LogedInAt { get; set; }
         public DateTime RegisteredAt { get; set; }
         public int Role { get; set; } = 0;
         public ICollection<Book> Books { get; set; } = null!;

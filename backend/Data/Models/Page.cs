@@ -10,7 +10,7 @@ namespace backend.Data
         public string Title { get; set; }
         public int Position { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         [MaxLength(24)]
         public string BookId { get; set; }

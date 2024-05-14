@@ -70,14 +70,24 @@ namespace backend.Controllers
                 EmailAddress = requestDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password),
                 Role = int.Parse(Roles.User),
-                LastLoginAt = dateTimeNow,
+                LogedInAt = dateTimeNow,
                 RegisteredAt = dateTimeNow
             };
 
             _userRepository.Add(user);
             _userRepository.Save();
 
-            return Ok(user);
+            return Ok(new UserData()
+            {
+                Id = user.UserId,
+                Name = user.Name,
+                Surname = user.Surname,
+                EmailAddress = user.EmailAddress,
+                Username = user.Username,
+                LastLoginAt = user.LogedInAt,
+                RegisteredAt = user.RegisteredAt,
+                Role = user.Role
+            });
         }
 
         [HttpPost("addUser"), Authorize(Roles = Roles.Admin)]
@@ -101,14 +111,25 @@ namespace backend.Controllers
                 EmailAddress = requestDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password),
                 Role = int.Parse(requestDto.IsAdmin ? Roles.Admin : Roles.User),
-                LastLoginAt = dateTimeNow,
+                LogedInAt = dateTimeNow,
                 RegisteredAt = dateTimeNow
             };
 
             _userRepository.Add(user);
             _userRepository.Save();
 
-            return Ok(user);
+
+            return Ok(new UserData()
+            {
+                Id = user.UserId,
+                Name = user.Name,
+                Surname = user.Surname,
+                EmailAddress = user.EmailAddress,
+                Username = user.Username,
+                LastLoginAt = user.LogedInAt,
+                RegisteredAt = user.RegisteredAt,
+                Role = user.Role
+            });
         }
 
         [HttpPost("login")]
@@ -123,7 +144,7 @@ namespace backend.Controllers
 
             if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
-                user.LastLoginAt = DateTime.UtcNow;
+                user.LogedInAt = DateTime.UtcNow;
                 _userRepository.Save();
 
                 return Ok(new {

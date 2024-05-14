@@ -7,6 +7,8 @@ namespace backend.Models
         public string Surname { get; set; }
         public string Username { get; set; }
         public string EmailAddress { get; set; }
+        public DateTime LastLoginAt { get; set; }
+        public DateTime RegisteredAt { get; set; }
         public int Role { get; set; }
     }
 }

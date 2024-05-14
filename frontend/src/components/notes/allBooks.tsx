@@ -6,7 +6,7 @@ function AllBooks() {
     const { books, OpenBook, AddBook } : any = useBooks();
 
     return (
-        <div className="w-2/5">
+        <div className="max-w-4xl w-full">
             <p className="text-neutral-500 text-lg mb-0 bg-zinc-100 w-min px-2 border border-b-0 border-solid border-gray-200">Books</p>
             <table className="border-collapse w-full shadow-lg overflow-hidden border border-solid bg-white border-gray-200">
                 <thead className="text-sm text-neutral-500 bg-zinc-100">
@@ -14,8 +14,8 @@ function AllBooks() {
                         <th className="px-2 py-1 w-2/5">Name</th>
                         <th className="px-2 py-1 w-20 text-center">Color</th>
                         <th className="px-2 py-1 w-1/12 text-center">Pages</th>
-                        <th className="px-2 py-1 w-2/12 text-center">Updated at</th>
-                        <th className="px-2 py-1 w-2/12 text-center">Created at</th>
+                        <th className="px-2 py-1 text-center">Updated at</th>
+                        <th className="px-2 py-1 text-center">Created at</th>
                     </tr>
                 </thead>
                 <tbody>

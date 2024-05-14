@@ -15,7 +15,7 @@ namespace backend.Data
         public int Position { get; set; }
 
         public DateTime CreatedAt { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         [MaxLength(24)]
         public string PageId { get; set; } = null!;
