@@ -12,6 +12,7 @@ import useBooks from "../../hooks/useBooks";
 import { IconHorizontalAction, IconBookCollection, IconBook, IconPage, IconArrowLeft, IconArrowRight } from "../../icons";
 import COLORS from "../../utils/colors";
 import { GetTimeISO } from "../../utils/timeConverter";
+import ROUTES from "../../utils/routePaths";
 
 function NotePage() {
     const navigate = useNavigate();
@@ -53,7 +54,7 @@ function NotePage() {
         }
 
         if(bookId === undefined){
-            navigate("/Book/view");
+            navigate(ROUTES.AllBooks);
         }
         else {
             api.get(`/api/Note/GetPageData/${id}`).then(response => {
@@ -80,7 +81,7 @@ function NotePage() {
                 } else if (response?.status === 401) {
                     LogOut();
                 } else {
-                    navigate("/");
+                    navigate(ROUTES.Home);
                 }
             })
         }
@@ -105,7 +106,7 @@ function NotePage() {
         }
 
         if(bookId === undefined){
-            navigate("/Book/view");
+            navigate(ROUTES.AllBooks);
         }
         else {
             setColor(COLORS.find(c => c.id == books[bookIndex].color));
@@ -319,8 +320,8 @@ function NotePage() {
             <div className="my-8 relative max-w-4xl w-full bg-white shadow group/page">
                 <div style={{ backgroundColor: color.backgroundColor, color: color.textColor}} className="h-5 p-2 flex items-center justify-between">
                     <div className="flex">
-                        <Link to="/Book/view" style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
-                        <Link to={`/book/${details.bookId}`} style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBook></IconBook></Link>
+                        <Link to={ROUTES.AllBooks} style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
+                        <Link to={`${ROUTES.Book}/${details.bookId}`} style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBook></IconBook></Link>
                         <div onClick={PreviousPage} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowLeft/></div>
                         <div onClick={NextPage} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowRight/></div>
                     </div>

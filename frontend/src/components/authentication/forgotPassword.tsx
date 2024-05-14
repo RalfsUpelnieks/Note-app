@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import PopUp from '../shared/popup';
 import api from '../../utils/api';
+import ROUTES from '../../utils/routePaths';
 
 function ForgotPassword() {
     const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -35,7 +36,7 @@ function ForgotPassword() {
                 </div>                    
                 <p className={msg ? 'text-green-700 m-0' : 'hidden'} aria-live='assertive'>{msg}</p>
                 <button className='h-10 mt-4 font-Roboto text-base tracking-wide bg-blue-600 text-white enabled:hover:bg-blue-700 enabled:hover:cursor-pointer border-none rounded-sm disabled:opacity-50' disabled={buttonDisabled} type='submit'>Reset password</button>
-                <a href="/login" className='no-underline hover:underline text-blue-700 opacity-80 text-sm'>Back to log in</a>
+                <a href={ROUTES.Login} className='no-underline hover:underline text-blue-700 opacity-80 text-sm'>Back to log in</a>
             </form>
         </PopUp>
     )

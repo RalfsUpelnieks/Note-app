@@ -1,8 +1,9 @@
 import React, { useEffect, useState} from 'react';
-import { useParams } from 'react-router-dom';
+import { Route, useParams } from 'react-router-dom';
 import PopUp from '../shared/popup';
 import api from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
+import ROUTES from '../../utils/routePaths';
 
 function ResetPassword() {
     const navigate = useNavigate()
@@ -31,7 +32,7 @@ function ResetPassword() {
     async function resetPassword() {
         api.post("/api/Auth/resetPassword", JSON.stringify({email, token, password})).then(response => {
             if (response?.ok) {
-                navigate("/login");
+                navigate(ROUTES.Login);
             } else if (response?.status == 401) {
                 window.location.reload();
             }  else {
@@ -81,7 +82,7 @@ function ResetPassword() {
                     <div className='px-10 pb-8 pt-4 flex flex-col'>
                         <h2 className='font-medium text-neutral-600 my-0 tracking-wide'>Invalid token</h2>
                         <span className='text-sm font-medium text-neutral-600 my-0 tracking-wide'>The reset password link is invalid. Request another link in the forget password page.</span>
-                        <a href="/login" className='no-underline hover:underline text-blue-700 opacity-80 text-sm'>Back to log in</a>
+                        <a href={ROUTES.Login} className='no-underline hover:underline text-blue-700 opacity-80 text-sm'>Back to log in</a>
                     </div>
                 </PopUp>
             :

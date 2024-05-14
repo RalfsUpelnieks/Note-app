@@ -1,16 +1,17 @@
 import { Link } from 'react-router-dom';
 import { IconDashboard, IconUsers } from '../../icons';
+import ROUTES from '../../utils/routePaths';
 
 function AdminSideNav() {
     const NAVIGATION_LIST = [
         {
             Name: "Dashboard",
-            To: "/dashboard",
+            To: ROUTES.Dashboard,
             Icon: <IconDashboard/>
         },
         {
             Name: "Users",
-            To: "/users",
+            To: ROUTES.AllUsers,
             Icon: <IconUsers/>
         }
     ];

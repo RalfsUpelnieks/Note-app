@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import Header from './header';
+import ROUTES from '../../utils/routePaths';
 
 function UserHeader() {
     const emptyTextPlaceholder = "untitled";
@@ -47,7 +48,7 @@ function UserHeader() {
                             {pageList.length !== 0 ? (
                                 pageList.map((object) => {
                                     return (
-                                        <Link to={`/page/${object.pageId}`} onClick={blur} className="no-underline text-black px-2 hover:bg-neutral-200 overflow-hidden text-ellipsis">
+                                        <Link to={`${ROUTES.Page}/${object.pageId}`} onClick={blur} className="no-underline text-black px-2 hover:bg-neutral-200 overflow-hidden text-ellipsis">
                                                 <span>{object.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}</span>
                                         </Link>
                                     );

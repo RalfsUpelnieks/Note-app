@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { GetStoredAuthToken, RemoveStoredAuthToken } from '../utils/authToken';
 import api from '../utils/api';
 import ROLES from "../utils/roles";
+import ROUTES from "../utils/routePaths";
 
 const AuthContext = createContext({});
 
@@ -69,7 +70,7 @@ export const AuthProvider = ({ children }) => {
                         user: data
                     });
 
-                    navigate(data.role == ROLES.Admin ? '/dashboard' : '/page' );
+                    navigate(data.role == ROLES.Admin ? ROUTES.Dashboard : ROUTES.Page );
                 });
             } else {
                 response?.json().then(data => {
@@ -87,7 +88,7 @@ export const AuthProvider = ({ children }) => {
             user: null
         });
         RemoveStoredAuthToken();
-        navigate('/login');
+        navigate(ROUTES.Login);
     }
 
     return (

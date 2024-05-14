@@ -2,6 +2,7 @@ import { Route, Routes, Navigate  } from 'react-router-dom';
 import { GetStoredAuthToken } from './utils/authToken';
 import useAuth from './hooks/useAuth';
 import Roles from './utils/roles';
+import ROUTES from './utils/routePaths';
 
 import RequireAuth from './components/authentication/requireAuth';
 import UserLayout from './layout/userLayout';
@@ -23,25 +24,25 @@ function App() {
 
     return (
         <Routes>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/register" element={<Register/>}/>
-            <Route path="/forgotPassword" element={<ForgotPassword/>}/>
-            <Route path="/resetpassword/:email/:token" element={<ResetPassword/>}/>
+            <Route path={ROUTES.Login} element={<Login/>}/>
+            <Route path={ROUTES.Register} element={<Register/>}/>
+            <Route path={ROUTES.ForgotPassword}  element={<ForgotPassword/>}/>
+            <Route path={`${ROUTES.ResetPassword}/:email/:token`} element={<ResetPassword/>}/>
             <Route element={<RequireAuth allowedRoles={[Roles.User]}/>}>
                 <Route element={<UserLayout/>}>
-                    <Route path="/Book/view" element={<AllBooks/>}/>
-                    <Route path="/book/:id" element={<NoteBook/>}/>
-                    <Route path="/page/:id" element={<NotePage/>}/>
+                    <Route path={ROUTES.AllBooks} element={<AllBooks/>}/>
+                    <Route path={`${ROUTES.Book}/:id`} element={<NoteBook/>}/>
+                    <Route path={`${ROUTES.Page}/:id`} element={<NotePage/>}/>
                 </Route>
             </Route>
             <Route element={<RequireAuth allowedRoles={[Roles.Admin]}/>}>
                 <Route element={<AdminLayout/>}>
-                    <Route path="/dashboard" element={<Dashboard/>}/>
-                    <Route path="/users" element={<Users/>}/>
+                    <Route path={ROUTES.Dashboard} element={<Dashboard/>}/>
+                    <Route path={ROUTES.AllUsers} element={<Users/>}/>
                     
                 </Route>
             </Route>
-            <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? '/dashboard' : '/Book/view'} /> : <Navigate to="/login" />} />
+            <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? ROUTES.Dashboard : ROUTES.AllBooks} /> : <Navigate to={ROUTES.Login} />} />
         </Routes>
     );
 };

@@ -5,6 +5,7 @@ import { IconHorizontalAction, IconBookCollection, IconBook, IconArrowLeft, Icon
 import useBooks from "../../hooks/useBooks";
 import ColorMenu from "../menus/colorMenu";
 import COLORS from "../../utils/colors";
+import ROUTES from "../../utils/routePaths";
 
 function NoteBook() {
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ function NoteBook() {
         var indexOfBook = books.map(b => b.bookId).indexOf(id);
 
         if(id === undefined || indexOfBook === -1){
-            navigate("/");
+            navigate(ROUTES.Home);
         }
         else{
             setTitle(books[indexOfBook].title);
@@ -217,7 +218,7 @@ function NoteBook() {
             <div className="my-8 relative max-w-4xl w-full bg-white shadow group/page">
                 <div style={{ backgroundColor: color.backgroundColor, color: color.textColor}} className="h-5 p-2 flex items-center justify-between">
                     <div className="flex">
-                        <Link to="/Book/view" style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
+                        <Link to={ROUTES.AllBooks} style={{ color: color.textColor}} className="flex mr-1 p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconBookCollection></IconBookCollection></Link>
                         <div onClick={PreviousBook} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowLeft/></div>
                         <div onClick={NextBook} className="flex hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconArrowRight/></div>
                     </div>

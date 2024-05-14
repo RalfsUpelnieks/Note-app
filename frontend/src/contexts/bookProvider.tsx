@@ -6,6 +6,7 @@ import objectId from "../utils/objectId";
 import { GetTimeISO } from "../utils/timeConverter";
 import useConfirmation from "../hooks/useConfirmation";
 import COLORS from "../utils/colors";
+import ROUTES from "../utils/routePaths";
 
 const BookContext = createContext({});
 
@@ -48,15 +49,15 @@ export const BookProvider = ({ children }) => {
     }, []);
 
     function OpenViewBooks(){
-        navigate("/Book/view");
+        navigate(ROUTES.AllBooks);
     }
 
     function OpenBook(bookId: string){
-        navigate(`/book/${bookId}`);
+        navigate(`${ROUTES.Book}/${bookId}`); 
     }
 
     function OpenPage(pageId: string){
-        navigate(`/page/${pageId}`);
+        navigate(`${ROUTES.Page}/${pageId}`);
     }
 
     async function AddBook() {

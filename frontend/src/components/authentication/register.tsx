@@ -3,6 +3,7 @@ import PopUp from '../shared/popup';
 import LinkButton from './linkButton';
 import api from '../../utils/api';
 import useAuth from '../../hooks/useAuth';
+import ROUTES from '../../utils/routePaths';
 
 function Register() {
     const [name, setName] = useState('');
@@ -46,7 +47,7 @@ function Register() {
     }, [name, surname, username, email, password, passwordConfirmation]);
 
     return(
-        <PopUp title='NoteBooks' navChildren={<LinkButton Text='Log In' Link='/login'></LinkButton>}>
+        <PopUp title='NoteBooks' navChildren={<LinkButton Text='Log In' Link={ROUTES.Login}></LinkButton>}>
             <form className='px-10 pb-8 pt-7 flex flex-col' onSubmit={handleSubmit}>
                 <span className='text-xl font-medium text-neutral-600 mb-4 mt-0 tracking-wide'>Register</span>
 
