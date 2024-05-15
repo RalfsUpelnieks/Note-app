@@ -14,7 +14,6 @@ interface EditableBlockProps {
 
 function EditableBlock({content, placeholder, pageId, className, onChange, onBlur, onKeyDown} : EditableBlockProps) {
     const title = useMemo(() => content, [pageId]);
-    const timer : any = useRef(null)
 
     const [formatMenuDetails, setFormatMenuDetails] = useState({
         open: false,

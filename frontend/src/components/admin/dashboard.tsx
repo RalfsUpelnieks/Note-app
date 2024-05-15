@@ -10,8 +10,6 @@ function Dashboard() {
         api.get("/api/Summary/Get").then(response => {
             if (response?.ok) {
                 response.json().then(data => { 
-                    console.log(data)
-
                     data.newUsersPastWeek = data.newUsersPastWeek.map((dataPoint) => {
                         switch (dataPoint.day) {
                             case 0:

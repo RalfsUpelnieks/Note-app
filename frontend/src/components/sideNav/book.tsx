@@ -3,6 +3,7 @@ import { UniqueIdentifier } from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable';
 import { forwardRef } from 'react';
+import PLACEHOLDERS from '../../utils/placeholders';
 
 export interface book {
     bookId: string;
@@ -39,7 +40,7 @@ export const BookContainer = forwardRef<HTMLDivElement, BookProps>(( {Title, id,
         <div ref={ref} style={{...style, backgroundColor: bgColor, borderColor: hover ? '#38bdf8' : selected ? textColor : '#00000071'}}  className='flex flex-col m-2 border border-solid'>
             <div onClick={onClick} {...handleProps} className={`flex items-center group peer px-1 hover:cursor-pointer ${selected ? "bg-[#00000015]" : ""} ${!hover && onOpen && 'hover:bg-[#00000015] peer'}`}>
                 <div onClick={(e) => { e.stopPropagation(); onOpen && onOpen();}} style={{color: textColor}} className={`flex text-center transition duration-200 ${onOpen && "hover:bg-[#00000028] rounded"} ${open && "rotate-90"}`}><IconDropDown/></div>
-                <span style={{color: textColor}}  className={`w-full text-base py-1 ps-1 overflow-hidden whitespace-nowrap text-ellipsis`} dangerouslySetInnerHTML={{__html: Title.replaceAll("<br>", " ") || "Untitled book"}}></span>
+                <span style={{color: textColor}}  className={`w-full text-base py-1 ps-1 overflow-hidden whitespace-nowrap text-ellipsis`} dangerouslySetInnerHTML={{__html: Title.replaceAll("<br>", " ") || PLACEHOLDERS.book}}></span>
                 <div onClick={(e) => { e.stopPropagation(); onAdd && onAdd();}} style={{color: textColor}} className={`opacity-0 flex text-center ${!sorting && "group-hover:opacity-100"} ${onOpen && "hover:bg-[#00000028] rounded"}`}><IconAdd/></div>
                 <div onClick={(e) => { e.stopPropagation(); onRemove && onRemove();}} style={{color: textColor}} className={`opacity-0 flex text-center ${!sorting && "group-hover:opacity-100"} ${onOpen && "hover:bg-[#00000028] rounded"}`}><IconDelete/></div>
             </div>

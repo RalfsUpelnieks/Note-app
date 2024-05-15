@@ -8,6 +8,7 @@ import { book, DroppableBook, BookContainer  } from './book';
 import { IconAdd } from '../../icons';
 import { Item, SortableItem } from './page';
 import COLORS from '../../utils/colors';
+import PLACEHOLDERS from '../../utils/placeholders';
 
 function SideNav() {
     const { id } = useParams()
@@ -248,7 +249,7 @@ function SideNav() {
                     <BookContainer open={book.open} id={book.bookId} Title={book.title} textColor={colors?.textColor} bgColor={colors?.backgroundColor}>
                     {book.pages.length != 0 &&
                         book.pages.map((page: {title: string, pageId: string}, index) => (
-                            <div key={page.pageId} className='ps-4 text-sm' dangerouslySetInnerHTML={{__html: page.title.replaceAll("<br>", " ") || "Untitled page"}}></div>
+                            <div key={page.pageId} className='ps-4 text-sm' dangerouslySetInnerHTML={{__html: page.title.replaceAll("<br>", " ") || PLACEHOLDERS.page}}></div>
                         ))
                     }
                     </BookContainer>

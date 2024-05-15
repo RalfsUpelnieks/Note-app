@@ -6,8 +6,7 @@ import FormatMenu from "../menus/toolbar/formatMenu";
 import { getCaretCoordinates, setCaretToEnd, getSelection } from "../../utils/caretControl";
 import menuList from "../../utils/blockList"
 import { IconDrag } from "../../icons";
-
-const PLACEHOLDER = `Press 'Control' + 'Space bar' for commands`;
+import PLACEHOLDERS from "../../utils/placeholders";
 
 interface NoteBlockProps {
     blockId: string
@@ -286,7 +285,7 @@ function NoteBlock(props : NoteBlockProps) {
                                 startingProperties: startingProperties,
                                 properties: properties,
                                 position: props.position,
-                                contentEditableProps: { onSelect: handleSelect, onInput: onInputChange, onPaste: onPaste, onDrop: onDrop, onKeyDown: onKeyDown, onKeyUp: onKeyUp, placeholder: PLACEHOLDER, contentEditable: true },
+                                contentEditableProps: { onSelect: handleSelect, onInput: onInputChange, onPaste: onPaste, onDrop: onDrop, onKeyDown: onKeyDown, onKeyUp: onKeyUp, placeholder: PLACEHOLDERS.blockInput, contentEditable: true },
                                 onPropertyChange: changeProperty,
                                 onBlur: onBlur,
                                 textInputStyling: " px-[2px] py-[2px] my-[1px] break-words outline-none",

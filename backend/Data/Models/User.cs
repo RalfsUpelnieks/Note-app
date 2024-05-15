@@ -24,8 +24,6 @@ namespace backend.Data
         [MaxLength(500)]
         public string PasswordHash { get; set; } = null!;
 
-        public bool EmailConfirmed { get; set; }
-
         [MaxLength(200)]
         public string? SecurityStamp { get; set; } = null!;
 

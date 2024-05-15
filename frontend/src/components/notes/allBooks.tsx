@@ -1,6 +1,7 @@
 import useBooks from "../../hooks/useBooks";
 import COLORS from "../../utils/colors";
 import { ConvertTime } from "../../utils/timeConverter";
+import PLACEHOLDERS from "../../utils/placeholders";
 
 function AllBooks() {
     const { books, OpenBook, AddBook } : any = useBooks();
@@ -12,8 +13,8 @@ function AllBooks() {
                 <thead className="text-sm text-neutral-500 bg-zinc-100">
                     <tr className="text-left">
                         <th className="px-2 py-1 w-2/5">Name</th>
-                        <th className="px-2 py-1 w-20 text-center">Color</th>
-                        <th className="px-2 py-1 w-1/12 text-center">Pages</th>
+                        <th className="px-2 py-1 w-22 text-center">Color</th>
+                        <th className="px-2 py-1 w-5 text-center">Pages</th>
                         <th className="px-2 py-1 text-center">Updated at</th>
                         <th className="px-2 py-1 text-center">Created at</th>
                     </tr>
@@ -22,7 +23,7 @@ function AllBooks() {
                     {books.map((Book: { bookId: string; pages: any; title: string; color: string; createdAt: string; lastUpdatedAt: string }) => {
                         return (
                             <tr key={Book.bookId} onClick={() => OpenBook(Book.bookId)}  className="border-0 group border-solid border-t border-gray-300 hover:bg-zinc-100 hover:cursor-pointer">
-                                <td className="px-2 max-w-xs py-2 overflow-hidden whitespace-nowrap text-ellipsis group-hover:underline" dangerouslySetInnerHTML={{__html: Book.title.replaceAll("<br>", " ") || "Untitled book"}}></td>
+                                <td className="px-2 max-w-xs py-2 overflow-hidden whitespace-nowrap text-ellipsis group-hover:underline" dangerouslySetInnerHTML={{__html: Book.title.replaceAll("<br>", " ") || PLACEHOLDERS.book}}></td>
                                 <td className="px-2 py-2 text-center">{COLORS.find(c => c.id == Book.color)?.name}</td>
                                 <td className="text-center">{Book.pages.length}</td>
                                 <td className="text-center">{ConvertTime(Book.lastUpdatedAt)}</td>

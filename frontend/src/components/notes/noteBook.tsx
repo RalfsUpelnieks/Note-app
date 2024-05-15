@@ -6,6 +6,7 @@ import useBooks from "../../hooks/useBooks";
 import ColorMenu from "../menus/colorMenu";
 import COLORS from "../../utils/colors";
 import ROUTES from "../../utils/routePaths";
+import PLACEHOLDERS from "../../utils/placeholders";
 
 function NoteBook() {
     const navigate = useNavigate();
@@ -234,7 +235,7 @@ function NoteBook() {
                         <EditableBlock
                             content={title}
                             className="text-center min-w-[18rem] mb-0"
-                            placeholder="Book title"
+                            placeholder={PLACEHOLDERS.bookInput}
                             pageId={details.bookId}
                             onChange={onTitleChange}
                             onBlur={onTitleBlur}
@@ -244,7 +245,7 @@ function NoteBook() {
                     <EditableBlock
                         content={descrtiption}
                         className="font-normal text-lg mx-5"
-                        placeholder="Description"
+                        placeholder={PLACEHOLDERS.bookDescriptionInput}
                         pageId={details.bookId}
                         onChange={onDescriptionChange}
                         onBlur={onDescriptionBlur}
@@ -256,7 +257,7 @@ function NoteBook() {
                                 {books[details.bookIndex].pages.map((Page: { pageId: string; title: string; }, index) => {
                                     return (
                                         <button key={Page.pageId} onClick={() => OpenPage(Page.pageId)}  className="border-0 pb-0 group flex justify-between bg-transparent border-solid border-b border-gray-300 hover:bg-zinc-100 hover:cursor-pointer">
-                                            <span className="px-2 pt-2 text-left w-11/12 text-base break-all text-neutral-600 group-hover:underline" dangerouslySetInnerHTML={{__html: Page.title.replaceAll("<br>", " ") || "Untitled book"}}></span>
+                                            <span className="px-2 pt-2 text-left w-11/12 text-base break-all text-neutral-600 group-hover:underline" dangerouslySetInnerHTML={{__html: Page.title.replaceAll("<br>", " ") || PLACEHOLDERS.book}}></span>
                                             <span className="text-base flex items-center">{index + 1}</span>
                                         </button>
                                     );

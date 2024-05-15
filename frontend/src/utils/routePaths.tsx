@@ -11,10 +11,4 @@ const ROUTES = {
     AllUsers: "/users"
 }
 
-
-
-
-            
-
-
 export default ROUTES;

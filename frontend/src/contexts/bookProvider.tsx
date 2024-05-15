@@ -7,6 +7,7 @@ import { GetTimeISO } from "../utils/timeConverter";
 import useConfirmation from "../hooks/useConfirmation";
 import COLORS from "../utils/colors";
 import ROUTES from "../utils/routePaths";
+import PLACEHOLDERS from "../utils/placeholders";
 
 const BookContext = createContext({});
 
@@ -52,11 +53,16 @@ export const BookProvider = ({ children }) => {
         navigate(ROUTES.AllBooks);
     }
 
-    function OpenBook(bookId: string){
+    function OpenBook(bookId: string) {
         navigate(`${ROUTES.Book}/${bookId}`); 
     }
 
-    function OpenPage(pageId: string){
+    function OpenPage(pageId: string) {
+        var bookIndex = books.findIndex(b => b.pages.map(p => p.pageId).includes(pageId));
+        const updatedBooks = [...books];
+        updatedBooks[bookIndex].open = true
+        setBooks(updatedBooks)
+
         navigate(`${ROUTES.Page}/${pageId}`);
     }
 
@@ -172,7 +178,7 @@ export const BookProvider = ({ children }) => {
     }
 
     function RemoveBook(book) {
-        OpenDeletionConfirmation(() => RemoveBookRequest(book.bookId), `book "${book.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}"`);
+        OpenDeletionConfirmation(() => RemoveBookRequest(book.bookId), `book "${book.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || PLACEHOLDERS.book}"`);
     }
 
     async function RemovePageRequest(pageId: string, bookId: string){
@@ -199,7 +205,7 @@ export const BookProvider = ({ children }) => {
     }
 
     function RemovePage(page, bookId) {
-        OpenDeletionConfirmation(() => RemovePageRequest(page.pageId, bookId), `page "${page.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || "Untitled"}"`);
+        OpenDeletionConfirmation(() => RemovePageRequest(page.pageId, bookId), `page "${page.title.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || PLACEHOLDERS.page}"`);
     }
 
     async function ChangeOpen(bookId: string) {

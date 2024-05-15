@@ -107,6 +107,41 @@ namespace backend.Controllers
                 .ToListAsync();
         }
 
+        [HttpGet("SearchBlocks/{query}"), Authorize]
+        public async Task<ActionResult<IEnumerable<SearchBlockResult>>> SearchBlocks(string query)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            User? user = _userAccessor.GetUser(User);
+            if (user is null)
+            {
+                return Unauthorized();
+            }
+
+            var searchLower = query.ToLower();
+
+            var blocks = await _blockRepository.GetAll()
+                .Include(b => b.Page)
+                .ThenInclude(p => p.Book)
+                .Where(b => b.Page.Book.UserId == user.UserId && b.Properties.ToLower().Contains(searchLower))
+                .OrderBy(b => b.Page.BookId)
+                .ThenBy(b => b.Page.Position)
+                .ThenBy(b => b.Position)
+                .ToListAsync();
+
+            return blocks.Select(b => new SearchBlockResult
+            {
+                PageId = b.Page.PageId,
+                BookTitle = b.Page.Book.Title,
+                PageTitle = b.Page.Title,
+                Content = b.Properties,
+                Position = b.Position
+            }).ToList();
+        }
+
         [HttpPost("AddBook"), Authorize]
         public ActionResult AddBook([FromBody] UpdateBookData data)
         {

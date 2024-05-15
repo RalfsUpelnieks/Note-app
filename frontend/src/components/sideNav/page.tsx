@@ -3,6 +3,7 @@ import { IconDelete } from '../../icons';
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import PLACEHOLDERS from "../../utils/placeholders";
 
 interface SortableItemProps {
   id: UniqueIdentifier;
@@ -104,7 +105,7 @@ export const Item = React.memo(
             style={ { ...style, "--index": index, color: color, } as React.CSSProperties }
             className={`ps-4 pe-1 p-0 flex justify-between text-left text-sm hover:cursor-pointer ${dragOverlay ? "bg-[#00000025] text-white" : "group"} ${selected ? "bg-[#0000002a] border border-solid border-white" : ""}  ${!selected && !dragOverlay ? "hover:bg-[#0000001a] border-none" : ""}`}
           >
-            <span className="overflow-hidden whitespace-nowrap text-ellipsis" dangerouslySetInnerHTML={{__html: title.replaceAll("<br>", " ") || "Untitled page"}}></span>
+            <span className="overflow-hidden whitespace-nowrap text-ellipsis" dangerouslySetInnerHTML={{__html: title.replaceAll("<br>", " ") || PLACEHOLDERS.page}}></span>
             <div onClick={(e) => { e.stopPropagation(); onRemove && onRemove();}} style={{color: color}}  className={`p-0 flex text-center opacity-0 hover:bg-[#00000028] rounded ${!sorting && "group-hover:opacity-100"}`}><IconDelete/></div>
           </div>
       );
