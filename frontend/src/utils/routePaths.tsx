@@ -8,7 +8,8 @@ const ROUTES = {
     Book: "/book",
     Page: "/page",
     Dashboard: "/dashboard",
-    AllUsers: "/users"
+    AllUsers: "/users",
+    AllFiles: "/files"
 }
 
 export default ROUTES;

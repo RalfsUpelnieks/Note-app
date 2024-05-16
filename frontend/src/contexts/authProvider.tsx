@@ -75,7 +75,6 @@ export const AuthProvider = ({ children }) => {
             } else {
                 response?.json().then(data => {
                     setErrMsg(data.error);
-                    console.log(data);
                 });
             }
         });

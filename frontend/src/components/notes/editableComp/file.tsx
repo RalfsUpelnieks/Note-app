@@ -15,6 +15,12 @@ function File(props: any){
             return;
         }
 
+        if(file[0].size > 52428800)
+        {
+            setMsg("File is too big. The max file size is 50MB.");
+            return;
+        }
+
         const formdata = new FormData();
         formdata.append('id', props.blockId);
         formdata.append('file', file[0]);
@@ -51,13 +57,13 @@ function File(props: any){
     }
 
     function handleDelete() {
-        api.delete(`/api/Files/DeleteFile/${props.blockId}`).then(response => {
+        api.delete(`/api/Files/DeleteUsersFile/${props.blockId}`).then(response => {
             if (response?.ok) {
                 console.log("File deleted");
                 props.onPropertyChange("filename", "");
             } else if (response?.status == 401) {
                 LogOut();
-            } else if (response?.status === 404) {
+            } else if (response?.status === 404 || response?.status === 400) {
                 console.log("File not found");
                 props.onPropertyChange("filename", "");
             } 
@@ -74,12 +80,11 @@ function File(props: any){
                 </div>
             :
                 <div className="w-full">
-                    <div className="flex w-full">
+                    <div className="flex w-full items-center">
                         <input type="file" onChange={ (e) => {setFile(e.target.files)} } className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file: file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 border-0"/>
-                        
+                        {msg && <span className='flex mr-2'>{msg}</span>}
                         <button className='w-24 h-8 text-sm my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleUpload}>Upload</button>
                     </div>
-                    {msg && <span className='block w-36 mx-auto'>{msg}</span>}
                 </div>
             }
         </>

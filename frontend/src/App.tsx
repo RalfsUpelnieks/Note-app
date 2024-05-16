@@ -10,8 +10,9 @@ import UserLayout from './layout/userLayout';
 import Login from './components/authentication/login';
 import Register from './components/authentication/register';
 import ForgotPassword from './components/authentication/forgotPassword';
-import Users from './components/admin/users';
 import Dashboard from './components/admin/dashboard';
+import Users from './components/admin/users';
+import Files from './components/admin/files';
 import NotePage from './components/notes/notePage';
 import './stylesheets/site.css'
 import AdminLayout from './layout/adminLayout';
@@ -39,7 +40,7 @@ function App() {
                 <Route element={<AdminLayout/>}>
                     <Route path={ROUTES.Dashboard} element={<Dashboard/>}/>
                     <Route path={ROUTES.AllUsers} element={<Users/>}/>
-                    
+                    <Route path={ROUTES.AllFiles} element={<Files/>}/>
                 </Route>
             </Route>
             <Route path="*" element={GetStoredAuthToken() ? <Navigate to={ auth?.user?.role === Roles.Admin ? ROUTES.Dashboard : ROUTES.AllBooks} /> : <Navigate to={ROUTES.Login} />} />

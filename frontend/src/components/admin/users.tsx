@@ -115,7 +115,6 @@ function Users() {
                         </tr>
                     </thead>
                     <tbody>
-                        
                         {users.map((User: { id: string; name: string; surname: string; username: string; emailAddress: string; lastLoginAt: string; registeredAt: string;  role: string }) => {
                             return (
                                 <tr key={User.id} className="border-0 group border-solid border-t border-gray-300 hover:bg-zinc-100 select-none">

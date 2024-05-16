@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { IconDashboard, IconUsers } from '../../icons';
+import { IconDashboard, IconUsers, IconFiles } from '../../icons';
 import ROUTES from '../../utils/routePaths';
 
 function AdminSideNav() {
@@ -13,6 +13,11 @@ function AdminSideNav() {
             Name: "Users",
             To: ROUTES.AllUsers,
             Icon: <IconUsers/>
+        },
+        {
+            Name: "Files",
+            To: ROUTES.AllFiles,
+            Icon: <IconFiles/>
         }
     ];
 

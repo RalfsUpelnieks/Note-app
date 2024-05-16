@@ -1,5 +1,7 @@
 ﻿using backend.Data;
+using backend.Helpers;
 using backend.Interfaces;
+using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +23,26 @@ namespace FileUploadDownload.Controllers
             _blockRepository = blockRepository;
             _fileRepository = fileRepository;
             _userAccessor = userAccessor;
+        }
+
+        [HttpGet("GetAllFiles"), Authorize(Roles = Roles.Admin)]
+        public async Task<ActionResult<IEnumerable<FileData>>> GetFiles()
+        {
+            return await _fileRepository.GetAll()
+                .OrderBy(b => b.CreatedAt)
+                .Include(f => f.Block)
+                .ThenInclude(b => b.Page)
+                .ThenInclude(p => p.Book)
+                .ThenInclude(b => b.User)
+                .Select(file => new FileData
+                {
+                    BlockId = file.BlockId,
+                    OwnersUsername = file.Block.Page.Book.User.Username,
+                    Filename = file.Filename,
+                    Size = file.Size,
+                    CreatedAt = file.CreatedAt
+                })
+                .ToListAsync();
         }
 
 
@@ -92,7 +114,6 @@ namespace FileUploadDownload.Controllers
             }
         }
 
-
         [Route("DownloadFile/{id}")]
         [HttpGet("DownloadFile"), Authorize]
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -134,16 +155,11 @@ namespace FileUploadDownload.Controllers
             return File(bytes, contenttype, Path.GetFileName(filepath));
         }
 
-        [HttpDelete("DeleteFile/{id}"), Authorize]
-        public IActionResult DeleteFile(string id)
+        [HttpDelete("DeleteUsersFile/{id}"), Authorize]
+        public IActionResult DeleteUsersFile(string id)
         {
             try
             {
-                if (!ModelState.IsValid) 
-                { 
-                    return BadRequest(ModelState);
-                }
-
                 User? user = _userAccessor.GetUser(User);
                 if (user is null) 
                 { 
@@ -180,6 +196,8 @@ namespace FileUploadDownload.Controllers
                     return NotFound();
                 }
 
+                block.Properties = "{\"text\":\"\"}";
+
                 _fileRepository.Delete(block.File);
                 _fileRepository.Save();
 
@@ -191,5 +209,53 @@ namespace FileUploadDownload.Controllers
             }
         }
 
+        [HttpDelete("DeleteFile/{id}"), Authorize(Roles = Roles.Admin)]
+        public IActionResult DeleteFile(string id)
+        {
+            try
+            {
+                User? user = _userAccessor.GetUser(User);
+                if (user is null)
+                {
+                    return Unauthorized();
+                }
+
+                Block? block = _blockRepository.Get(b => b.BlockId == id)
+                    .Include(b => b.File)
+                    .Include(b => b.Page)
+                    .ThenInclude(p => p.Book)
+                    .FirstOrDefault();
+
+                if (block is null || block.File is null)
+                {
+                    return BadRequest();
+                }
+
+                var extension = "." + block.File.Filename.Split('.')[block.File.Filename.Split('.').Length - 1];
+                string filename = id + extension;
+
+                var filepath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", filename);
+
+                if (System.IO.File.Exists(filepath))
+                {
+                    System.IO.File.Delete(filepath);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+                block.Properties = "{\"text\":\"\"}";
+
+                _fileRepository.Delete(block.File);
+                _fileRepository.Save();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
