@@ -70,7 +70,7 @@ function Files() {
                             })
                             :
                             <tr className="border-0 border-solid border-t text-center border-gray-300">
-                                <td colSpan={5} className="py-2 text-neutral-600">No books</td>
+                                <td colSpan={5} className="py-2 text-neutral-600">No files</td>
                             </tr>
                         }
                     </tbody>
