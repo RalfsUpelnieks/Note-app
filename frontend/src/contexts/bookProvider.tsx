@@ -59,10 +59,12 @@ export const BookProvider = ({ children }) => {
 
     function OpenPage(pageId: string) {
         var bookIndex = books.findIndex(b => b.pages.map(p => p.pageId).includes(pageId));
-        const updatedBooks = [...books];
-        updatedBooks[bookIndex].open = true
-        setBooks(updatedBooks)
-
+        if(bookIndex != -1){
+            const updatedBooks = [...books];
+            updatedBooks[bookIndex].open = true
+            setBooks(updatedBooks)
+        }
+        
         navigate(`${ROUTES.Page}/${pageId}`);
     }
 
@@ -167,9 +169,18 @@ export const BookProvider = ({ children }) => {
         api.delete(`/api/Note/RemoveBook/${bookId}`).then(response => {
             if (response?.ok) {
                 console.log("Page removed");
+                
                 if(bookId === id){
                     OpenViewBooks();
                 }
+
+                var bookIndex = books.findIndex(b => b.pages.map(p => p.pageId).includes(id));
+                if(bookIndex != -1){
+                    if (books[bookIndex].bookId == bookId){
+                        OpenViewBooks();
+                    }
+                }
+
                 setBooks(books.filter(book => book.bookId !== bookId));
             } else if (response?.status == 401) {
                 LogOut();

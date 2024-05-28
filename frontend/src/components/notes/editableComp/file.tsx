@@ -30,10 +30,11 @@ function File(props: any){
             if (response?.ok) {
                 console.log("File uploded");
                 setMsg("")
-                props.onPropertyChange("filename", file[0].name);
+                props.onPropertyChange("filename", file[0].name, false);
             } else if (response?.status == 401) {
                 LogOut();
             } else {
+                console.log(response)
                 setMsg("Upload failed")
             }
         });
@@ -50,6 +51,9 @@ function File(props: any){
                 });
             } else if (response?.status == 401) {
                 LogOut();
+            } else if (response?.status === 404) {
+                setMsg("File not found")
+                props.onPropertyChange("filename", "", false);
             } else {
                 setMsg("Download failed")
             }
@@ -60,14 +64,21 @@ function File(props: any){
         api.delete(`/api/Files/DeleteUsersFile/${props.blockId}`).then(response => {
             if (response?.ok) {
                 console.log("File deleted");
-                props.onPropertyChange("filename", "");
+                props.onPropertyChange("filename", "", false);
             } else if (response?.status == 401) {
                 LogOut();
             } else if (response?.status === 404 || response?.status === 400) {
                 console.log("File not found");
-                props.onPropertyChange("filename", "");
-            } 
+                props.onPropertyChange("filename", "", false);
+            }
         });
+
+        setFile(null);
+    }
+
+    function onChange(e){
+        setMsg("");
+        setFile(e.target.files)
     }
     
     return (
@@ -76,14 +87,14 @@ function File(props: any){
                 <div className="flex cursor-pointer w-full">
                     <IconDownload/>
                     <span className='w-full px-1 text-sm text-neutral-700' onClick={downloadFile}>{props.properties.filename}</span>
-                    <button className='flex p-0 text-xs my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleDelete}><IconDelete/></button>
+                    <button className='flex p-[0.1rem] text-xs my-auto bg-red-600 text-white hover:bg-red-700 hover:cursor-pointer border-none rounded' onClick={handleDelete}><IconDelete width={18} height={18}/></button>
                 </div>
             :
                 <div className="w-full">
                     <div className="flex w-full items-center">
-                        <input type="file" onChange={ (e) => {setFile(e.target.files)} } className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file: file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 border-0"/>
-                        {msg && <span className='flex mr-2'>{msg}</span>}
-                        <button className='w-24 h-8 text-sm my-auto bg-zinc-800 text-white hover:bg-black hover:cursor-pointer border-none rounded' onClick={handleUpload}>Upload</button>
+                        <input type="file" onChange={onChange} className="flex w-full text-sm text-zinc-500 border-0 file:mr-2 file:py-1 file:my-1 file:px-4 file:bg-gray-100 hover:file:bg-gray-200 file: file:text-sm file:border file:border-solid file:border-zinc-400 file:cursor-pointer file:text-zinc-500 "/>
+                        {msg && <span className='flex mr-2 w-52 text-sm text-zinc-700 justify-end'>{msg}</span>}
+                        <button className='w-24 h-8 text-sm my-auto bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer border-none rounded' onClick={handleUpload}>Upload</button>
                     </div>
                 </div>
             }

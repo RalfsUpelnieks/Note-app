@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240519114036_InitialCreate")]
+    [Migration("20240528090110_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -96,7 +96,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Book");
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("backend.Data.Page", b =>

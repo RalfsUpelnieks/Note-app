@@ -7,6 +7,7 @@ namespace backend.Data
         public DataContext(DbContextOptions options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Book> Books { get; set; }
         public DbSet<Page> Pages { get; set; }
         public DbSet<Block> Blocks { get; set; }
         public DbSet<StoredFile> Files { get; set; }

@@ -9,6 +9,7 @@ import { IconAdd } from '../../icons';
 import { Item, SortableItem } from './page';
 import COLORS from '../../utils/colors';
 import PLACEHOLDERS from '../../utils/placeholders';
+import ROUTES from '../../utils/routePaths';
 
 function SideNav() {
     const { id } = useParams()
@@ -249,7 +250,7 @@ function SideNav() {
                     <BookContainer open={book.open} id={book.bookId} Title={book.title} textColor={colors?.textColor} bgColor={colors?.backgroundColor}>
                     {book.pages.length != 0 &&
                         book.pages.map((page: {title: string, pageId: string}, index) => (
-                            <div key={page.pageId} className='ps-4 text-sm' dangerouslySetInnerHTML={{__html: page.title.replaceAll("<br>", " ") || PLACEHOLDERS.page}}></div>
+                            <div key={page.pageId} className='ps-4 text-sm overflow-hidden whitespace-nowrap text-ellipsis' dangerouslySetInnerHTML={{__html: page.title.replaceAll("<br>", " ") || PLACEHOLDERS.page}}></div>
                         ))
                     }
                     </BookContainer>
@@ -258,19 +259,21 @@ function SideNav() {
         }
 
         var bookIndex = findPageBookIndex(activeDetails.Id);
-        var page = books[bookIndex].pages.find(p => p.pageId == activeDetails.Id);
+        if(bookIndex !== -1){
+            var page = books[bookIndex].pages.find(p => p.pageId == activeDetails.Id);
 
-        if(page){
-            return <Item title={page.title} selected={false} dragOverlay />;
+            if(page){
+                return <Item title={page.title} selected={false} dragOverlay />;
+            }
         }
     }
 
     return (
         <nav className='max-w-[15rem] w-full select-none bg-SideMenuBackground border-0 border-r border-solid border-gray-200'>
             <div className='flex flex-col h-full text-neutral-300'>
-                <div onClick={OpenViewBooks} className='bg-[#b3b3b32a] border-0 border-b border-solid border-zinc-800 px-1 flex items-center justify-between hover:cursor-pointer hover:bg-[#b3b3b33f]'>
+                <div onClick={OpenViewBooks} className={`border-0 border-b border-solid border-zinc-800 px-1 flex items-center justify-between hover:cursor-pointer hover:bg-[#b3b3b33f] ${window.location.pathname == ROUTES.AllBooks ? "bg-[#b3b3b33f]" : "bg-[#b3b3b32a]"}`}>
                     <span className='font-sans text-[18px] text-neutral-300 py-1'>Book view</span>
-                    <div onClick={(e) => { e.stopPropagation(); AddBook && AddBook()}} className='text-neutral-300 flex hover:bg-zinc-600 rounded'><IconAdd/></div>
+                    <div onClick={(e) => { e.stopPropagation(); AddBook && AddBook()}} className='text-neutral-300 flex hover:bg-[#0000002f] rounded'><IconAdd/></div>
                 </div>
                 <div className='contents'>
                     <div className='overflow-y-auto h-full'>

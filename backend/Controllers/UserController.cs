@@ -338,14 +338,17 @@ namespace backend.Controllers
         {
             foreach (var file in files)
             {
-                var extension = "." + file.Filename.Split('.')[file.Filename.Split('.').Length - 1];
-                string filename = file.BlockId + extension;
-
-                var filepath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", filename);
-
-                if (System.IO.File.Exists(filepath))
+                if(file != null)
                 {
-                    System.IO.File.Delete(filepath);
+                    var extension = "." + file.Filename.Split('.')[file.Filename.Split('.').Length - 1];
+                    string filename = file.BlockId + extension;
+
+                    var filepath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", filename);
+
+                    if (System.IO.File.Exists(filepath))
+                    {
+                        System.IO.File.Delete(filepath);
+                    }
                 }
             }
         }

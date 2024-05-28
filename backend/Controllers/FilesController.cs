@@ -45,17 +45,11 @@ namespace FileUploadDownload.Controllers
                 .ToListAsync();
         }
 
-
         [HttpPost("UploadFile"), Authorize]
         public async Task<IActionResult> WriteFile([FromForm] string id, IFormFile file)
         {
             try
             {
-                if (!ModelState.IsValid) 
-                { 
-                    return BadRequest(ModelState);
-                }
-
                 User? user = _userAccessor.GetUser(User);
                 if (user is null) 
                 {
@@ -63,13 +57,20 @@ namespace FileUploadDownload.Controllers
                 }
 
                 Block? block = _blockRepository.Get(b => b.BlockId == id)
+                    .Include(b => b.File)
                     .Include(b => b.Page)
                     .ThenInclude(p => p.Book)
                     .FirstOrDefault();
 
                 if (block is null) 
                 { 
-                    return BadRequest();
+                    return NotFound();
+                }
+
+                if (!(block.File is null))
+                {
+                    block.Properties = "{\"filename\":\"" + block.File.Filename + "\"}";
+                    return BadRequest("File exists");
                 }
 
                 if (block.Page.Book.UserId != user.UserId)
@@ -119,10 +120,11 @@ namespace FileUploadDownload.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> DownloadFile(string id)
         {
-            if (!ModelState.IsValid) { return BadRequest(ModelState); }
-
             User? user = _userAccessor.GetUser(User);
-            if (user is null) { return Unauthorized(); }
+            if (user is null) 
+            { 
+                return Unauthorized();
+            }
 
             Block? block = _blockRepository.Get(b => b.BlockId == id)
                     .Include(b => b.File)
@@ -132,7 +134,7 @@ namespace FileUploadDownload.Controllers
 
             if (block is null || block.File is null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             if (block.Page.Book.UserId != user.UserId)
@@ -191,12 +193,8 @@ namespace FileUploadDownload.Controllers
                 {
                     System.IO.File.Delete(filepath);
                 }
-                else
-                {
-                    return NotFound();
-                }
 
-                block.Properties = "{\"text\":\"\"}";
+                block.Properties = "{\"filename\":\"\"}";
 
                 _fileRepository.Delete(block.File);
                 _fileRepository.Save();
@@ -240,12 +238,8 @@ namespace FileUploadDownload.Controllers
                 {
                     System.IO.File.Delete(filepath);
                 }
-                else
-                {
-                    return NotFound();
-                }
 
-                block.Properties = "{\"text\":\"\"}";
+                block.Properties = "{\"filename\":\"\"}";
 
                 _fileRepository.Delete(block.File);
                 _fileRepository.Save();

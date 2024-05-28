@@ -42,7 +42,7 @@ function Dashboard() {
 
     return (
         pageData.loaded &&
-            <div className="flex flex-col p-4 gap-3 w-11/12 items-center">
+            <div className="flex flex-col p-4 gap-3 w-[95%] 2xl:w-11/12 items-center">
                 <div className="flex flex-row w-full gap-3">
                     <Milestone title="Registered users." value={pageData.data.users} color="#27ae60"/>
                     <Milestone title="Books" value={pageData.data.books} color="#d35400"/>
@@ -68,7 +68,7 @@ function Dashboard() {
                     </div>
                     <div className="flex flex-col w-full bg-white border border-solid border-gray-300 rounded">
                         <div className='flex justify-between bg-zinc-100 border-0 border-b border-solid border-gray-200 ps-2'>
-                            <span className='text-lg font-semibold text-neutral-500 my-0'>New entities past 30 days</span>
+                            <span className='text-lg font-semibold text-neutral-500 my-0'>New entities past 31 days</span>
                         </div>
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart

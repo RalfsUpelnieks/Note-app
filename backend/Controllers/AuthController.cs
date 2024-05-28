@@ -92,15 +92,30 @@ namespace backend.Controllers
 
         [HttpPost("addUser"), Authorize(Roles = Roles.Admin)]
         public ActionResult<User> AddUser([FromBody] AdminUserRegistration requestDto) {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            if (!new EmailAddressAttribute().IsValid(requestDto.Email)) { return BadRequest(new { Error = "Invalid email" }); }
+            if (!new EmailAddressAttribute().IsValid(requestDto.Email)) 
+            { 
+                return BadRequest(new { Error = "Invalid email" });
+            }
 
-            if (_userRepository.Get(u => u.Username == requestDto.Username).Any()) { return BadRequest(new { Error = "User with this username already exists" }); }
+            if (_userRepository.Get(u => u.Username == requestDto.Username).Any()) 
+            { 
+                return BadRequest(new { Error = "User with this username already exists" });
+            }
             
-            if (_userRepository.Get(u => u.EmailAddress == requestDto.Email).Any()) { return BadRequest(new { Error = "User with this email already exists" }); }
+            if (_userRepository.Get(u => u.EmailAddress == requestDto.Email).Any()) 
+            {
+                return BadRequest(new { Error = "User with this email already exists" });
+            }
 
-            if (requestDto.Password.Length < 6) { return BadRequest(new { Error = "Password must be at least 6 characters" }); }
+            if (requestDto.Password.Length < 6) 
+            { 
+                return BadRequest(new { Error = "Password must be at least 6 characters" });
+            }
 
             var dateTimeNow = DateTime.UtcNow;
 

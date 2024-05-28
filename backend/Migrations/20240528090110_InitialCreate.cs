@@ -34,7 +34,7 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Book",
+                name: "Books",
                 columns: table => new
                 {
                     BookId = table.Column<string>(type: "nvarchar(24)", maxLength: 24, nullable: false),
@@ -48,9 +48,9 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Book", x => x.BookId);
+                    table.PrimaryKey("PK_Books", x => x.BookId);
                     table.ForeignKey(
-                        name: "FK_Book_Users_UserId",
+                        name: "FK_Books_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -72,9 +72,9 @@ namespace backend.Migrations
                 {
                     table.PrimaryKey("PK_Pages", x => x.PageId);
                     table.ForeignKey(
-                        name: "FK_Pages_Book_BookId",
+                        name: "FK_Pages_Books_BookId",
                         column: x => x.BookId,
-                        principalTable: "Book",
+                        principalTable: "Books",
                         principalColumn: "BookId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -129,8 +129,8 @@ namespace backend.Migrations
                 column: "PageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Book_UserId",
-                table: "Book",
+                name: "IX_Books_UserId",
+                table: "Books",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -152,7 +152,7 @@ namespace backend.Migrations
                 name: "Pages");
 
             migrationBuilder.DropTable(
-                name: "Book");
+                name: "Books");
 
             migrationBuilder.DropTable(
                 name: "Users");

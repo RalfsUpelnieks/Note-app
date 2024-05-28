@@ -229,14 +229,6 @@ function NotePage() {
         addBlockOnServer(newBlock, index + 2);
         updatedBlocks.splice(index + 1, 0, newBlock);
 
-
-        //update current block will be useful when moving text from one to another
-        // updatedBlocks[index] = {
-        //     ...updatedBlocks[index],
-        //     type: type,
-        //     properties: properties
-        // };
-
         setBlocks(updatedBlocks);
         setSelectedIndex(index + 2);
     };

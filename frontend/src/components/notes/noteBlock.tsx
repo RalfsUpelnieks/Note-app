@@ -36,17 +36,19 @@ function NoteBlock(props : NoteBlockProps) {
         position: { x: 0, y: 0}
     });
 
-    function changeProperty(property, value){
+    function changeProperty(property, value, updateOnServer = true){
         if(properties[property] !== undefined ){
             const updatedProperties = {...properties, [property]: value};
 
             setProperties(updatedProperties);
             
-            clearTimeout(timer.current);
-            if(JSON.stringify(props.properties) != JSON.stringify(updatedProperties)) {
-                timer.current = setTimeout(() => { 
-                    props.updateBlock(props.blockId, updatedProperties, type);
-                }, 1200);
+            if(updateOnServer){
+                clearTimeout(timer.current);
+                if(JSON.stringify(props.properties) != JSON.stringify(updatedProperties)) {
+                    timer.current = setTimeout(() => { 
+                        props.updateBlock(props.blockId, updatedProperties, type);
+                    }, 1200);
+                }
             }
         }
     }
@@ -105,24 +107,6 @@ function NoteBlock(props : NoteBlockProps) {
     }
 
     function onKeyDown(e) {
-        // if(e.key === "l"){
-        //     e.preventDefault();
-        //     var linkURL = prompt('Enter a URL:', 'http://');
-        //     var sText = document.getSelection();
-        
-        //     document.execCommand('insertHTML', false, '<a href="' + linkURL + '" target="_blank" contentEditable="false">' + sText + '</a>');
-        // }
-
-        // if(e.key === "c"){
-        //     e.preventDefault();
-        //     document.execCommand('foreColor', false, "rgba(0,0,0,0.5)");
-        // }
-
-        // if(e.key === "n"){
-        //     e.preventDefault();
-        //     document.execCommand('backColor', false, "rgba(2,0,0,0.5)");
-        // }
-
         if (e.key === "Backspace" && !properties.text) {
             e.preventDefault();
             clearTimeout(timer.current);

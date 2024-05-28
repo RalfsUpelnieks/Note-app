@@ -53,7 +53,7 @@ function NoteBook() {
                 bookIndex: indexOfBook,
             })
         }
-    }, [id]);
+    }, [id, books]);
 
     async function updateTitleOnServer(newTitle) {
         const result = await updateBook(details.bookId, newTitle, books[details.bookIndex].description, books[details.bookIndex].color);
