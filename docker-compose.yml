@@ -11,7 +11,17 @@ services:
       - "5062:80"
       - "5025:443"
     environment:
-      ConnectionStrings__DefaultConnection: Data Source=sql_server2022;Initial Catalog=NoteAppDb;User Id=SA;Password=Password123;MultipleActiveResultSets=true;Encrypt=False
+      ConnectionStrings__DefaultConnection: Data Source=.\SQLEXPRESS;Initial Catalog=NoteAppDb; Encrypt=False; MultipleActiveResultSets=True; Integrated Security=True
+      Jwt__Key: <randomKeyAtLeast128CharLongForExampleKRtUr30X3F3F173B63IEN9RCsNc6OnxPj6BT5rjEwTinRjvxIg>
+      Jwt__ValidMinutes: 60
+      Jwt__Issuer: https://localhost:44345/
+      Jwt__Audience: https://localhost:44345/
+      WebClient: http://localhost:3000
+      EmailSettings__Sender: <sender>
+      EmailSettings__Username: <username>
+      EmailSettings__Password: <password>
+      EmailSettings__Host: <host>
+      EmailSettings__Port: 587
   database:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     container_name: sql_server2022
