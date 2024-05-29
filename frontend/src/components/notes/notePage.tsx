@@ -13,6 +13,7 @@ import { IconHorizontalAction, IconBookCollection, IconBook, IconPage, IconArrow
 import COLORS from "../../utils/colors";
 import { GetTimeISO } from "../../utils/timeConverter";
 import ROUTES from "../../utils/routePaths";
+import INPUT_LIMITS from "../../utils/inputLimits";
 
 function NotePage() {
     const navigate = useNavigate();
@@ -336,6 +337,7 @@ function NotePage() {
                         onChange={onChange}
                         onBlur={onBlur}
                         onKeyDown={onKeyDown}
+                        maxChar={INPUT_LIMITS.PageTitle}
                     />
                     <DragDropContext onDragEnd={onDragEndHandler}>
                         <Droppable droppableId={id!}>

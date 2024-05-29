@@ -7,6 +7,7 @@ import ColorMenu from "../menus/colorMenu";
 import COLORS from "../../utils/colors";
 import ROUTES from "../../utils/routePaths";
 import PLACEHOLDERS from "../../utils/placeholders";
+import INPUT_LIMITS from "../../utils/inputLimits";
 
 function NoteBook() {
     const navigate = useNavigate();
@@ -144,8 +145,6 @@ function NoteBook() {
         setMenuPostion(cord)
         setIsMenuOpen(true)
 
-        // Add listener asynchronously to avoid conflicts with
-        // the double click of the text selection
         setTimeout(() => {
             document.addEventListener("click", ActionMenuhandler, true);
             document.body.style.overflowY = 'hidden';
@@ -239,6 +238,7 @@ function NoteBook() {
                             pageId={details.bookId}
                             onChange={onTitleChange}
                             onBlur={onTitleBlur}
+                            maxChar={INPUT_LIMITS.BookTitle}
                         />
                     </div>
                     
@@ -249,6 +249,7 @@ function NoteBook() {
                         pageId={details.bookId}
                         onChange={onDescriptionChange}
                         onBlur={onDescriptionBlur}
+                        maxChar={INPUT_LIMITS.BookDescription}
                     />
                     <h2 className="text-center text-neutral-800 select-none">Content</h2>
                     <div className="flex flex-col text-left">

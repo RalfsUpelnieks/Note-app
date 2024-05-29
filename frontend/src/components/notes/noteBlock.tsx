@@ -7,6 +7,7 @@ import { getCaretCoordinates, setCaretToEnd, getSelection } from "../../utils/ca
 import menuList from "../../utils/blockList"
 import { IconDrag } from "../../icons";
 import PLACEHOLDERS from "../../utils/placeholders";
+import INPUT_LIMITS from "../../utils/inputLimits";
 
 interface NoteBlockProps {
     blockId: string
@@ -91,8 +92,18 @@ function NoteBlock(props : NoteBlockProps) {
 
     function onPaste(e) {
         e.preventDefault();
+
+        const block = e.target;
+        const { selectionStart, selectionEnd } = getSelection(block);
+
         var text = e.clipboardData.getData('text/plain')
-        document.execCommand('insertText', false, text);
+
+        var selectedCharCount = selectionEnd - selectionStart
+        var textLength =  e.target.innerText.length + text.length - selectedCharCount
+
+        if(textLength <= INPUT_LIMITS.BlockContent){
+            document.execCommand('insertText', false, text);
+        }
     }
 
     function onDrop(e) {
@@ -132,6 +143,8 @@ function NoteBlock(props : NoteBlockProps) {
             }
 
             openActionMenu({x, y});
+        } else if(e.keyCode > 46 && !e.ctrlKey && e.target.innerText.length >= INPUT_LIMITS.BlockContent) {
+            e.preventDefault();
         }
     }
 
@@ -165,8 +178,6 @@ function NoteBlock(props : NoteBlockProps) {
             position: cord
         })
 
-        // Add listener asynchronously to avoid conflicts with
-        // the double click of the text selection
         setTimeout(() => {
             document.addEventListener("click", ActionMenuhandler, true);
             document.body.style.overflowY = 'hidden';
@@ -194,8 +205,6 @@ function NoteBlock(props : NoteBlockProps) {
             position: cord
         })
 
-        // Add listener asynchronously to avoid conflicts with
-        // the double click of the text selection
         setTimeout(() => {
             document.addEventListener("click", FormatMenuhandler, true);
         }, 100);

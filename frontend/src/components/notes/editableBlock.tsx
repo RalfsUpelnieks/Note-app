@@ -10,9 +10,10 @@ interface EditableBlockProps {
     onChange?(e): void
     onBlur?(e): void
     onKeyDown?(e): void
+    maxChar: number
 }
 
-function EditableBlock({content, placeholder, pageId, className, onChange, onBlur, onKeyDown} : EditableBlockProps) {
+function EditableBlock({content, placeholder, pageId, className, onChange, onBlur, onKeyDown, maxChar} : EditableBlockProps) {
     const title = useMemo(() => content, [pageId]);
 
     const [formatMenuDetails, setFormatMenuDetails] = useState({
@@ -22,8 +23,18 @@ function EditableBlock({content, placeholder, pageId, className, onChange, onBlu
 
     function onPaste(e) {
         e.preventDefault();
+
+        const block = e.target;
+        const { selectionStart, selectionEnd } = getSelection(block);
+
         var text = e.clipboardData.getData('text/plain')
-        document.execCommand('insertText', false, text);
+
+        var selectedCharCount = selectionEnd - selectionStart
+        var textLength =  e.target.innerText.length + text.length - selectedCharCount
+
+        if(textLength <= maxChar){
+            document.execCommand('insertText', false, text);
+        }
     }
 
     function onDrop(e) {
@@ -42,8 +53,6 @@ function EditableBlock({content, placeholder, pageId, className, onChange, onBlu
             position: cord
         })
 
-        // Add listener asynchronously to avoid conflicts with
-        // the double click of the text selection
         setTimeout(() => {
             document.addEventListener("click", FormatMenuhandler, true);
         }, 100);
@@ -77,6 +86,16 @@ function EditableBlock({content, placeholder, pageId, className, onChange, onBlu
         }
     };
 
+    function onKeyDownInternal(e) {
+        if(onKeyDown){
+            onKeyDown(e)
+        }
+        
+        if(e.keyCode > 46 && !e.ctrlKey && e.target.innerText.length >= maxChar) {
+            e.preventDefault();
+        }
+    }
+
     return (
         <>
             {formatMenuDetails.open && (
@@ -92,7 +111,7 @@ function EditableBlock({content, placeholder, pageId, className, onChange, onBlu
                 onBlur={onBlur} 
                 onPaste={onPaste}
                 onDrop={onDrop}
-                onKeyDown={onKeyDown}
+                onKeyDown={onKeyDownInternal}
                 onSelect={handleSelect}
                 contentEditable="true" 
                 className={`break-all cursor-text empty:before:content-[attr(placeholder)] empty:before:text-neutral-400 focus:outline-none ${className}`}
