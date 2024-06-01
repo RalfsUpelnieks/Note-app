@@ -234,7 +234,7 @@ export const BookProvider = ({ children }) => {
     }
     
     return (
-        <BookContext.Provider value={{ books, setBooks, OpenViewBooks, ChangeOpen, OpenBook, OpenPage, AddBook, updateBook, RemoveBook, AddPage, updatePage, RemovePage}}>
+        <BookContext.Provider value={{ books, setBooks, OpenViewBooks, ChangeOpen, OpenBook, AddBook, updateBook, RemoveBook, OpenPage, AddPage, updatePage, RemovePage}}>
             {
                 !loading
                     && children

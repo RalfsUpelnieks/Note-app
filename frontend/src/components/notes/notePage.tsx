@@ -9,18 +9,22 @@ import { setCaretToEnd } from "../../utils/caretControl";
 import useAuth from '../../hooks/useAuth';
 import api from '../../utils/api';
 import useBooks from "../../hooks/useBooks";
-import { IconHorizontalAction, IconBookCollection, IconBook, IconPage, IconArrowLeft, IconArrowRight } from "../../icons";
+import { IconHorizontalAction, IconBookCollection, IconBook, IconPage, IconArrowLeft, IconArrowRight, IconDelete } from "../../icons";
 import COLORS from "../../utils/colors";
 import { GetTimeISO } from "../../utils/timeConverter";
 import ROUTES from "../../utils/routePaths";
 import INPUT_LIMITS from "../../utils/inputLimits";
+import useMenu from "../../hooks/useMenu";
+import MenuIcon from "../menus/menuIcon";
 
 function NotePage() {
     const navigate = useNavigate();
     const { LogOut } : any = useAuth()
     const { id } = useParams()
 
-    const { books, setBooks, updatePage, OpenPage } : any = useBooks();
+    const { books, setBooks, updateBook, RemoveBook, OpenPage, updatePage, RemovePage } : any = useBooks();
+    const { OpenMenu, menuDetails } : any = useMenu();
+
     const [title, setTitle] = useState("");
     const [color, setColor] = useState<any>();
     const [details, setDetails] =  useState({
@@ -307,6 +311,63 @@ function NotePage() {
         }
     }
 
+    function onHandleClick(e) {
+        if(!menuDetails.isOpen) {
+            const react = e.target.getBoundingClientRect();
+            let {x, y} = { x: react.left - 135, y: 0 };
+
+            if (react.top < 80){
+                y = 80;
+            } else if (react.top + 258 > window.innerHeight) {
+                y = window.innerHeight - 268;
+            } else {
+                y = react.top - 11;
+            }
+
+            openActionMenu({x, y});
+        }
+    }
+
+    const actionMenu = [
+        {
+            id: "deletePage",
+            action: () => RemovePage(books[details.bookIndex].pages[details.pageIndex], details.bookId),
+            label: "Delete page",
+            icon: <MenuIcon><IconDelete width={20} height={20}/></MenuIcon>
+        },
+        {
+            id: "deleteBook",
+            action: () => RemoveBook(books[details.bookIndex]),
+            label: "Delete book",
+            icon: <MenuIcon><IconDelete width={20} height={20}/></MenuIcon>
+        }
+    ];
+
+    function openActionMenu(position){
+        const menu = [
+            {
+                title: "Book colors", 
+                menuItems: COLORS.map(b => ({id: b.id, action: () => changeColor(b.id), label: b.name, icon: <div className="h-4 w-4 mr-2 border border-solid" style={{ backgroundColor: b.backgroundColor, borderColor: b.textColor}}></div> }))
+            }, {
+                title: "Actions",
+                menuItems: actionMenu
+            }
+        ];
+        
+        OpenMenu(id, menu, position)
+    }
+
+    async function changeColor(color) {
+        const result = await updateBook(details.bookId, books[details.bookIndex].title, books[details.bookIndex].description, color);
+        if(result){
+            const updatedBooks = [...books];
+            updatedBooks[details.bookIndex].color = color;
+            setBooks(updatedBooks);
+
+            setColor(COLORS.find(c => c.id == color))
+        }
+    }
+
     return (
         <>
             {!details.loading &&
@@ -325,7 +386,7 @@ function NotePage() {
                     </div>
                     
                     <div className="flex">
-                        <div className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction/></div>
+                        <div onClick={onHandleClick} className="flex p-[0.1rem] hover:bg-opacity-10 hover:bg-black hover:cursor-pointer rounded"><IconHorizontalAction/></div>
                     </div>
                 </div>
                 <div className="px-3">

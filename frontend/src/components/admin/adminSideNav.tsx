@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { IconDashboard, IconUsers, IconFiles } from '../../icons';
+import { IconDashboard, IconUsers, IconFolder } from '../../icons';
 import ROUTES from '../../utils/routePaths';
 
 function AdminSideNav() {
@@ -17,7 +17,7 @@ function AdminSideNav() {
         {
             Name: "Files",
             To: ROUTES.AllFiles,
-            Icon: <IconFiles/>
+            Icon: <IconFolder/>
         }
     ];
 

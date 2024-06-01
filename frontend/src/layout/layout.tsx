@@ -14,7 +14,7 @@ function Layout({topNavChildren, sideNavChildren, children} : LayoutProps) {
                 {sideNavChildren}
                 <main className="w-full flex flex-col">
                     <div className="contents">
-                        <div className="overflow-y-auto flex flex-col items-center">
+                        <div id="MainContent" className="overflow-y-auto flex flex-col items-center">
                             {children}
                         </div>
                     </div> 

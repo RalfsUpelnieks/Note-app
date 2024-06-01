@@ -1,21 +1,21 @@
 import { useState, useEffect, useRef} from "react";
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import EditableBlock from "./editableBlock";
-import { IconHorizontalAction, IconBookCollection, IconBook, IconArrowLeft, IconArrowRight } from "../../icons";
+import { IconHorizontalAction, IconBookCollection, IconBook, IconArrowLeft, IconArrowRight, IconDelete } from "../../icons";
 import useBooks from "../../hooks/useBooks";
-import ColorMenu from "../menus/colorMenu";
 import COLORS from "../../utils/colors";
 import ROUTES from "../../utils/routePaths";
 import PLACEHOLDERS from "../../utils/placeholders";
 import INPUT_LIMITS from "../../utils/inputLimits";
+import useMenu from "../../hooks/useMenu";
+import MenuIcon from "../menus/menuIcon";
 
 function NoteBook() {
     const navigate = useNavigate();
     const { id } = useParams()
 
-    const { books, setBooks, OpenBook, OpenPage, AddPage, updateBook } : any = useBooks();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [menuPostion, setMenuPostion] = useState({ x: 0, y: 0});
+    const { books, setBooks, OpenBook, OpenPage, AddPage, updateBook, RemoveBook } : any = useBooks();
+    const { OpenMenu, menuDetails } : any = useMenu();
 
     const [title, setTitle] = useState("");
     const [descrtiption, setDescrtiption] = useState("");
@@ -125,7 +125,7 @@ function NoteBook() {
     }
 
     function onHandleClick(e) {
-        if(!isMenuOpen) {
+        if(!menuDetails.isOpen) {
             const react = e.target.getBoundingClientRect();
             let {x, y} = { x: react.left - 135, y: 0 };
 
@@ -141,32 +141,30 @@ function NoteBook() {
         }
     }
 
-    function openActionMenu(cord) {
-        setMenuPostion(cord)
-        setIsMenuOpen(true)
-
-        setTimeout(() => {
-            document.addEventListener("click", ActionMenuhandler, true);
-            document.body.style.overflowY = 'hidden';
-        }, 100);
-    }
-
-    function closeActionMenu() {
-        setIsMenuOpen(false);
-
-        document.removeEventListener("click", ActionMenuhandler, true);
-        document.body.style.overflowY = 'auto';
-    }
-
-    function ActionMenuhandler(e) {
-        if(e.target.closest("#ActionMenu") === null) {
-            closeActionMenu();
+    const actionMenu = [
+        {
+            id: "deleteBook",
+            action: () => RemoveBook(books[details.bookIndex]),
+            label: "Delete book",
+            icon: <MenuIcon><IconDelete width={20} height={20}/></MenuIcon>
         }
-    };
+    ];
+
+    function openActionMenu(position){
+        const menu = [
+            {
+                title: "Book colors", 
+                menuItems: COLORS.map(b => ({id: b.id, action: () => changeColor(b.id), label: b.name, icon: <div className="h-4 w-4 mr-2 border border-solid" style={{ backgroundColor: b.backgroundColor, borderColor: b.textColor}}></div> }))
+            }, {
+                title: "Actions",
+                menuItems: actionMenu
+            }
+        ];
+        
+        OpenMenu(id, menu, position)
+    }
 
     async function changeColor(color) {
-        closeActionMenu();
-
         const result = await updateBook(details.bookId, books[details.bookIndex].title, books[details.bookIndex].description, color);
         if(result){
             const updatedBooks = [...books];
@@ -207,13 +205,6 @@ function NoteBook() {
 
     return (
         <>
-        {isMenuOpen && (
-            <ColorMenu
-                position={menuPostion}
-                closeMenu={closeActionMenu}
-                handleSelection={changeColor}
-            />
-        )}
         {!details.loading &&
             <div className="my-8 relative max-w-4xl w-full bg-white shadow group/page">
                 <div style={{ backgroundColor: color.backgroundColor, color: color.textColor}} className="h-5 p-2 flex items-center justify-between">

@@ -1,34 +1,17 @@
 import { useState, useEffect } from "react";
-import blockList from "../../utils/blockList";
-import { setCaretToEnd } from "../../utils/caretControl";
 
-interface DeleteAction {
-    deleteBlock: () => void;
-}
-
-interface ActionProps {
+interface MenuProps {
     position: {
         x?: number;
         y?: number;
     }
-    blockPosition: number
+    menuItems: any
+    exitMenu(): void
     closeMenu(): void
-    handleSelection(id: string): void
-    actions: DeleteAction
 }
 
-function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actions }: ActionProps) {
-    const actionMenu = [
-        {
-            id: "delete",
-            action: () => actions.deleteBlock(),
-            label: "Delete",
-        }
-    ];
-
-    const menu = [{title: "Blocks", menuItems: blockList.map(b => ({...b, action: () => handleSelection(b.id)}))}, {title: "Actions", menuItems: actionMenu}];
-
-    const [menuList, setMenuList] = useState(menu);
+function Menu({ position, menuItems, exitMenu, closeMenu }: MenuProps) {
+    const [menuList, setMenuList] = useState(menuItems);
     var menuItemList = menuList.flatMap((obj : any) => obj.menuItems);
 
     const [selectedAction, setSelectedAction] = useState(0);
@@ -41,7 +24,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
             var list : any = [];
             const searchResults = search.toLowerCase();
 
-            for (const category of menu){
+            for (const category of menuItems){
                 if(category.title.toLowerCase().includes(searchResults)) {
                     list.push(category);
                 } else {
@@ -60,7 +43,7 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
             }
             setMenuList(list);
         } else {
-            setMenuList(menu);
+            setMenuList(menuItems);
         }
         menuItemList = menuList.flatMap((obj : any) => obj.menuItems);
     }, [search]);
@@ -69,34 +52,18 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                const menutime = (menuItemList[selectedAction] as any);
+                const menuItem = (menuItemList[selectedAction] as any);
 
-                if(menutime) {
-                    closeMenu();
-                    
-                    if(menutime.action) {
-                        menutime.action();
-                    } else {
-                        handleSelection(menutime.id);
-                    }
+                if(menuItem) {
+                    handleSelection(menuItem.action)
                 }
             } else if (e.key === "Backspace") {
                 if (!search) {
                     e.preventDefault();
-                    const block = (document.querySelector(`[data-position="${blockPosition}"]`) as HTMLElement);
-                    if (block) {
-                        setCaretToEnd(block);
-                    }
-                    
-                    closeMenu();
+                    exitMenu();
                 }
             } else if (e.key === "Escape") {
-                const block = (document.querySelector(`[data-position="${blockPosition}"]`) as HTMLElement);
-                if (block) {
-                    setCaretToEnd(block);
-                }
-
-                closeMenu();
+                exitMenu();
             } else if (e.key === "Tab" || e.key === "ArrowDown") {
                 e.preventDefault();
                 const newSelectedAction = selectedAction === menuItemList.length - 1 ? 0 : selectedAction + 1;
@@ -113,6 +80,15 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
         };
     }, [menuList, selectedAction]);
 
+
+    function handleSelection(action) {           
+        if(action) {
+            action();
+        }
+
+        closeMenu();
+    }
+
     function handleChange(e) {
         setSearch(e.target.value);
     };
@@ -120,19 +96,20 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
     function changeSelectedTag(index: number) {
         setSelectedAction(index);
     }
-
+    
     return (
-        <div id="ActionMenu" className="fixed select-none z-10 flex flex-col w-32 max-h-64 bg-white shadow-2xl border border-solid border-gray-200 overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>
-            <input className="block w-11/12 h-8 mx-auto mt-1 center px-3 py-[0.375rem] text-[1rem] text-[#495057] border border-solid border-[#ced4da] rounded-sm leading-normal focus:outline-none box-border" data-position="Search" placeholder="Search..." onChange={handleChange}></input>
+        <div id="Menu" className="fixed select-none z-10 flex flex-col w-32 max-h-64 bg-white shadow-2xl border border-solid border-gray-200 overflow-x-hidden overflow-y-auto" style={{ top: position.y, left: position.x}}>
+            <input data-position="MenuSearch" className="block w-11/12 h-8 mx-auto my-1 center px-3 py-[0.37rem] text-[0.95rem] text-[#495057] border border-solid border-[#ced4da] rounded-sm leading-normal focus:outline-none box-border" placeholder="Search..." onChange={handleChange}></input>
             {menuList.length !== 0 ? (
                 menuList.map((object) => {
                     return (
                         <div key={object.title}>
-                            <div className="px-2 py-[0.20rem] font-lg font-semibold">{object.title}</div>
+                            <div className="px-2 py-[0.20rem] text-neutral-700 bg-zinc-100 border-0 border-solid border-y border-gray-200 font-lg font-semibold">{object.title}</div>
                             {object.menuItems.map((tag, key) => {
                                 return (
-                                <div key={key} className={"px-4 py-2 hover:cursor-pointer" + (menuItemList.indexOf(tag) === selectedAction ? " bg-[rgb(228,228,228)]" : "")} role="button" tabIndex={0} onMouseOver={() => changeSelectedTag(menuItemList.indexOf(tag))} onClick={tag.action}>
-                                {tag.label}
+                                <div key={key} className={`flex px-1 py-[0.4rem] items-center hover:cursor-pointer ${menuItemList.indexOf(tag) === selectedAction ? "bg-[rgb(221,221,221)]" : ""}`} role="button" tabIndex={0} onMouseOver={() => changeSelectedTag(menuItemList.indexOf(tag))} onClick={() => handleSelection(tag.action)}>
+                                    {tag.icon}
+                                    <span className="text-[0.9rem]">{tag.label}</span>
                                 </div>
                                 );
                             })}
@@ -146,4 +123,4 @@ function ActionMenu({ position, blockPosition, closeMenu, handleSelection, actio
     );
 };
 
-export default ActionMenu;
+export default Menu;

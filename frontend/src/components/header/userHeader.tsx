@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Header from './header';
 import useBooks from '../../hooks/useBooks';
 import PLACEHOLDERS from '../../utils/placeholders';
-import { IconBook, IconPage, IconBlock, IconArrowRight } from '../../icons';
+import { IconBook, IconPage, IconParagraph, IconArrowRight } from '../../icons';
 import api from "../../utils/api";
 import useAuth from "../../hooks/useAuth";
 
@@ -157,7 +157,7 @@ function UserHeader() {
                                                         <IconPage width={14} height={14}/><span className='max-w-[16rem] overflow-x-hidden whitespace-nowrap text-ellipsis' dangerouslySetInnerHTML={{__html: block.pageTitle.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || PLACEHOLDERS.page}}></span>
                                                     </div>
                                                     <div className='flex'>
-                                                        <IconBlock/><span className='text-black w-11/12 ml-[0.15rem] overflow-x-hidden whitespace-nowrap text-ellipsis' dangerouslySetInnerHTML={{__html: block.content.text.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || PLACEHOLDERS.page}}></span>
+                                                        <IconParagraph/><span className='text-black w-11/12 ml-[0.15rem] overflow-x-hidden whitespace-nowrap text-ellipsis' dangerouslySetInnerHTML={{__html: block.content.text.replaceAll("&nbsp;", " ").replaceAll("<br>", " ") || PLACEHOLDERS.page}}></span>
                                                     </div>
                                                 </div>
                                             );

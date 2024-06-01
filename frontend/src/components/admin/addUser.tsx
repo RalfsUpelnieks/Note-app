@@ -48,13 +48,13 @@ function AddUser({closePanel, users}: AddUserProps) {
     }, [name, surname, username, email, password, isAdmin]);
 
     useEffect(() => {
-        document.addEventListener('click', ClickOnBlurhandler);
+        document.addEventListener('click', clickOnBlurhandler);
         return () => {
-            document.removeEventListener('click', ClickOnBlurhandler);
+            document.removeEventListener('click', clickOnBlurhandler);
         };
     }, []);
 
-    function ClickOnBlurhandler(e) {
+    function clickOnBlurhandler(e) {
         if(e.target.id === "blur") {
             closePanel();
         }

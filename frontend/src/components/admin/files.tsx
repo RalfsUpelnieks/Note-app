@@ -24,7 +24,7 @@ function Files() {
         })
     }, []);
 
-    async function DeleteFile(id: string) {
+    async function deleteFile(id: string) {
         api.delete(`/api/Files/DeleteFile/${id}`).then(response => {
             if (response?.ok) {
                 console.log("File deleted");
@@ -36,7 +36,7 @@ function Files() {
     }
 
     function handleFileDeletionCheck(file) {
-        OpenDeletionConfirmation(() => DeleteFile(file.blockId), `file with name "${file.filename}"`)
+        OpenDeletionConfirmation(() => deleteFile(file.blockId), `file with name "${file.filename}"`)
     }
 
     return (

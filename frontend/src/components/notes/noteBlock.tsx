@@ -1,13 +1,15 @@
 import  React from "react";
 import { useState, useRef} from "react";
 import { Draggable } from "react-beautiful-dnd";
-import ActionMenu from "../menus/actionMenu";
 import FormatMenu from "../menus/toolbar/formatMenu";
+import blockList from "../../utils/blockList";
 import { getCaretCoordinates, setCaretToEnd, getSelection } from "../../utils/caretControl";
 import menuList from "../../utils/blockList"
-import { IconDrag } from "../../icons";
+import { IconDelete, IconDrag } from "../../icons";
 import PLACEHOLDERS from "../../utils/placeholders";
 import INPUT_LIMITS from "../../utils/inputLimits";
+import useMenu from "../../hooks/useMenu";
+import MenuIcon from "../menus/menuIcon";
 
 interface NoteBlockProps {
     blockId: string
@@ -27,10 +29,7 @@ function NoteBlock(props : NoteBlockProps) {
     const [type, setType] = useState(props.type);
     const timer : any = useRef(null);
 
-    const [actionMenuDetails, setActionMenuDetails] = useState({
-        open: false,
-        position: { x: 0, y: 0}
-    });
+    const { OpenMenu, menuDetails } : any = useMenu();
 
     const [formatMenuDetails, setFormatMenuDetails] = useState({
         open: false,
@@ -74,16 +73,9 @@ function NoteBlock(props : NoteBlockProps) {
 
             clearTimeout(timer.current);
             props.updateBlock(props.blockId, newProperties, newType);
-
-            setTimeout(() => {
-                const block: HTMLElement | null = document.querySelector(`[data-position="${props.position}"]`);
-                if (block) {
-                    setCaretToEnd(block);
-                }
-            }, 100);
-
-            closeActionMenu();
         }
+
+        onActionMenuClose();
     }
 
     function onInputChange(e) {
@@ -122,7 +114,7 @@ function NoteBlock(props : NoteBlockProps) {
             e.preventDefault();
             clearTimeout(timer.current);
             props.deleteBlock(props.blockId);
-        } else if (e.key === "Enter" && !e.shiftKey && !actionMenuDetails.open) {
+        } else if (e.key === "Enter" && !e.shiftKey && !menuDetails.isOpen) {
             e.preventDefault();
 
             props.addBlock(props.blockId, properties, type);
@@ -156,7 +148,7 @@ function NoteBlock(props : NoteBlockProps) {
     }
 
     function onHandleClick(e) {
-        if(!actionMenuDetails.open) {
+        if(!menuDetails.isOpen) {
             const react = e.target.getBoundingClientRect();
             let {x, y} = { x: react.left - 135, y: 0 };
 
@@ -172,33 +164,38 @@ function NoteBlock(props : NoteBlockProps) {
         }
     }
 
-    function openActionMenu(cord) {
-        setActionMenuDetails({
-            open: true,
-            position: cord
-        })
+    const actionMenu = [
+        {
+            id: "delete",
+            action: () => props.deleteBlock(props.blockId),
+            label: "Delete",
+            icon: <MenuIcon><IconDelete width={20} height={20}/></MenuIcon>
+        }
+    ];
 
+    function openActionMenu(position){
+        const menu = [
+            {
+                title: "Blocks", 
+                menuItems: blockList.map(b => ({...b, action: () => changeType(b.id)}))
+            }, {
+                title: "Actions",
+                menuItems: actionMenu
+            }
+        ];
+        
+        OpenMenu(props.blockId, menu, position, onActionMenuClose)
+    }
+
+    function onActionMenuClose() {
         setTimeout(() => {
-            document.addEventListener("click", ActionMenuhandler, true);
-            document.body.style.overflowY = 'hidden';
-
-            const block: HTMLElement | null = document.querySelector(`[data-position="Search"]`);
+            const block: HTMLElement | null = document.querySelector(`[data-position="${props.position}"]`);
             if (block) {
                 setCaretToEnd(block);
             }
         }, 100);
     }
-
-    function closeActionMenu() {
-        setActionMenuDetails({
-            ...actionMenuDetails,
-            open: false
-        })
-
-        document.removeEventListener("click", ActionMenuhandler, true);
-        document.body.style.overflowY = 'auto';
-    }
-
+    
     function openFormatMenu(cord) {
         setFormatMenuDetails({
             open: true,
@@ -218,12 +215,6 @@ function NoteBlock(props : NoteBlockProps) {
 
         document.removeEventListener("click", FormatMenuhandler, true);
     }
-
-    function ActionMenuhandler(e) {
-        if(e.target.closest("#ActionMenu") === null) {
-            closeActionMenu();
-        }
-    };
 
     function FormatMenuhandler(e) {
         if(e.target.closest("#FormatMenu") === null) {
@@ -252,15 +243,6 @@ function NoteBlock(props : NoteBlockProps) {
 
     return (
         <>
-            {actionMenuDetails.open && (
-                <ActionMenu
-                    position={actionMenuDetails.position}
-                    blockPosition={props.position}
-                    closeMenu={closeActionMenu}
-                    handleSelection={changeType}
-                    actions={{ deleteBlock: () => props.deleteBlock(props.blockId) }}
-                />
-            )}
             {formatMenuDetails.open && (
                 <FormatMenu
                     position={formatMenuDetails.position}
@@ -282,7 +264,7 @@ function NoteBlock(props : NoteBlockProps) {
                                 onPropertyChange: changeProperty,
                                 onBlur: onBlur,
                                 textInputStyling: " px-[2px] py-[2px] my-[1px] break-words outline-none",
-                                selectionStyling: (snapshot.isDragging || actionMenuDetails.open ? " bg-neutral-100" : "") + (snapshot.isDragging ? " opacity-80" : "")
+                                selectionStyling: (snapshot.isDragging || menuDetails.isOpen && menuDetails.id == props.blockId ? " bg-neutral-100" : "") + (snapshot.isDragging ? " opacity-80" : "")
                             })
                         }
                     </div>
