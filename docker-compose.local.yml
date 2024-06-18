@@ -1,12 +1,11 @@
-version: '3.4'
-
 services:
-  
   backend:
     image: ${DOCKER_REGISTRY-}noteapp/backend
     build:
       context: backend
       dockerfile: Dockerfile
+    depends_on:
+      - database
     ports:
       - "5062:80"
       - "5025:443"
@@ -22,6 +21,7 @@ services:
       EmailSettings__Password: <password>
       EmailSettings__Host: <host>
       EmailSettings__Port: 587
+
   database:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     container_name: sql_server2022
@@ -36,11 +36,12 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
+      
   frontend:
     image: ${DOCKER_REGISTRY-}noteapp/frontend
     build:
       context: frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.local
     environment:
       NODE_ENV: production
     ports:

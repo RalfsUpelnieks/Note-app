@@ -68,7 +68,7 @@ function Dashboard() {
                     </div>
                     <div className="flex flex-col w-full bg-white border border-solid border-gray-300 rounded">
                         <div className='flex justify-between bg-zinc-100 border-0 border-b border-solid border-gray-200 ps-2'>
-                            <span className='text-lg font-semibold text-neutral-500 my-0'>New entities past 31 days</span>
+                            <span className='text-lg font-semibold text-neutral-500 my-0'>New entities past 30 days</span>
                         </div>
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart

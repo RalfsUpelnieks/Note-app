@@ -1,10 +1,9 @@
 import { GetStoredAuthToken } from './authToken';
-import configData from '../config.json'
 
 function Fetch(method, url) { 
     let bearer = 'Bearer ' + GetStoredAuthToken();
 
-    return fetch('http://localhost:' + configData.APIPort + url, {
+    return fetch(process.env.REACT_APP_API_HOST + url, {
         method: method,
         headers: {
             'Authorization': bearer,
@@ -19,7 +18,7 @@ function Fetch(method, url) {
 function FetchWithBody(method, url, body, contentType = 'application/json') { 
     let bearer = 'Bearer ' + GetStoredAuthToken();
 
-    return fetch('http://localhost:' + configData.APIPort + url, {
+    return fetch(process.env.REACT_APP_API_HOST + url, {
         method: method,
         headers: {
             'Authorization': bearer,
