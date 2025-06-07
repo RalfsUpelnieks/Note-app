@@ -1,0 +1,75 @@
+networks:
+    local-net:
+        driver: bridge
+
+services:
+  nginx:
+    build:
+      context: nginx-reverse-proxy
+      dockerfile: Dockerfile
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - 80:80
+    networks:
+      - local-net
+    restart: unless-stopped
+
+  frontend:
+    container_name: noteapp-frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-http://localhost}
+    depends_on:
+      - backend
+    networks:
+      - local-net
+    restart: unless-stopped
+
+  backend:
+    container_name: noteapp-backend
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      Jwt__Key: ${JWT_KEY}
+      Jwt__ValidMinutes: 60
+      Jwt__Issuer: ${JWT_ISSUER:-https://localhost}
+      Jwt__Audience: ${JWT_AUDIENCE:-https://localhost}
+      WebClient: ${WEB_CLIENT:-http://localhost}
+      EmailSettings__Sender: ${EMAIL_SENDER}
+      EmailSettings__Username: ${EMAIL_USERNAME}
+      EmailSettings__Password: ${EMAIL_PASSWORD}
+      EmailSettings__Host: ${EMAIL_HOST}
+      EmailSettings__Port: 587
+    depends_on:
+      - database
+    networks:
+      - local-net
+    restart: unless-stopped
+    
+  database:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server2022
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+      ACCEPT_EULA: "Y"
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - sql-data:/var/opt/mssql
+    networks:
+      - local-net
+    restart: unless-stopped
+
+volumes:
+  sql-data:
+    driver: local
