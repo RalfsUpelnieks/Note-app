@@ -73,31 +73,25 @@ Follow these steps to run the application locally:
    ```
 
 3. **Configure Docker**:
-   - Update the docker-compose file with your desired settings. Use one of the following docker files based on the intended environment
-     - **Local development**:
-         ```bash
-         docker-compose.local.yml
-         ```
-     - **Production deployment (Nginx)**:
-       ```bash
-       docker-compose.deployment.yml
-       ```
+   - Update the docker-compose file with your desired settings:
+      ```bash
+      docker-compose.yml
+      ```
+   - Update env file with your desired settings:
+      ```bash
+      .env
+      ```
 
 5. **Run the Application**:
-     - **Local development**:
-       ```bash
-       docker compose -f docker-compose.local.yml up
-       ```
-     - **Production deployment (Nginx)**:
-       ```bash
-       docker compose -f docker-compose.deployment.yml up
-       ```
+   ```bash
+   docker compose up
+   ```
 ---
 
 ## Repository Structure
 
 - `backend/`: Contains the server-side code built with ASP.NET Core.
 - `frontend/`: Contains the client-side code built with React.
-- `nginx/`: Web server configuration.
+- `nginx-reverse-proxy/`: Reverse proxy configuration.
 
 ---
